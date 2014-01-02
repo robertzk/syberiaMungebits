@@ -5,7 +5,6 @@
 #'    Otherwise, the list elements are lists of 2 elements, the first of
 #'    which are the values to be replaced and the second the replacement value.
 #' @return the replaced column
-#' @export
 #' @examples
 #' \dontrun{
 #' # replace A, B, D with 1 and NA with 0.
@@ -27,3 +26,6 @@
   }
   if (is_factor) factor(replaced) else replaced
 }
+
+#' @export
+value_replacer <- column_transformation(.value_replacer)
