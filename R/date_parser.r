@@ -7,7 +7,7 @@
 #' @return numeric. Number of years
 #' @export
 #' @importFrom stringr str_extract
-date_parser <- function(col) {
+.date_parser <- function(col) {
   as.numeric(str_extract(col, '^[0-9]+'))
 }
 
