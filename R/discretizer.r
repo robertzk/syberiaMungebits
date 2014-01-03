@@ -51,9 +51,9 @@ discretizer_fn <- function(column,
       }
     }
   } else {
-    discretized_column <- try(suppressWarnings(arules:::discretize(column,
+    discretized_column <- try(arules:::discretize(column,
                                      method = 'frequency',
-                                     categories = granularity)))
+                                     categories = granularity))
   }
 
   if (inherits(discretized_column, 'try-error'))
@@ -76,12 +76,16 @@ restore_levels_fn <- function(column, ...) {
 #' @param cols a vector of columns to discretize.
 #' @param ... the arguments passed to the discretization.
 #' @export
-discretizer <- column_transformation(function(column, ...) {
-  cat("Discretizing ", names(column)[1], "...\n")
+discretizer <- column_transformation(function(column, debug = FALSE, ...) {
   fn <- if ('levels' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
         else mungebitsTransformations:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
-  fn(column, ...)
+  if (debug) {
+    fn(column, ...)
+  } else  {
+    cat("Discretizing ", names(column)[1], "...\n")
+    suppressWarnings(fn(column, ...))
+  }
 }, mutating = TRUE, named = TRUE)
 
 # Some helper functions

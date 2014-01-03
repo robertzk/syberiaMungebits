@@ -15,8 +15,8 @@ means <- function(dataset) {
 }
 
 test_that("it imputes a column in a dataframe correctly", {
-  . <- setup_imputation_mungebit()
-  mb <- .[[1]]; iris2 <- .[[2]]
+  x <- setup_imputation_mungebit()
+  mb <- x[[1]]; iris2 <- x[[2]]
   expect_equal(means(iris), unlist(iris2$data[1, 1:2]))
   expect_equal(length(mb$inputs), 2,
     info = paste0("Expecting imputer mungebit to store inputs for 2 columns.",
