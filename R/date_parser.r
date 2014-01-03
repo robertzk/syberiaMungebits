@@ -10,7 +10,7 @@
 #' date_parser(dd, 1)
 #' print(dd[[1]])
 #' # [1] 0 8 20
-.date_parser <- function(col) {
+date_parser_fn <- function(col) {
   vapply(col, function(string) {
     as.numeric(
       substring(string, 1,
@@ -21,5 +21,5 @@
 }
 
 #' @export
-date_parser <- column_transformation(.date_parser)
+date_parser <- column_transformation(date_parser_fn)
 
