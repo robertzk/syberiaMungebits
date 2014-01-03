@@ -65,6 +65,10 @@ discretizer_fn <- function(column,
   }
 }
 
+restore_levels_fn <- function(column) {
+  numeric_to_factor(column[[1]], inputs$levels)
+}
+
 #' Discretizer
 #'
 #' @aliases discretizer_fn
@@ -72,12 +76,18 @@ discretizer_fn <- function(column,
 #' @param cols a vector of columns to discretize.
 #' @param ... the arguments passed to the discretization.
 #' @export
-discretizer <- column_transformation(discretizer_fn,
-                                     mutating = TRUE, named = TRUE)
+discretizer <- column_transformation(function(column, ...) {
+  fn <- if ('levels' %in% names(inputs)) restore_levels_fn
+        else discretizer_fn
+  environment(fn) <- environment() # Make inputs available
+  fn(column, ...)
+}, mutating = TRUE, named = TRUE)
 
 # Some helper functions
 mode_ratio <- function(variable) {
   freqs = tabulate(match(variable, unique(variable)))
+  if (length(freqs) < 2) stop('Cannot compute mode ratio of variable with ',
+                              'less than 2 unique values.')
   freqs[order(-freqs)[1]] / freqs[order(-freqs)[2]]
 }
 
