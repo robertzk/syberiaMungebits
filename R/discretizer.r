@@ -1,24 +1,41 @@
-#' Discretizer
+#' Discretizer function
 #'
+#' @param column an atomic vector. The variable to discretize.
+#' @param granularity an integer. The suggested number of levels.
+#' @param mode_freq_threshold a real value between 0 and 1. If the mode of the
+#'    variable exceeds this value and is greater than
+#'    \code{mode_ratio_threshold} (see next parameter) times the next greatest
+#'    mode (i.e., the ratio of the value occuring most often over the value
+#'    occuring second most often is over \code{mode_ratio_threshold}) then
+#'    the variable will be attempted to be discretized in manner as to make
+#'    the mode its own bucket. (so if the mode is 5, we'd want, e.g., [2,4),
+#'    5, and (5, 7]).
+#' @param mode_ratio_threshold a real value. See the \code{mode_freq_threshold}
+#'    parameter.
+#' @param category_range The number of levels to consider when the
+#'    discretization procedure descrized in the \code{mode_freq_threshold}
+#'    parameter is employed. The default is \code{min(granularity, 20):20}.
 #' @importFrom arules discretize
 #' @importFrom stringr str_trim
 #' @importFrom Ramd pp
-.discretizer <- function(column,
+discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20) {
 
+  colname <- names(column)[[1]]
+  column <- column[[1]]
   mode_value <- Mode(column)
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
       mode_ratio(column) > mode_ratio_threshold) {
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(discretize(column,
+        discretized_column <- try(arules:::discretize(column,
                                              method = 'frequency',
                                              categories = i))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- str_trim(levels(discretized_column))
-        if (mode_value %in% supressWarnings(as.numeric(trimmed_levels))) {
+        if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
           mode_corrected <- TRUE
           break
         }
@@ -34,18 +51,29 @@
       }
     }
   } else {
-    discretized_column <- try(discretize(column,
+    discretized_column <- try(arules:::discretize(column,
                                      method = 'frequency',
                                      categories = granularity))
   }
 
   if (inherits(discretized_column, 'try-error'))
     stop(pp("Problem discretizing variable '#{colname}': #{discretized_column}"))
-  else discretized_column
+  else {
+    # Store the levels for restoring during prediction
+    inputs$levels <<- levels(discretized_column)
+    discretized_column
+  }
 }
 
+#' Discretizer
+#'
+#' @aliases discretizer_fn
+#' @param dataframe a data.frame to discretize.
+#' @param cols a vector of columns to discretize.
+#' @param ... the arguments passed to the discretization.
 #' @export
-discretizer <- column_transformation(discretizer, mutating = TRUE)
+discretizer <- column_transformation(discretizer_fn,
+                                     mutating = TRUE, named = TRUE)
 
 # Some helper functions
 mode_ratio <- function(variable) {

@@ -5,7 +5,7 @@
 #' This is a column transformation and will be wrapped in
 #' \code{column_transformation}.
 #'
-#' @param col an atomic vector. The column to process.
+#' @param column an atomic vector. The column to process.
 #' @return numeric. Number of years
 #' @examples
 #' dd <- data.frame(cbind(c("", "8 days", "20 days")), stringsAsFactors = FALSE)

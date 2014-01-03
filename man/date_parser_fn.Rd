@@ -1,16 +1,20 @@
 \name{date_parser_fn}
 \alias{date_parser_fn}
-\title{Parse string dates into POSIXct}
+\title{Parse numeric date distances into numerics.}
 \usage{
-date_parser_fn(col)
+date_parser_fn(column)
 }
 \arguments{
-  \item{col}{an atomic vector. The column to process.}
+  \item{column}{an atomic vector. The column to process.}
 }
 \value{
 numeric. Number of years
 }
 \description{
+For example, c("8 days", "100 days", "") will become c(8,
+100, NA)
+}
+\details{
 This is a column transformation and will be wrapped in
 \code{column_transformation}.
 }
