@@ -1,1 +1,8 @@
+export(date_parser)
+export(drop_single_value_variables)
 export(drop_variables)
+export(imputer)
+export(orderer)
+export(value_replacer)
+importFrom(mungebits,column_transformation)
+importFrom(mungebits,multi_column_transformation)

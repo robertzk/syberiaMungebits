@@ -12,10 +12,10 @@
 #' date_parser(dd, 1)
 #' print(dd[[1]])
 #' # [1] 0 8 20
-.date_parser <- function(column) {
+date_parser_fn <- function(column) {
   suppressWarnings(as.numeric(sub(" .*", "", column)))
 }
 
 #' @export
-date_parser <- column_transformation(.date_parser)
+date_parser <- column_transformation(date_parser_fn)
 

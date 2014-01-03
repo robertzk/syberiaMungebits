@@ -1,6 +1,6 @@
-#' mungebits_transformations
+#' mungebitsTransformations
 #'
-#' @name mungebits_transformations
+#' @name mungebitsTransformations
 #' @docType package
 #' @importFrom mungebits column_transformation
 #' @importFrom mungebits multi_column_transformation
