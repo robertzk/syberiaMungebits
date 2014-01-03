@@ -12,6 +12,7 @@ test_that("it correctly discretizes iris data set", {
 test_that("it correctly restores iris data set", {
   iris2 <- mungebits:::mungeplane(iris)
   mb <- mungebits:::mungebit(discretizer)
+  # mode_freq_threshold = 0.15 actually fails to discretize...
   mb$run(iris2, 1:4, mode_freq_threshold = 0.2)
   # prediction run
   one_row_discretized <- iris_discretized[1, , drop = FALSE]

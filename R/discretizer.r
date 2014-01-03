@@ -20,19 +20,19 @@
 #' @importFrom Ramd pp
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
-    category_range = min(granularity, 20):20) {
+    category_range = min(granularity, 20):20, ...) {
 
   colname <- names(column)[[1]]
   column <- column[[1]]
-  mode_value <- Mode(column)
+  mode_value <- mungebitsTransformations:::Mode(column)
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
-      mode_ratio(column) > mode_ratio_threshold) {
+      mungebitsTransformations:::mode_ratio(column) > mode_ratio_threshold) {
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(arules:::discretize(column,
+        discretized_column <- try(suppressWarnings(arules:::discretize(column,
                                              method = 'frequency',
-                                             categories = i))
+                                             categories = i)))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- str_trim(levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
@@ -51,9 +51,9 @@ discretizer_fn <- function(column,
       }
     }
   } else {
-    discretized_column <- try(arules:::discretize(column,
+    discretized_column <- try(suppressWarnings(arules:::discretize(column,
                                      method = 'frequency',
-                                     categories = granularity))
+                                     categories = granularity)))
   }
 
   if (inherits(discretized_column, 'try-error'))
@@ -65,7 +65,7 @@ discretizer_fn <- function(column,
   }
 }
 
-restore_levels_fn <- function(column) {
+restore_levels_fn <- function(column, ...) {
   numeric_to_factor(column[[1]], inputs$levels)
 }
 
@@ -77,8 +77,9 @@ restore_levels_fn <- function(column) {
 #' @param ... the arguments passed to the discretization.
 #' @export
 discretizer <- column_transformation(function(column, ...) {
-  fn <- if ('levels' %in% names(inputs)) restore_levels_fn
-        else discretizer_fn
+  cat("Discretizing ", names(column)[1], "...\n")
+  fn <- if ('levels' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
+        else mungebitsTransformations:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
   fn(column, ...)
 }, mutating = TRUE, named = TRUE)
