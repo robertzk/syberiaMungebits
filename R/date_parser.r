@@ -1,4 +1,6 @@
-#' Parse string dates into POSIXct
+#' Parse numeric date distances into numerics.
+#'
+#' For example, c("8 days", "100 days", "") will become c(8, 100, NA)
 #'
 #' This is a column transformation and will be wrapped in
 #' \code{column_transformation}.
@@ -10,14 +12,8 @@
 #' date_parser(dd, 1)
 #' print(dd[[1]])
 #' # [1] 0 8 20
-.date_parser <- function(col) {
-  vapply(col, function(string) {
-    as.numeric(
-      substring(string, 1,
-        max(which(strsplit(string, '')[[1]] == ' ')[1] - 1, 0, na.rm = TRUE)
-      )
-    )
-  }, numeric(1), USE.NAMES = FALSE)
+.date_parser <- function(column) {
+  suppressWarnings(as.numeric(sub(" .*", "", column)))
 }
 
 #' @export
