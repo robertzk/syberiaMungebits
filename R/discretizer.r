@@ -15,18 +15,30 @@
 #' @param category_range The number of levels to consider when the
 #'    discretization procedure descrized in the \code{mode_freq_threshold}
 #'    parameter is employed. The default is \code{min(granularity, 20):20}.
+#' @param lower_count_bound an integer. Variables with less than or equal to
+#'    this many unique values will not get discretized. Default is
+#'    \code{granularity}.
+#' @param ... a convenience for compatibility with its twin brother,
+#'    restore_levels_fn.
 #' @importFrom arules discretize
 #' @importFrom stringr str_trim
+#' @importFrom stringr str_replace_all
 #' @importFrom Ramd pp
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
-    category_range = min(granularity, 20):20, ...) {
-
+    category_range = min(granularity, 20):20, lower_count_bound = granularity,
+    ...) {
   colname <- names(column)[[1]]
   column <- column[[1]]
-  mode_value <- mungebitsTransformations:::Mode(column)
+
+  # Some caching optimizations
+  uniques <- mungebitsTransformations:::present_uniques(column)
+  if (length(uniques) <= lower_count_bound) return(column)
+  variable_freqs <- mungebitsTransformations:::freqs(column, uniques)
+  mode_value <- mungebitsTransformations:::Mode(column, uniques, variable_freqs)
+
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
-      mungebitsTransformations:::mode_ratio(column) > mode_ratio_threshold) {
+      mungebitsTransformations:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
@@ -42,7 +54,6 @@ discretizer_fn <- function(column,
       }
       if (!mode_corrected) {
         # TODO: Turn into binary variable
-        # binary_variables <<- append(binary_variables, colname)
 
         stop(pp("Mode of variable '#{colname}' is above #{100 * mode_freq_threshold}% ",
                 "and/or mode ratio is above #{mode_ratio_threshold} and no number of buckets between ",
@@ -66,7 +77,7 @@ discretizer_fn <- function(column,
 }
 
 restore_levels_fn <- function(column, ...) {
-  numeric_to_factor(column[[1]], inputs$levels)
+  mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
 }
 
 #' Discretizer
@@ -83,22 +94,32 @@ discretizer <- column_transformation(function(column, debug = FALSE, ...) {
   if (debug) {
     fn(column, ...)
   } else  {
-    cat("Discretizing ", names(column)[1], "...\n")
+    # cat("Discretizing ", names(column)[1], "...\n")
     suppressWarnings(fn(column, ...))
   }
 }, mutating = TRUE, named = TRUE)
 
 # Some helper functions
-mode_ratio <- function(variable) {
-  freqs = tabulate(match(variable, unique(variable)))
-  if (length(freqs) < 2) stop('Cannot compute mode ratio of variable with ',
+mode_ratio <- function(variable,
+                       variable_freqs = mungebitsTransformations:::freqs(variable)) {
+  if (length(variable_freqs) < 2) stop('Cannot compute mode ratio of variable with ',
                               'less than 2 unique values.')
-  freqs[order(-freqs)[1]] / freqs[order(-freqs)[2]]
+  variable_freqs[order(-variable_freqs)[1]] / variable_freqs[order(-variable_freqs)[2]]
 }
 
 # http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode
-Mode <- function(variable) {
-  uniques <- unique(variable[!is.na(variable)])
-  uniques[which.max(tabulate(match(variable, uniques)))]
+Mode <- function(variable,
+                 uniques = mungebitsTransformations:::presentUniques(variable),
+                 variable_freqs = mungebitsTransformations:::freqs(variable, uniques)) {
+  uniques[which.max(variable_freqs)]
+}
+
+present_uniques <- function(variable) {
+  unique(variable[!is.na(variable)])
+}
+
+freqs <- function(variable,
+                  uniques = mungebitsTransformations:::presentUniques(variable)) {
+  tabulate(match(variable, uniques))
 }
 

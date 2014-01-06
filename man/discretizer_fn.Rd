@@ -3,7 +3,8 @@
 \title{Discretizer function}
 \usage{
 discretizer_fn(column, granularity = 3, mode_freq_threshold = 0.15,
-  mode_ratio_threshold = 1.5, category_range = min(granularity, 20):20)
+  mode_ratio_threshold = 1.5, category_range = min(granularity, 20):20,
+  lower_count_bound = granularity, ...)
 }
 \arguments{
   \item{column}{an atomic vector. The variable to
@@ -29,6 +30,13 @@ discretizer_fn(column, granularity = 3, mode_freq_threshold = 0.15,
   when the discretization procedure descrized in the
   \code{mode_freq_threshold} parameter is employed. The
   default is \code{min(granularity, 20):20}.}
+
+  \item{lower_count_bound}{an integer. Variables with less
+  than or equal to this many unique values will not get
+  discretized. Default is \code{granularity}.}
+
+  \item{...}{a convenience for compatibility with its twin
+  brother, restore_levels_fn.}
 }
 \description{
 Discretizer function

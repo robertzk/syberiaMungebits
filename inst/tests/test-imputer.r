@@ -1,7 +1,6 @@
 context("imputer")
 
 setup_imputation_mungebit <- function() {
-  require("mungebits")
   iris2 <- iris
   mb <- mungebits:::mungebit(imputer)
   iris2[1, ] <- NA
@@ -15,6 +14,7 @@ means <- function(dataset) {
 }
 
 test_that("it imputes a column in a dataframe correctly", {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
   x <- setup_imputation_mungebit()
   mb <- x[[1]]; iris2 <- x[[2]]
   expect_equal(means(iris), unlist(iris2$data[1, 1:2]))
@@ -24,9 +24,11 @@ test_that("it imputes a column in a dataframe correctly", {
                   testthat::colourise("mutating = TRUE", "green"),
                   " when defining the column_transformation?"))
   
+  if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
 test_that("it restores an imputed column correctly", {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
   . <- setup_imputation_mungebit()
   mb <- .[[1]]; iris2 <- .[[2]]
   iris2$data[1, ] <- NA
@@ -36,5 +38,6 @@ test_that("it restores an imputed column correctly", {
   expect_equal(means(iris), unlist(iris2$data[1, 1:2]),
     info = paste0("The imputer mungebit must be able to restore means using ",
                   "the trained mungebit"))
+  if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
