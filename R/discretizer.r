@@ -67,6 +67,11 @@ discretizer_fn <- function(column,
                                      categories = granularity))
   }
 
+  # Handle weird discretizer bug
+  # TODO: DO THIS IN RESTORE LEVELS
+  if (is.list(discretized_column))
+    discretized_column <- sapply(discretized_column, function(column) column[[1]])
+
   if (inherits(discretized_column, 'try-error'))
     stop(pp("Problem discretizing variable '#{colname}': #{discretized_column}"))
   else {
@@ -87,14 +92,13 @@ restore_levels_fn <- function(column, ...) {
 #' @param cols a vector of columns to discretize.
 #' @param ... the arguments passed to the discretization.
 #' @export
-discretizer <- column_transformation(function(column, debug = FALSE, ...) {
+discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
   fn <- if ('levels' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
         else mungebitsTransformations:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
-  if (debug) {
+  if (verbose) {
     fn(column, ...)
   } else  {
-    # cat("Discretizing ", names(column)[1], "...\n")
     suppressWarnings(fn(column, ...))
   }
 }, mutating = TRUE, named = TRUE)
