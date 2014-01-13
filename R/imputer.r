@@ -3,8 +3,8 @@
 #'
 #' @param x an atomic vector.
 imputer_fn <- function(x) {
-  if (!'mean' %in% names(inputs)) inputs$mean <<- mean(x, na.rm = TRUE)
-  x[is.na(x)] <- inputs$mean
+  if (!'median' %in% names(inputs)) inputs$median <<- median(x, na.rm = TRUE)
+  x[is.na(x)] <- inputs$median
   x
 }
 
