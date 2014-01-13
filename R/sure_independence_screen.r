@@ -7,10 +7,11 @@
 #' @importFrom statsUtils sure_independence_screening
 #' @export
 sure_independence_screen <- function(dataframe, ...) {
-  browser()
   eval(substitute({
-    column_transformation(function(column, ...)
-      statsUtils::sure_independence_screening(dataframe$dep_var, column, ...)
-    )(dataframe, ...)
-  }), envir = parent.frame())
+    column_transformation(function(column, ...) {
+      if (is.null(statsUtils::sure_independence_screening(dataframe$dep_var, column, ...)))
+        NULL
+      else column
+    })(dataframe, ...)
+  }, list(dataframe = substitute(dataframe))), envir = parent.frame())
 }
