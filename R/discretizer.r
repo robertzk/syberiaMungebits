@@ -36,8 +36,8 @@ discretizer_fn <- function(column,
 
   # Some caching optimizations
   uniques <- mungebitsTransformations:::present_uniques(column)
-  if (length(uniques) <= lower_count_bound) return(column)
-  if (length(uniques) >= upper_count_bound) return(column)
+  if (!is.null(lower_count_bound) && length(uniques) <= lower_count_bound) return(column)
+  if (!is.null(upper_count_bound) && length(uniques) >= upper_count_bound) return(column)
   variable_freqs <- mungebitsTransformations:::freqs(column, uniques)
   mode_value <- mungebitsTransformations:::Mode(column, uniques, variable_freqs)
 
