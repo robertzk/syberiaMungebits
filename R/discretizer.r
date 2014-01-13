@@ -18,6 +18,9 @@
 #' @param lower_count_bound an integer. Variables with less than or equal to
 #'    this many unique values will not get discretized. Default is
 #'    \code{granularity}.
+#' @param upper_count_bound an integer. Variables with more than or equal to
+#'    this many unique values will not get discretized. Default is
+#'    \code{granularity}.
 #' @param ... a convenience for compatibility with its twin brother,
 #'    restore_levels_fn.
 #' @importFrom arules discretize
@@ -27,13 +30,14 @@
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
-    ...) {
+    upper_count_bound = NULL, ...) {
   colname <- names(column)[[1]]
   column <- column[[1]]
 
   # Some caching optimizations
   uniques <- mungebitsTransformations:::present_uniques(column)
   if (length(uniques) <= lower_count_bound) return(column)
+  if (length(uniques) >= upper_count_bound) return(column)
   variable_freqs <- mungebitsTransformations:::freqs(column, uniques)
   mode_value <- mungebitsTransformations:::Mode(column, uniques, variable_freqs)
 
