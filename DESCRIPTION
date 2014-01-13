@@ -13,4 +13,5 @@ LazyData: true
 Suggests:
     testthat,
     knitr,
-    microbenchmark
+    microbenchmark,
+    statsUtils

@@ -109,6 +109,13 @@ test_that('correctly uses mutating transformations', {
   expect_equal(inputs, 'test')
 })
 
+test_that('correctly runs column transformations using a function as column name specifier', {
+  iris2 <- iris
+  doubler <- column_transformation(function(x) 2*x)
+  doubler(iris2, is.numeric)
+  expect_equal(iris2[, 1:4], iris[, 1:4]*2)
+})
+
 test_that('correctly uses named transformations', {
   iris2 <- iris
   name_duper <- column_transformation(function(x) {
