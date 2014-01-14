@@ -43,7 +43,6 @@ discretizer_fn <- function(column,
 
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
       mungebitsTransformations:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
-    print(colname)
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
