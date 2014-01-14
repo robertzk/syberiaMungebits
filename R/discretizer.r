@@ -59,12 +59,17 @@ discretizer_fn <- function(column,
       if (!mode_corrected) {
         # TODO: Turn into binary variable
 
-        stop(pp("Mode of variable '#{colname}' is above #{100 * mode_freq_threshold}% ",
+        warning(pp("Mode of variable '#{colname}' is above #{100 * mode_freq_threshold}% ",
                 "and/or mode ratio is above #{mode_ratio_threshold} and no number of buckets between ",
                 "#{min(category_range)} and #{max(category_range)} fixes the problem. May want to ",
                 "discretize manually")) 
       }
     }
+    if (!mode_corrected) {
+      discretized_column <- try(arules:::discretize(column,
+                                method = 'frequency',
+                                categories = granularity))
+      }
   } else {
     discretized_column <- try(arules:::discretize(column,
                                      method = 'frequency',
