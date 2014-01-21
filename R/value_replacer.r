@@ -27,9 +27,10 @@ value_replacer_fn <- function(x, values_map) {
       if (is_factor) as.character(values_map[[name]]) else values_map[[name]]
   }
   if (is_factor) factor(replaced, levels =
-    union(unique(replaced), mungebitsTransformations:::value_replacer_fn(levels(x), values_map)))
+    if ('levels' %in% names(inputs)) inputs$levels
+    else inputs$levels <<- unique(replaced))
   else replaced
 }
 
 #' @export
-value_replacer <- column_transformation(value_replacer_fn)
+value_replacer <- column_transformation(value_replacer_fn, mutating = TRUE)
