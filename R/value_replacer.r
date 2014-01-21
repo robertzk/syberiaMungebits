@@ -27,7 +27,7 @@ value_replacer_fn <- function(x, values_map) {
       if (is_factor) as.character(values_map[[name]]) else values_map[[name]]
   }
   if (is_factor) factor(replaced, levels =
-    union(mungebitsTransformations:::value_replacer_fn(levels(x), values_map), unique(replaced))
+    union(mungebitsTransformations:::value_replacer_fn(levels(x), values_map), unique(replaced)))
   else replaced
 }
 
