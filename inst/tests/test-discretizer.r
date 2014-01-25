@@ -47,3 +47,15 @@ test_that("it does not discretize values with uniques below the lower bnd", {
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
+test_that("it does not discretize values with uniques above the upper bnd", {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+  iris2 <- mungebits:::mungeplane(iris)
+  mb <- mungebits:::mungebit(discretizer)
+  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
+         upper_count_bound = 23, debug = TRUE)
+  # Only the fourth column of iris has < 23 uniques
+  expect_equal(iris2$data[, -4], iris[, -4]);
+  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+  if (!mungebits_loaded) unloadNamespace('mungebits')
+})
+
