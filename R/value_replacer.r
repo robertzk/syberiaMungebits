@@ -27,7 +27,8 @@ value_replacer_fn <- function(x, values_map) {
       if (is_factor) as.character(values_map[[name]]) else values_map[[name]]
   }
   if (is_factor) factor(replaced, levels =
-    if ('levels' %in% names(inputs)) inputs$levels
+    if (!exists('inputs')) unique(replaced)
+    else if ('levels' %in% names(inputs)) inputs$levels
     else inputs$levels <<- unique(replaced))
   else replaced
 }

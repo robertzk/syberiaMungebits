@@ -34,7 +34,7 @@ test_that("it replaces factors correctly", {
   column <- factor(c("a", "b", "c"))
   column <- value_replacer_fn(column, list(a = "b", b = "a", c = "d"))
   expect_true(identical(column,
-                        factor(c("b", "a", "d"), levels = c("a", "b", "d"))))
+                        factor(c("b", "a", "d"), levels = c("b", "a", "d"))))
 })
 
 
