@@ -10,9 +10,6 @@ select_variables(dataframe, cols)
   \item{cols}{an atomic vector. Drop all but these
   columns.}
 }
-\value{
-NULL ensures the column gets removed
-}
 \description{
 Select variables in a dataframe.
 }

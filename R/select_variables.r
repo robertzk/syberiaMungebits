@@ -2,7 +2,6 @@
 #'
 #' @param dataframe a data.frame
 #' @param cols an atomic vector. Drop all but these columns.
-#' @return NULL ensures the column gets removed
 #' @export
 #' @examples
 #' select_variables(iris, 1) # Select only first variable
