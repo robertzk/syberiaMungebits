@@ -4,7 +4,7 @@
 \usage{
 discretizer_fn(column, granularity = 3, mode_freq_threshold = 0.15,
   mode_ratio_threshold = 1.5, category_range = min(granularity, 20):20,
-  lower_count_bound = granularity, ...)
+  lower_count_bound = granularity, upper_count_bound = NULL, ...)
 }
 \arguments{
   \item{column}{an atomic vector. The variable to
@@ -32,6 +32,10 @@ discretizer_fn(column, granularity = 3, mode_freq_threshold = 0.15,
   default is \code{min(granularity, 20):20}.}
 
   \item{lower_count_bound}{an integer. Variables with less
+  than or equal to this many unique values will not get
+  discretized. Default is \code{granularity}.}
+
+  \item{upper_count_bound}{an integer. Variables with more
   than or equal to this many unique values will not get
   discretized. Default is \code{granularity}.}
 
