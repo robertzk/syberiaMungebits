@@ -32,6 +32,7 @@ discretizer_fn <- function(column,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
     upper_count_bound = NULL, ...) {
   colname <- names(column)[[1]]
+  print(colname)
   column <- column[[1]]
 
   # Some caching optimizations
