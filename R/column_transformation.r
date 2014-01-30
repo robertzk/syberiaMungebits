@@ -46,7 +46,7 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
             `*tmp.fn.left.by.mungebits.library*`(dataframe[colname], ...)
           })
         else 
-          dataframe[cols] <- lapply(dataframe[cols],
+          dataframe[cols] <- lapply(dataframe[cols], 
             `*tmp.fn.left.by.mungebits.library*`, ...)
       } else {
         # We must now be surgically precise. The transformation function
