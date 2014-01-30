@@ -92,7 +92,11 @@ discretizer_fn <- function(column,
 }
 
 restore_levels_fn <- function(column, ...) {
-  mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
+  if (!'levels' %in% names(inputs)) column[[1]]
+  else {
+    cat("Restoring levels for ", names(column), " \n")
+    mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
+  }
 }
 
 #' Discretizer
@@ -103,7 +107,8 @@ restore_levels_fn <- function(column, ...) {
 #' @param ... the arguments passed to the discretization.
 #' @export
 discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
-  fn <- if ('levels' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
+  on.exit(inputs$trained <<- TRUE)
+  fn <- if ('trained' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
         else mungebitsTransformations:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
   if (verbose) {
