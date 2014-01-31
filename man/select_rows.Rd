@@ -2,7 +2,7 @@
 \alias{select_rows}
 \title{Select rows in a dataframe.}
 \usage{
-select_rows(dataframe, rows)
+select_rows(dataframe, rows, whole = FALSE)
 }
 \arguments{
   \item{dataframe}{a data.frame}
