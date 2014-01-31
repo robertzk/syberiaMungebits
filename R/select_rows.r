@@ -1,7 +1,15 @@
 #' Select rows in a dataframe.
 #'
 #' @param dataframe a data.frame
-#' @param rows an atomic vector. Drop all but these rows.
+#' @param rows an atomic vector or function. Drop all but these rows.
+#'    If \code{rows} is a function, the rows will be selected based on the
+#'    \code{whole} parameter. If \code{whole = TRUE}, the whole dataframe
+#'    will be passed in, and the resulting row indices (character, numeric,
+#'    or logical) will be selected. If \code{whole = FALSE} (the default)
+#'    the function will be applied to each row and the result will be expected
+#'    to be a logical, with only the rows returning \code{TRUE} being selected.
+#' @param whole a logical. See the \code{rows} parameter. The default is 
+#'    \code{FALSE}.
 #' @export
 #' @examples
 #' select_rows(iris, 1:10) # Select only first ten rows
