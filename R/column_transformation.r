@@ -24,7 +24,7 @@
 #' doubler(iris, c('Sepal.Length')) 
 column_transformation <- function(transformation, mutating = FALSE, named = FALSE) {
   force(transformation); force(mutating); force(named)
-  invisible(function(dataframe, cols = colnames(dataframe), ...) {
+  invisible(structure(function(dataframe, cols = colnames(dataframe), ...) {
     # The fastest way to do this. The alternatives are provided in the comment below
     assign("*tmp.fn.left.by.mungebits.library*",
            transformation, envir = parent.frame())
@@ -92,7 +92,7 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
       class(dataframe) <- 'data.frame'
       NULL
     }), envir = parent.frame()))
-  })
+  }, class = c('transformation', 'function'), named = named, mutating = mutating))
 }
 
 # Possible column transformations:
