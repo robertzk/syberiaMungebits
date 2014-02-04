@@ -2,7 +2,7 @@ Package: mungebitsTransformations
 Title: Mungebits transformations
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
-    with the mungebits package
+    with the mungebits package.
 Version: 0.2
 Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
