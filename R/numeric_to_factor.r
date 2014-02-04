@@ -5,34 +5,54 @@
 #' @param num a numeric atomic vector. Will be restored to a factor variable.
 #' @param levs a character vector of levels. 
 #' @param na.to.missing a logical. Whether to convert NAs to a "Missing" level.
+#' @export
 #' @keywords internal
 numeric_to_factor <- function(num, levs, na.to.missing = TRUE) {
+  .Call('mungebitsTransformations_numeric_to_factor',
+         num, levs, na.to.missing, PACKAGE = 'mungebitsTransformations')
+}
+
+numeric_to_factor2 <- function(num, levs, na.to.missing = TRUE) {
   if (length(levs) == 0) stop('Zero levels provided')
-  if (length(num) > 1)
-    return(sapply(num, function(n) { numeric_to_factor(n, levs, na.to.missing) }))
 
-  if (na.to.missing && is.na(num))
-    return(factor('Missing', levels = union(levs, 'Missing')))
+  levs <- as.character(levs)
+  original_levs <- levs
 
-  in_range_bools <- sapply(levs, function(lev) {
-    lev <- as.character(lev)
-    lev <- str_replace_all(lev, " ", "")
-    lev_split <- strsplit(lev, ",")[[1]]
-    if (length(lev_split) < 2) {
-      old_opts <- options(warn = -1)
-      on.exit(options(old_opts))
-      level_to_num <- as.numeric(as.character(lev))
-      return(!is.na(level_to_num) && level_to_num == num)
-    }
-    
-    left_bound <- as.numeric(substr(lev_split[1], 2, nchar(lev_split[1])))
-    right_bound <- as.numeric(substr(lev_split[2], 1, nchar(lev_split[2]) - 1))
-    left_operator <- if (substr(lev, 1, 1) == '(') `<` else `<=`
-    right_operator <- if (substr(lev, tmp <- nchar(lev), tmp) == ')') `>` else `>=`
-    left_operator(left_bound, num) && right_operator(right_bound, num)
+  levs <- str_replace_all(levs, ' ', '')
+  levs <- strsplit(levs, ',')
+  numeric_levs <- vapply(levs,
+    function(lev) length(lev) == 1 &&
+      all(strsplit(lev, '')[[1]]  %in% strsplit('-.0123456789', '')[[1]]),
+    logical(1))
+
+  charnums <- character(length(num))
+  already_numeric <- as.character(num) %in% levs[numeric_levs]
+  charnums[already_numeric] <- num[already_numeric]
+
+  range_levs <- vapply(levs, function(lev) length(lev) == 2, logical(1))
+  levs[range_levs] <- lapply(levs[range_levs],
+    function(lev) {
+      left_bound <- as.numeric(substr(lev[1], 2, nchar(lev[1])))
+      right_bound <- as.numeric(substr(lev[2], 1, nchar(lev[2]) - 1))
+      left_operator <- if (substr(lev[1], 1, 1) == '(') `<` else `<=`
+      right_operator <- if (substr(lev[2], tmp <- nchar(lev[2]), tmp) == ')') `>` else `>=`
+      list(function(x) left_operator(left_bound, x),
+           function(x) right_operator(right_bound, x))
+    })
+
+  in_levs <- lapply(levs[range_levs], function(lev) {
+    lev[[1]](num[!already_numeric]) & lev[[2]](num[!already_numeric])
   })
+  in_levs <- apply(data.frame(in_levs), 1, function(ins) which(c(ins, TRUE))[1])
 
-  if (sum(in_range_bools) == 0) factor('Missing', levels = union(levs, 'Missing'))
-  else factor(levs[in_range_bools], levels = levs)
+  charnums[!already_numeric] <- c(original_levs[range_levs], NA)[in_levs]
+
+  final_levs <- original_levs
+  if (na.to.missing && sum(is.na(charnums)) > 0)
+    final_levs <- union(original_levs, 'Missing')
+
+  if (na.to.missing) charnums[is.na(charnums)] <- 'Missing'
+
+  factor(charnums, levels = final_levs)
 }
 
