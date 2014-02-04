@@ -1,6 +1,5 @@
 useDynLib(mungebitsTransformations)
 exportPattern(".*numeric_to_factor.*")
-
 export(column_transformation)
 export(date_parser)
 export(discretizer)
