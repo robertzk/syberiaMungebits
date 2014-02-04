@@ -32,7 +32,6 @@ discretizer_fn <- function(column,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
     upper_count_bound = NULL, ...) {
   colname <- names(column)[[1]]
-  print(colname)
   column <- column[[1]]
   if (!is.numeric(column)) return(column)
 
@@ -95,7 +94,6 @@ discretizer_fn <- function(column,
 restore_levels_fn <- function(column, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
-    cat("Restoring levels for ", names(column), " \n")
     mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
   }
 }
@@ -115,7 +113,7 @@ discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
   if (verbose) {
     fn(column, ...)
   } else  {
-    suppressWarnings(fn(column, ...))
+    suppressMessages(suppressWarnings(fn(column, ...)))
   }
 }, mutating = TRUE, named = TRUE)
 

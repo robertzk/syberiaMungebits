@@ -44,6 +44,12 @@ test_that("it does not discretize values with uniques below the lower bnd", {
   # Only the fourth column of iris has <= 22 uniques
   expect_equal(iris2$data[, -4], iris_discretized[, -4]);
   expect_equal(iris2$data[, 4], iris[, 4])
+
+  # test prediction
+  iris2 <- mungebits:::mungeplane(iris)
+  mb$run(iris2, 1:4)
+  expect_equal(iris2$data[, -4], iris_discretized[, -4]);
+  expect_equal(iris2$data[, 4], iris[, 4])
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
@@ -54,6 +60,12 @@ test_that("it does not discretize values with uniques above the upper bnd", {
   mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
          upper_count_bound = 23, debug = TRUE)
   # Only the fourth column of iris has < 23 uniques
+  expect_equal(iris2$data[, -4], iris[, -4]);
+  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+
+  # test prediction
+  iris2 <- mungebits:::mungeplane(iris)
+  mb$run(iris2, 1:4)
   expect_equal(iris2$data[, -4], iris[, -4]);
   expect_equal(iris2$data[, 4], iris_discretized[, 4])
   if (!mungebits_loaded) unloadNamespace('mungebits')

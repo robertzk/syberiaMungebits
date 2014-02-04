@@ -2,6 +2,8 @@
 #'
 #' @name mungebitsTransformations
 #' @docType package
+#' @useDynLib mungebitsTransformations
+#' @exportPattern .*numeric_to_factor.*
 NULL
 
 #' A discretized version of the iris data set, used for internal
