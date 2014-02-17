@@ -33,6 +33,7 @@ discretizer_fn <- function(column,
     upper_count_bound = NULL, ...) {
   colname <- names(column)[[1]]
   column <- column[[1]]
+  if (!is.numeric(column)) return(column)
 
   # Some caching optimizations
   uniques <- mungebitsTransformations:::present_uniques(column)
