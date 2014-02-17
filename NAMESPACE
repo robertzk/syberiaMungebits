@@ -1,3 +1,4 @@
+S3method(print,transformation)
 export(column_transformation)
 export(date_parser)
 export(discretizer)

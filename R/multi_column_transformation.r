@@ -45,7 +45,7 @@
 #' scaler(iris[c('Petal.Length', 'Petal.Width')], , , 2)
 #' # Note the missing second and third arguments.
 multi_column_transformation <- function(transformation) {
-  invisible(function(dataframe, input_cols = colnames(dataframe),
+  invisible(structure(function(dataframe, input_cols = colnames(dataframe),
            output_cols = input_cols, ...) {
     # The fastest way to do this. The alternative is to use pass by value
     # or replace list subset assignment below with mapply.
@@ -96,7 +96,9 @@ multi_column_transformation <- function(transformation) {
       class(dataframe) <- 'data.frame'
       NULL
     }), envir = parent.frame()))
-  })
+  }, class = c('multiColumnTransformation', 'transformation', 'function')
+  # TODO: named = named, mutating = mutating)
+  ))
 }
 
 ##' @export

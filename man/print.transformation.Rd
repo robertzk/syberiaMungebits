@@ -1,0 +1,22 @@
+\name{print.transformation}
+\alias{print.transformation}
+\title{A convenience method to make printing of transformations more obvious.}
+\usage{
+\method{print}{transformation}(x, ...)
+}
+\arguments{
+  \item{x}{a \code{transformation}. Either a
+  \code{column_transformation} or
+  \code{multi_column_transformation}.}
+
+  \item{...}{additional parameters to print.}
+}
+\description{
+A convenience method to make printing of transformations
+more obvious.
+}
+\seealso{
+\code{\link{column_transformation}},
+\code{\link{multi_column_transformation}}
+}
+
