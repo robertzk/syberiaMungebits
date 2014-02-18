@@ -1,5 +1,7 @@
 #include <Rcpp.h>
 #include <vector>
+#include <algorithm>
+#include <string>
 using namespace Rcpp;
 
 std::vector<double> _sort_actuals = std::vector<double>();
