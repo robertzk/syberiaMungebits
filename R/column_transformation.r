@@ -24,7 +24,7 @@
 #' doubler(iris, c('Sepal.Length')) 
 column_transformation <- function(transformation, mutating = FALSE, named = FALSE) {
   force(transformation); force(mutating); force(named)
-  invisible(structure(function(dataframe, cols = colnames(dataframe), ...) {
+  invisible(structure(function(dataframe, input_cols = colnames(dataframe), ...) {
     # The fastest way to do this. The alternatives are provided in the comment below
     assign("*tmp.fn.left.by.mungebits.library*",
            transformation, envir = parent.frame())
@@ -34,23 +34,22 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
 
     # During prediction, always use same column names as during training
     # TODO: Clean this up
-    if (exists('inputs') && !'*colnames*' %in% names(inputs)) {
-      cols <- standard_column_format(cols, dataframe)
-      colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
-      inputs$`*colnames*` <<- colns
-    } else if (exists('inputs') && '*colnames*' %in% names(inputs)) {
-      cols <- inputs$`*colnames*`
-      colns <- cols
-    } else {
-      cols <- standard_column_format(cols, dataframe)
-      colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
-    }
+    standard_cols <- standard_column_format(input_cols, dataframe)
+    colns <- if (is.character(standard_cols)) standard_cols else colnames(dataframe)[standard_cols]
 
     invisible(eval(substitute({
+      cols <-
+        if (exists('inputs') && !'*colnames*' %in% names(inputs))
+          inputs$`*colnames*` <<- standard_cols
+        else if (exists('inputs') && '*colnames*' %in% names(inputs))
+          inputs$`*colnames*`
+        else standard_cols
+
       # Trick to make assignment incredibly fast. Could screw up the
       # data.frame if the function is interrupted, however.
       class(dataframe) <- 'list'
       on.exit(class(dataframe) <- 'data.frame')
+
       if (!mutating) {
         environment(`*tmp.fn.left.by.mungebits.library*`) <- environment()
         if (named)

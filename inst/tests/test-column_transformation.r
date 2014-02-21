@@ -105,7 +105,7 @@ test_that('correctly uses mutating transformations', {
   iris2 <- iris
   mutater <- column_transformation(function(x) { inputs <<- 'test'; x })
   inputs <- NULL
-  mutater(iris2)
+  (function() { mutater(iris2) })()
   expect_equal(inputs, 'test')
 })
 
