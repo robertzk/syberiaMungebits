@@ -12,9 +12,9 @@ BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        NumericVector num = Rcpp::as<NumericVector >(numSEXP);
-        CharacterVector levs = Rcpp::as<CharacterVector >(levsSEXP);
-        bool na_to_missing = Rcpp::as<bool >(na_to_missingSEXP);
+        Rcpp::traits::input_parameter< NumericVector >::type num(numSEXP );
+        Rcpp::traits::input_parameter< CharacterVector >::type levs(levsSEXP );
+        Rcpp::traits::input_parameter< bool >::type na_to_missing(na_to_missingSEXP );
         CharacterVector __result = numeric_to_factor(num, levs, na_to_missing);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
@@ -22,5 +22,3 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
-
-

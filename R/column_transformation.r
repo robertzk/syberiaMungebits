@@ -34,12 +34,12 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
 
     # During prediction, always use same column names as during training
     # TODO: Clean this up
-    if (exists('inputs') && !'colnames' %in% names(inputs)) {
+    if (exists('inputs') && !'colnames' %in% names(attributes(inputs))) {
       cols <- standard_column_format(cols, dataframe)
       colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
-      inputs$colnames <- colns
-    } else if (exists('inputs') && 'colnames' %in% names(inputs)) {
-      cols <- inputs$colnames
+      attr(inputs, 'colnames') <- colns
+    } else if (exists('inputs') && 'colnames' %in% names(attributes(inputs))) {
+      cols <- attr(inputs, 'colnames')
       colns <- cols
     } else {
       cols <- standard_column_format(cols, dataframe)
