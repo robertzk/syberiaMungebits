@@ -31,8 +31,20 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
     mutating <- mutating # Copy from parent scope to this environment
     named <- named       # Copy from parent scope to this environment
     # if (is.logical(cols)) cols <- which(cols)
-    cols <- standard_column_format(cols, dataframe)
-    colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
+
+    # During prediction, always use same column names as during training
+    # TODO: Clean this up
+    if (exists('inputs') && !'colnames' %in% names(inputs)) {
+      cols <- standard_column_format(cols, dataframe)
+      colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
+      inputs$colnames <- colns
+    } else if (exists('inputs') && 'colnames' %in% names(inputs)) {
+      cols <- inputs$colnames
+      colns <- cols
+    } else {
+      cols <- standard_column_format(cols, dataframe)
+      colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
+    }
 
     invisible(eval(substitute({
       # Trick to make assignment incredibly fast. Could screw up the
