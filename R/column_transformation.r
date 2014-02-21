@@ -35,7 +35,6 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
     # During prediction, always use same column names as during training
     # TODO: Clean this up
     standard_cols <- standard_column_format(input_cols, dataframe)
-    colns <- if (is.character(standard_cols)) standard_cols else colnames(dataframe)[standard_cols]
 
     invisible(eval(substitute({
       cols <-
@@ -53,7 +52,7 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
       if (!mutating) {
         environment(`*tmp.fn.left.by.mungebits.library*`) <- environment()
         if (named)
-          dataframe[cols] <- lapply(colns, function(colname) {
+          dataframe[cols] <- lapply(cols, function(colname) {
             `*tmp.fn.left.by.mungebits.library*`(dataframe[colname], ...)
           })
         else 
@@ -70,7 +69,7 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
         # scope (like in a mungebit). Afterwards, we exploit the fact that the
         # <<- operator never modifies local scope using
         #   inputs[[column_name]] <<- inputs
-        dataframe[cols] <- lapply(colns, function(column_name) {
+        dataframe[cols] <- lapply(cols, function(column_name) {
           # If this is a prediction run and inputs already exists for this
           # column, use that, otherwise use NULL
           inputs <- if (exists('inputs') &&

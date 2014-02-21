@@ -42,3 +42,24 @@ test_that("it restores an imputed column correctly", {
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
+test_that("it can handle imputation with a function column specifier",  {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+ iris2 <- iris
+ mb <- mungebits:::mungebit(imputer)
+  iris2[1, 1:2] <- NA
+  iris2 <- mungebits:::mungeplane(iris2)
+  mb$run(iris2, function(x) is.numeric(x) && sum(is.na(x)) > 0)
+  iris2$data <- iris
+  iris2$data[1, ] <- NA
+  out <- tryCatch(mb$run(iris2, function(x) is.numeric(x) && sum(is.na(x)) > 0),
+           warning = function(w) "warning")
+  expect_identical(out, NULL,  info = "There should not have been any warnings thrown")
+  # make sure same medians get restored when predicting
+  expect_equal(medians(iris), unlist(iris2$data[1, 1:2]),
+    info = paste0("The imputer mungebit must be able to restore medians using ",
+                  "the trained mungebit"))
+  expect_identical(c(NA_real_, NA_real_), unname(unlist(iris2$data[1, 3:4])),
+    info = paste0("The imputer mungebit must not restore inappropriate columns"))
+
+  if (!mungebits_loaded) unloadNamespace('mungebits')
+})
