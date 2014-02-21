@@ -37,7 +37,7 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
     if (exists('inputs') && !'colnames' %in% names(attributes(inputs))) {
       cols <- standard_column_format(cols, dataframe)
       colns <- if (is.character(cols)) cols else colnames(dataframe)[cols]
-      attr(inputs, 'colnames') <- colns
+      attr(inputs, 'colnames') <<- colns
     } else if (exists('inputs') && 'colnames' %in% names(attributes(inputs))) {
       cols <- attr(inputs, 'colnames')
       colns <- cols
