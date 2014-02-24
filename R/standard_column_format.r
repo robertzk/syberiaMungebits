@@ -19,8 +19,10 @@
 
 standard_column_format <- function(cols, dataframe) {
   if (missing(dataframe)) stop('No dataframe provided')
+  missingcols <- missing(cols)
   eval(substitute(
-   if (is.function(cols)) colnames(dataframe)[vapply(dataframe, cols, logical(1))]
+   if (missingcols) colnames(dataframe)
+   else if (is.function(cols)) colnames(dataframe)[vapply(dataframe, cols, logical(1))]
    else if (is.character(cols)) force(cols) 
    else colnames(dataframe)[cols]
   ), envir = parent.frame())
