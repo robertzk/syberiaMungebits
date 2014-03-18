@@ -1,4 +1,4 @@
-#' Drop missing columns with over a certain percent missing.
+#' Drop columns with over a certain percent missing.
 #'
 #' @param x any. The column to screen.
 #' @param threshold numeric. The percent (e.g., 0.5) below which to remove
