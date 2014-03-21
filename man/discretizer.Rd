@@ -3,7 +3,7 @@
 \alias{discretizer_fn}
 \title{Discretizer}
 \usage{
-discretizer(dataframe, cols = colnames(dataframe), ...)
+discretizer(dataframe, input_cols = colnames(dataframe), ...)
 }
 \arguments{
   \item{dataframe}{a data.frame to discretize.}
