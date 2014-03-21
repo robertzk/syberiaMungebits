@@ -10,9 +10,13 @@
 #' select_variables(iris, c(T,T,F,F,T)) # Exclude cols 3 and 4
 select_variables <- function(dataframe, cols, weak = TRUE) {
   cols <- standard_column_format(cols, dataframe)
-  if (weak) cols <- intersect(colnames(dataframe), cols)
+  if (weak) {
+    na_cols <- setdiff(cols, colnames(dataframe))
+    cols <- intersect(colnames(dataframe), cols)
+  }
   eval(substitute({
     dataframe <- dataframe[, cols, drop = FALSE]
+    if (weak && length(na_cols) > 0) dataframe[, na_cols] <- NA
   }), envir = parent.frame())
 }
 
