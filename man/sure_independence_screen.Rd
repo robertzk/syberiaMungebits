@@ -2,7 +2,8 @@
 \alias{sure_independence_screen}
 \title{Sure independence screening function}
 \usage{
-sure_independence_screen(dataframe, ...)
+sure_independence_screen(dataframe, ..., exclude = character(0),
+  discretizer_params = list())
 }
 \arguments{
   \item{dataframe}{a data.frame. Run sure independence
@@ -11,6 +12,20 @@ sure_independence_screen(dataframe, ...)
   \item{...}{further SIS options. See also
   \code{sure_independence_screening} in the
   \code{statsUtils} package.}
+
+  \item{exclude}{character. A vector of variables to never
+  remove.}
+
+  \item{discretizer_params.}{A list of parameters to pass
+  to the \code{discretizer} that discretizes all
+  non-categorical variables before sure independence
+  screening.  By default, these are \code{granularity = N},
+  \code{upper_count_bound = NULL}, \code{lower_count_bound
+  = 1}, where \code{N} is the rounded mean of the number of
+  levels in each existent factor variable (i.e. if some
+  were pre-discretized), or 3 if there are less than 5 such
+  variables. If any are left undiscretized, these will not
+  be screened.}
 }
 \description{
 Sure independence screening function

@@ -46,7 +46,7 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     (mungebits:::mungebit(value_replacer))$run(sisdf, is.factor, list(list(NA, 'Missing')))
 
     mungebits:::mungebit(column_transformation(eval(bquote(function(column, ...) {
-      if (is.null(statsUtils::sure_independence_screening(.(sisdf$data$dep_var), column, ...))) NULL
+      if (is.null(statsUtils::sure_independence_screening(.(dataframe$dep_var), column, ...))) NULL
       else column
     }))))$run(sisdf, setdiff(colnames(sisdf$data), exclude), ...)
 
