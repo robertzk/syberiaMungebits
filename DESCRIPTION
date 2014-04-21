@@ -10,7 +10,7 @@ Depends:
     R (>= 3.0.1),
     Rcpp (>= 0.10.6)
 Imports:
-    stringr
+    mungebits
 LinkingTo: Rcpp
 License: MIT
 LazyData: true

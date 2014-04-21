@@ -24,8 +24,6 @@
 #' @param ... a convenience for compatibility with its twin brother,
 #'    restore_levels_fn.
 #' @importFrom arules discretize
-#' @importFrom stringr str_trim
-#' @importFrom stringr str_replace_all
 #' @importFrom Ramd pp
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
@@ -51,7 +49,7 @@ discretizer_fn <- function(column,
                                              method = 'frequency',
                                              categories = i)))
         if (inherits(discretized_column, 'try-error')) next 
-        trimmed_levels <- str_trim(levels(discretized_column))
+        trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
           mode_corrected <- TRUE
           break
