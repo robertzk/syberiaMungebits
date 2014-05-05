@@ -19,3 +19,4 @@ Suggests:
     knitr,
     microbenchmark,
     statsUtils
+Roxygen: list(wrap = FALSE)

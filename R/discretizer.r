@@ -98,9 +98,8 @@ restore_levels_fn <- function(column, ...) {
 
 #' Discretizer
 #'
-#' @aliases discretizer_fn
 #' @param dataframe a data.frame to discretize.
-#' @param cols a vector of columns to discretize.
+#' @param input_cols a vector of columns to discretize.
 #' @param ... the arguments passed to the discretization.
 #' @export
 discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
