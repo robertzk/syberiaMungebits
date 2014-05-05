@@ -124,7 +124,7 @@ mode_ratio <- function(variable,
 
 # http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode
 Mode <- function(variable,
-                 uniques = mungebitsTransformations:::presentUniques(variable),
+                 uniques = mungebitsTransformations:::present_uniques(variable),
                  variable_freqs = mungebitsTransformations:::freqs(variable, uniques)) {
   uniques[which.max(variable_freqs)]
 }
@@ -134,7 +134,7 @@ present_uniques <- function(variable) {
 }
 
 freqs <- function(variable,
-                  uniques = mungebitsTransformations:::presentUniques(variable)) {
+                  uniques = mungebitsTransformations:::present_uniques(variable)) {
   tabulate(match(variable, uniques))
 }
 
