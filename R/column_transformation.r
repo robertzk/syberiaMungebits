@@ -28,6 +28,8 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
     # The fastest way to do this. The alternatives are provided in the comment below
     assign("*tmp.fn.left.by.mungebits.library*",
            transformation, envir = parent.frame())
+    if (isdebugged(transformation)) eval.parent(quote(
+      debug(`*tmp.fn.left.by.mungebits.library*`)))
     mutating <- mutating # Copy from parent scope to this environment
     named <- named       # Copy from parent scope to this environment
     # if (is.logical(cols)) cols <- which(cols)
@@ -51,7 +53,9 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
       on.exit(class(dataframe) <- 'data.frame')
 
       if (!mutating) {
+        debug_flag <- isdebugged(`*tmp.fn.left.by.mungebits.library*`)
         environment(`*tmp.fn.left.by.mungebits.library*`) <- environment()
+        if (debug_flag) debug(`*tmp.fn.left.by.mungebits.library*`)
         if (named)
           dataframe[cols] <- lapply(cols, function(colname) {
             `*tmp.fn.left.by.mungebits.library*`(dataframe[colname], ...)
@@ -76,8 +80,10 @@ column_transformation <- function(transformation, mutating = FALSE, named = FALS
           inputs <- if (exists('inputs') &&
                         column_name %in% names(inputs)) inputs[[column_name]]
                     else NULL
+          debug_flag <- isdebugged(`*tmp.fn.left.by.mungebits.library*`)
           # Ensure transformation has access to "inputs"
           environment(`*tmp.fn.left.by.mungebits.library*`) <- environment()
+          if (debug_flag) debug(`*tmp.fn.left.by.mungebits.library*`)
           column <- `*tmp.fn.left.by.mungebits.library*`(
             if (named) dataframe[column_name] else dataframe[[column_name]], ...)
           if (!is.null(inputs)) {
