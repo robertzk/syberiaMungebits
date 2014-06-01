@@ -24,7 +24,6 @@
 #' @param ... a convenience for compatibility with its twin brother,
 #'    restore_levels_fn.
 #' @importFrom arules discretize
-#' @importFrom Ramd pp
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
@@ -58,9 +57,9 @@ discretizer_fn <- function(column,
       if (!mode_corrected) {
         # TODO: Turn into binary variable
 
-        warning(pp("Mode of variable '#{colname}' is above #{100 * mode_freq_threshold}% ",
-                "and/or mode ratio is above #{mode_ratio_threshold} and no number of buckets between ",
-                "#{min(category_range)} and #{max(category_range)} fixes the problem. May want to ",
+        warning(paste0("Mode of variable '", colname ,"' is above ", 100 * mode_freq_threshold, "% ",
+                "and/or mode ratio is above ", mode_ratio_threshold, " and no number of buckets between ",
+                min(category_range), " and ", max(category_range), " fixes the problem. May want to ",
                 "discretize manually")) 
       }
     }
@@ -81,7 +80,7 @@ discretizer_fn <- function(column,
     discretized_column <- sapply(discretized_column, function(column) column[[1]])
 
   if (inherits(discretized_column, 'try-error'))
-    stop(pp("Problem discretizing variable '#{colname}': #{discretized_column}"))
+    stop(paste0("Problem discretizing variable '", colname, "': ", discretized_column))
   else {
     # Store the levels for restoring during prediction
     inputs$levels <<- levels(discretized_column)
