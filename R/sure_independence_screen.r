@@ -54,7 +54,7 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
   }
   eval.parent(bquote(.(substitute(dataframe)) <-
     .(substitute(dataframe))[
-      .(intersect(colnames(dataframe)), .(inputs$remaining_columns))]))
+      .(intersect(colnames(dataframe), inputs$remaining_columns))]))
   TRUE
 }
 
