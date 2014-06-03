@@ -2,6 +2,7 @@
 #'
 #' @param x an atomic vector
 truncator_fn <- function(x) {
+  stopifnot(is.numeric(x))
   if (!('min' %in% names(inputs))) {
     inputs$min <<- min(x, na.rm = TRUE)
     inputs$max <<- max(x, na.rm = TRUE)
