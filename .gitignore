@@ -1,4 +1,5 @@
 src/*.so
 src/*.o
 R/Rcpp*
+*.r.swp
 
