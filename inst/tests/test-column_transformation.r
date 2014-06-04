@@ -6,7 +6,7 @@ test_that('correctly transforms one column by multiplying by two', {
   iris2 <- iris
   doubler <- column_transformation(function(x) 2 * x)
   doubler(iris2, 'Sepal.Length')
-  expect_equal(iris2[[1]], 2 * iris[[1]],
+  expect_identical(iris2[[1]], 2 * iris[[1]],
                "column_transformation must double first column of iris2")
 })
 
