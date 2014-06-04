@@ -1,4 +1,8 @@
 src/*.so
 src/*.o
+src/symbols.rds
 R/Rcpp*
 
+..Rcheck
+*.Rcheck
+*.tar.gz
