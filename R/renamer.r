@@ -5,7 +5,7 @@
 #'    respective values new names.
 #' @export
 #' @examples
-#' renamer(iris, list('Sepal.Length' = 'seplen', 'Sepal.Width', = 'sepwid'))
+#' renamer(iris, list('Sepal.Length' = 'seplen', 'Sepal.Width' = 'sepwid'))
 renamer <- function(dataframe, replacements) {
   eval(substitute({
     colnames(dataframe) <-
