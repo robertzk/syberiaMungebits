@@ -1,8 +1,0 @@
-* using log directory ‘/Users/robertk/dev/mungebitsTransformations/..Rcheck’
-* using R version 3.0.2 (2013-09-25)
-* using platform: x86_64-apple-darwin10.8.0 (64-bit)
-* using session charset: UTF-8
-* using option ‘--no-build-vignettes’
-* checking for file ‘./DESCRIPTION’ ... ERROR
-Required fields missing or empty:
-  ‘Author’ ‘Maintainer’
