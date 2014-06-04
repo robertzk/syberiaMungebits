@@ -71,3 +71,25 @@ test_that("it does not discretize values with uniques above the upper bnd", {
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
+test_that("it successfully bins values on the boundary of the training phase", {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+
+  xmin = -83.892
+  xmax = 16.108
+  
+  x.train <- seq(xmin,xmax,length.out=100) 
+  df1 <- data.frame(x=x.train)
+  mp1 <- mungebits:::mungeplane(df1)
+  
+  x.predict <- c(xmin,mean(xmin,xmax),xmax)
+  df2 <- data.frame(x=x.predict)
+  mp2 <- mungebits:::mungeplane(df2)
+    
+  mb <- mungebits:::mungebit(discretizer)
+  mb$run(mp1, 1, lower_count_bound=0)
+  mb$run(mp2, 1, lower_count_bound=0)
+  
+  # check that none of the outputs are missing in discretizer
+  expect_equal(sum(mp2$data[,1]=="Missing"),0)
+})
+
