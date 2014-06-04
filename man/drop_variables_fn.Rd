@@ -18,6 +18,6 @@ This is a column transformation and will be wrapped in
 \examples{
 drop_variables(iris, 1) # Drop first column
 drop_variables(iris, c('Sepal.Length', 'Petal.Length'))
-drop_variables(iris, c(T,T,F,F,T)) # only leave columns 3 and 4
+drop_variables(iris, c(TRUE,TRUE,FALSE,FALSE,TRUE)) # only leave columns 3 and 4
 }
 
