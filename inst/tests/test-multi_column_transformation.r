@@ -4,7 +4,7 @@ test_that('correctly transforms one column by multiplying by two', {
   iris2 <- iris
   doubler <- multi_column_transformation(function(x) 2 * x)
   doubler(iris2, 'Sepal.Length')
-  expect_equal(iris2[[1]], 2 * iris[[1]],
+  expect_identical(iris2[[1]], 2 * iris[[1]],
                "multi_column_transformation must double first column of iris2")
 })
 
@@ -12,7 +12,7 @@ test_that('correctly creates derivative column that is multiple by two', {
   iris2 <- iris
   doubler <- multi_column_transformation(`*`)
   doubler(iris2, 'Sepal.Length', 'Sepal.Length2', 2)
-  expect_equal(iris2[['Sepal.Length2']], 2 * iris[[1]],
+  expect_identical(iris2[['Sepal.Length2']], 2 * iris[[1]],
     paste0("multi_column_transformation must create new column 'Sepal.Length2'",
            " whose values are double those in the first column of iris2"))
 })
