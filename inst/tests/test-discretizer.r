@@ -88,7 +88,7 @@ test_that("Discretizer Successfully Interacts with Truncators to Truncate Extrem
   mbTrunc <- mungebits:::mungebit(truncator)
   mbDisc <- mungebits:::mungebit(discretizer)
   
-  mbTrunc$run(mp1 )
+  mbTrunc$run(mp1)
   mbDisc$run(mp1, 1, lower_count_bound=0)
   
   
@@ -101,6 +101,33 @@ test_that("Discretizer Successfully Interacts with Truncators to Truncate Extrem
   expect_equal(sum(mp2$data[,1]=="Missing"),0)
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
+
+test_that("Discretizer can handle unforseen Factor Levels", {
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+
+  xmin = -83.892
+  xmax = 16.108
+  
+  x.train <- seq(xmin,xmax,length.out=100) 
+  df1 <- data.frame(x=x.train)
+  mp1 <- mungebits:::mungeplane(df1)
+  
+  x.predict <- c(xmin,mean(c(xmin,xmax)),xmax)
+  df2 <- data.frame(x=x.predict)
+  mp2 <- mungebits:::mungeplane(df2)
+    
+  mbDisc <- mungebits:::mungebit(discretizer)
+  
+  mbDisc$run(mp1, 1, lower_count_bound=0)
+  mbDisc$run(mp2, 1, lower_count_bound=0)
+  
+
+
+  # check that none of the outputs are missing in discretizer
+  expect_equal(sum(mp2$data[,1]=="Missing"),0)
+  if (!mungebits_loaded) unloadNamespace('mungebits')
+})
+
 
 # test_that("it successfully bins values on the boundary of the training phase", {
 
@@ -121,6 +148,7 @@ test_that("Within Discretizer It Doesent Contain Factor Gaps", {
   mb$run(iris2, 1:4)
   expect_equal(iris2$data[, -4], iris[, -4]);
   expect_equal(iris2$data[, 4], iris_discretized[, 4])
+  
   if (!mungebits_loaded) unloadNamespace('mungebits')
 }
   
