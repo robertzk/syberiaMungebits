@@ -1,23 +1,27 @@
 #' Constrain a numeric column to the range [min,max] of the training set 
 #'
 #' @param x an atomic vector
-truncator_fn <- function(x) {
-  if (names(x) == 'mbb_min_default_differential') browser()
-  #if (names(x) == 'mbb_min_default_differential') print(min(x[[1]],na.rm=T)-inputs$min)
-  #if (names(x) == 'mbb_min_default_differential') print(max(x[[1]],na.rm=T)-inputs$max)
+#' @param digits how many decimal places you would like your numeric number to contain after its been truncated
 
+truncator_fn <- function(x) {
+    
   x <- x[[1]]
   stopifnot(is.numeric(x))
   if (!('min' %in% names(inputs))) {
     inputs$min <<- min(x, na.rm = TRUE)
     inputs$max <<- max(x, na.rm = TRUE)
   } else { 
-    x[x<=inputs$min] <- inputs$min 
-    x[x>=inputs$max] <- inputs$max 
+    
+    x[x<=inputs$min] <- mungebitsTransformations:::trunc.dig(inputs$min, digits =1)
+    x[x>=inputs$max] <- mungebitsTransformations:::trunc.dig(inputs$max, digits=1)
   }
   x
 }
 
+# Truncates Decimals after specified numers of Digits. 
+#' i.e trunc.dig(5.732 , digits = 1) => 5.7 
+
+trunc.dig <- function(x, digits = 1) trunc(x*10^digits)/10^digits
+
 #' @export
 truncator <- column_transformation(truncator_fn, mutating = TRUE, named = TRUE)
-
