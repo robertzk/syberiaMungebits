@@ -13,14 +13,14 @@
 #' @export
 remember <- function(dataframe,f,key) {
 
-  if (!("trained" %in% names(inputs))) return(invisible(NULL))
+  if (!("trained" %in% names(inputs))) { 
+    # Write it to the base environment
+    # This is so wrong, but hey, it works
+    env <- as.environment("package:base")
+    if (!is.null(env$memory)) env$memory <- list()
+    env$memory[[key]] <- f(dataframe) 
+    inputs$trained <<- TRUE
+  }
 
-  # Write it to the base environment
-  # This is so wrong, but hey, it works
-  env <- as.environment("package:base")
-  if (!exists(env$memory)) env$memory <- list()
-  env$memory[[key]] <- f(dataframe) 
-
-  inputs$trained <<- TRUE
   invisible(NULL)
 }

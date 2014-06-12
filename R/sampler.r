@@ -4,6 +4,10 @@
 #' @param df a data frame
 #' @export
 sampler <- function(df, var, val, frac) {
+
+  if (("trained" %in% names(inputs))) return(invisible(NULL)) 
+  inputs$trained <<- TRUE
+
   eval(substitute({
     rows <- which(df[[var]]==val) 
     n <- length(rows)
