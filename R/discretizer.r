@@ -92,7 +92,17 @@ discretizer_fn <- function(column,
 restore_levels_fn <- function(column, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
-    mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
+    
+          
+    column <- mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
+
+    # Catches NewLevels within test(Prediction) that were unforeseen during TrainingPhase
+    # and assigns them to most common bucket i.e. mode(levels(df))
+    LogicVector <- (column %in% inputs$levels)
+    column[!LogicVector] <- mungebitsTransformations:::Mode(inputs$levels)
+    column
+    
+
   }
 }
 
