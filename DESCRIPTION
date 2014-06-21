@@ -2,7 +2,7 @@ Package: mungebitsTransformations
 Title: Mungebits transformations
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
-    with the mungebits package.
+    with the mungebits package, designed for syberia models.
 Version: 0.2
 Author: Robert Krzyzanowski <technoguyrob@gmail.com>
 Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
