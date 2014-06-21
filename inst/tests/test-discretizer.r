@@ -1,7 +1,7 @@
 # TODO: (RK) Figure out why this is broken on CI
 #context("discretizer")
 #
-#attach(system.file("data/iris_discretized.rda", package = "mungebitsTransformations"))
+#attach(system.file("data/iris_discretized.rda", package = "syberiaMungebits"))
 #
 #test_that("it correctly discretizes iris data set", {
 #  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)

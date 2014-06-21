@@ -1,2 +1,2 @@
 library(testthat)
-test_package("mungebitsTransformations")
+test_package("syberiaMungebits")

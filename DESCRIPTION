@@ -1,5 +1,5 @@
-Package: mungebitsTransformations
-Title: Mungebits transformations
+Package: syberiaMungebits
+Title: Common mungebits used with Syberia projects
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
     with the mungebits package, designed for syberia models.

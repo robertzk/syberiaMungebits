@@ -33,14 +33,14 @@ discretizer_fn <- function(column,
   if (!is.numeric(column)) return(column)
 
   # Some caching optimizations
-  uniques <- mungebitsTransformations:::present_uniques(column)
+  uniques <- syberiaMungebits:::present_uniques(column)
   if (!is.null(lower_count_bound) && length(uniques) <= lower_count_bound) return(column)
   if (!is.null(upper_count_bound) && length(uniques) >= upper_count_bound) return(column)
-  variable_freqs <- mungebitsTransformations:::freqs(column, uniques)
-  mode_value <- mungebitsTransformations:::Mode(column, uniques, variable_freqs)
+  variable_freqs <- syberiaMungebits:::freqs(column, uniques)
+  mode_value <- syberiaMungebits:::Mode(column, uniques, variable_freqs)
 
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
-      mungebitsTransformations:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
+      syberiaMungebits:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
@@ -91,7 +91,7 @@ discretizer_fn <- function(column,
 restore_levels_fn <- function(column, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
-    mungebitsTransformations:::numeric_to_factor(column[[1]], inputs$levels)
+    syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels)
   }
 }
 
@@ -103,8 +103,8 @@ restore_levels_fn <- function(column, ...) {
 #' @export
 discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
   on.exit(inputs$trained <<- TRUE)
-  fn <- if ('trained' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
-        else mungebitsTransformations:::discretizer_fn
+  fn <- if ('trained' %in% names(inputs)) syberiaMungebits:::restore_levels_fn
+        else syberiaMungebits:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
   if (verbose) {
     fn(column, ...)
@@ -115,7 +115,7 @@ discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
 
 # Some helper functions
 mode_ratio <- function(variable,
-                       variable_freqs = mungebitsTransformations:::freqs(variable)) {
+                       variable_freqs = syberiaMungebits:::freqs(variable)) {
   if (length(variable_freqs) < 2) stop('Cannot compute mode ratio of variable with ',
                               'less than 2 unique values.')
   variable_freqs[order(-variable_freqs)[1]] / variable_freqs[order(-variable_freqs)[2]]
@@ -123,8 +123,8 @@ mode_ratio <- function(variable,
 
 # http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode
 Mode <- function(variable,
-                 uniques = mungebitsTransformations:::present_uniques(variable),
-                 variable_freqs = mungebitsTransformations:::freqs(variable, uniques)) {
+                 uniques = syberiaMungebits:::present_uniques(variable),
+                 variable_freqs = syberiaMungebits:::freqs(variable, uniques)) {
   uniques[which.max(variable_freqs)]
 }
 
@@ -133,7 +133,7 @@ present_uniques <- function(variable) {
 }
 
 freqs <- function(variable,
-                  uniques = mungebitsTransformations:::present_uniques(variable)) {
+                  uniques = syberiaMungebits:::present_uniques(variable)) {
   tabulate(match(variable, uniques))
 }
 

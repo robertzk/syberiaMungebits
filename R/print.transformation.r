@@ -8,7 +8,7 @@
 #'      \code{\link{multi_column_transformation}}
 print.transformation <- function(x, ...) {
   cat("This is a mungebits transformation as defined in the",
-      "mungebitsTransformations package.\n")
+      "syberiaMungebits package.\n")
   labels <- if (identical(attr(x, 'named'), TRUE)) 'named' else c()
   labels <- append(labels, if (identical(attr(x, 'mutating'), TRUE)) 'mutating' else c())
   if (length(labels) > 0) {
