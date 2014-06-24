@@ -7,6 +7,8 @@ truncator_fn(x)
 }
 \arguments{
 \item{x}{an atomic vector}
+
+\item{digits}{how many decimal places you would like your numeric number to contain after its been truncated}
 }
 \description{
 Constrain a numeric column to the range [min,max] of the training set
