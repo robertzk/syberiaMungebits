@@ -21,16 +21,25 @@
 #' @param upper_count_bound an integer. Variables with more than or equal to
 #'    this many unique values will not get discretized. Default is
 #'    \code{granularity}.
-#' @param ... a convenience for compatibility with its twin brother,
-#'    restore_levels_fn.
+#' @param missing_level character. Any values that were \code{NA} prior to
+#'    discretization will be replaced with this level. If set to \code{NULL},
+#'    then the \code{NA}s will remain. The default is \code{"Missing"}.
+#' @param ... additional arguments to pass to arules::discretize.
 #' @importFrom arules discretize
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
-    upper_count_bound = NULL, ...) {
+    upper_count_bound = NULL, missing_level = 'Missing', ...) {
+
+  old_options <- options(digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+                         scipen = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS)
+  on.exit(options(old_options))
+
   colname <- names(column)[[1]]
   column <- column[[1]]
   if (!is.numeric(column)) return(column)
+
+  previous_missing_values <- is.na(column)
 
   # Some caching optimizations
   uniques <- syberiaMungebits:::present_uniques(column)
@@ -44,9 +53,9 @@ discretizer_fn <- function(column,
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(suppressWarnings(arules:::discretize(column,
-                                             method = 'frequency',
-                                             categories = i)))
+        discretized_column <- try(suppressWarnings(arules::discretize(column,
+          digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS, method = 'frequency',
+          categories = i, ...)))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
@@ -64,14 +73,14 @@ discretizer_fn <- function(column,
       }
     }
     if (!mode_corrected) {
-      discretized_column <- try(arules:::discretize(column,
-                                method = 'frequency',
-                                categories = granularity))
+      discretized_column <- try(arules::discretize(column,
+        digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+        method = 'frequency', categories = granularity, ...))
       }
   } else {
-    discretized_column <- try(arules:::discretize(column,
-                                     method = 'frequency',
-                                     categories = granularity))
+    discretized_column <- try(arules::discretize(column,
+      digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+      method = 'frequency', categories = granularity, ...))
   }
 
   # Handle weird discretizer bug
@@ -83,15 +92,26 @@ discretizer_fn <- function(column,
     stop(paste0("Problem discretizing variable '", colname, "': ", discretized_column))
   else {
     # Store the levels for restoring during prediction
+    if (!is.null(missing_level) && sum(previous_missing_values) > 0) {
+      discretized_column <- factor(discretized_column,
+        levels = c(levels(discretized_column), missing_level))
+      discretized_column[previous_missing_values] <- missing_level
+    }
     inputs$levels <<- levels(discretized_column)
     discretized_column
   }
 }
 
-restore_levels_fn <- function(column, ...) {
+restore_levels_fn <- function(column, missing_level = 'Missing', ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
-    syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels)
+    previous_missing_values <- is.na(column[[1]])
+    col <- syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
+                                                na.to.missing = FALSE) 
+    if (!is.null(missing_level))
+      factor(ifelse(previous_missing_values,
+            as.character(missing_level), as.character(col)), levels = levels(col))
+    else col
   }
 }
 
@@ -136,4 +156,6 @@ freqs <- function(variable,
                   uniques = syberiaMungebits:::present_uniques(variable)) {
   tabulate(match(variable, uniques))
 }
+
+MAX_DISCRETIZATION_DIGITS <- 10
 

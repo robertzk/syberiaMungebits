@@ -6,7 +6,8 @@ drop_single_value_variables_fn <- function(x) {
     else return(x)
   }
 
-  if (length(x) == 0 || identical(x, rep(x[[1]], length(x)))) {
+  if (length(x) == 0 || (tmp <- length(unique(x))) == 1 ||
+      (tmp == 2 && any(is.na(x)))) {
     inputs$dropped <<- TRUE
     NULL
   } else {
