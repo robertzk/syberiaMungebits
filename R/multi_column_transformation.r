@@ -57,7 +57,7 @@ multi_column_transformation <- function(transformation) {
         identical(input_cols,is.character)) { # input_cols is a function
       
         # this is basically a synonym for the current function
-        my_mct <- multi_column_transformation(transformation)
+        my_mct <- Recall(transformation)
       
         dataframe <- substitute(dataframe)
         invisible(eval(substitute({
