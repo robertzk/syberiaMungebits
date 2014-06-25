@@ -31,7 +31,8 @@ discretizer_fn <- function(column,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
     upper_count_bound = NULL, missing_level = 'Missing', ...) {
 
-  old_options <- options(digits = 10, scipen = 10)
+  old_options <- options(digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+                         scipen = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS)
   on.exit(options(old_options))
 
   colname <- names(column)[[1]]
@@ -52,9 +53,9 @@ discretizer_fn <- function(column,
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(suppressWarnings(arules::discretize(column, digits = 10,
-                                             method = 'frequency',
-                                             categories = i, ...)))
+        discretized_column <- try(suppressWarnings(arules::discretize(column,
+          digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS, method = 'frequency',
+          categories = i, ...)))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
@@ -72,14 +73,14 @@ discretizer_fn <- function(column,
       }
     }
     if (!mode_corrected) {
-      discretized_column <- try(arules::discretize(column, digits = 10,
-                                method = 'frequency',
-                                categories = granularity, ...))
+      discretized_column <- try(arules::discretize(column,
+        digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+        method = 'frequency', categories = granularity, ...))
       }
   } else {
-    discretized_column <- try(arules::discretize(column, digits = 10,
-                                     method = 'frequency',
-                                     categories = granularity, ...))
+    discretized_column <- try(arules::discretize(column,
+      digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS,
+      method = 'frequency', categories = granularity, ...))
   }
 
   # Handle weird discretizer bug
@@ -155,4 +156,6 @@ freqs <- function(variable,
                   uniques = syberiaMungebits:::present_uniques(variable)) {
   tabulate(match(variable, uniques))
 }
+
+MAX_DISCRETIZATION_DIGITS <- 10
 
