@@ -30,7 +30,7 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     granularity <- if (sum(categorical_variables) < 5) 3
       else round(mean(vapply(dataframe[, categorical_variables], nlevels, integer(1))))
 
-    discretizer_params <- merge(discretizer_params, list(
+    discretizer_params <- mungebits:::list_merge(discretizer_params, list(
       granularity = granularity, upper_count_bound = NULL, lower_count_bound = 1))
 
     mb <- mungebits:::mungebit(discretizer)
@@ -54,7 +54,8 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
   }
   inputs$remaining_columns <- intersect(inputs$remaining_columns, colnames(dataframe))
   eval.parent(bquote(.(substitute(dataframe)) <-
-    .(substitute(dataframe))[.(inputs$remaining_columns)]))
+    .(substitute(dataframe))[
+      .(intersect(colnames(dataframe), inputs$remaining_columns))]))
   TRUE
 }
 

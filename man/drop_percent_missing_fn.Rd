@@ -15,8 +15,9 @@ column that have at least that percent missing. The default is 0.8.}
 Drop columns with over a certain percent missing.
 }
 \examples{
-df <- iris; df[, 6] <- NA; df[1, 6] <- 1
-drop_percent_missing(df, , 0.8) # Drop sixth column
+df <- iris; df[, 6] <- NA; df[1, 6] <- 1; df <- mungebits:::mungeplane(df)
+mb <- mungebits:::mungebit(drop_percent_missing)
+mb$run(df, TRUE, 0.8) # Drop sixth column
 }
 \seealso{
 \code{\link{drop_percent_missing}}

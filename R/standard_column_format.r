@@ -14,7 +14,7 @@
 #' @export
 #' @examples
 #' standard_column_format(c(1,5), iris)  # c('Sepal.Length', 'Species')
-#' standard_column_format(c(T,F,F,F,T), iris)  # c('Sepal.Length', 'Species')
+#' standard_column_format(c(TRUE,FALSE,FALSE,FALSE,TRUE), iris)  # c('Sepal.Length', 'Species')
 #' standard_column_format('Sepal.Length', iris)  # 'Sepal.Length'
 
 standard_column_format <- function(cols, dataframe) {

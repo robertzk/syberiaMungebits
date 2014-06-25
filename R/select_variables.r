@@ -5,9 +5,9 @@
 #' @param weak logical. Whether or not to add non-existent columns as NAs.
 #' @export
 #' @examples
-#' select_variables(iris, 1) # Select only first variable
-#' select_variables(iris, c('Sepal.Length', 'Petal.Length'))
-#' select_variables(iris, c(T,T,F,F,T)) # Exclude cols 3 and 4
+#' df <- iris; select_variables(df, 1) # Select only first variable
+#' df <- iris; select_variables(df, c('Sepal.Length', 'Petal.Length'))
+#' df <- iris; select_variables(df, c(TRUE,TRUE,FALSE,FALSE,TRUE)) # Exclude cols 3 and 4
 select_variables <- function(dataframe, cols, weak = TRUE) {
   cols <- standard_column_format(cols, dataframe)
   if (weak) {

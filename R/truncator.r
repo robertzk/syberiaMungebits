@@ -12,8 +12,8 @@ truncator_fn <- function(x) {
     inputs$max <<- max(x, na.rm = TRUE)
   } else { 
     
-    x[x<=inputs$min] <- mungebitsTransformations:::trunc.dig(inputs$min, digits =1)
-    x[x>=inputs$max] <- mungebitsTransformations:::trunc.dig(inputs$max, digits=1)
+    x[x<=inputs$min] <- syberiaMungebits:::trunc.dig(inputs$min, digits =1)
+    x[x>=inputs$max] <- syberiaMungebits:::trunc.dig(inputs$max, digits=1)
   }
   x
 }
@@ -25,3 +25,4 @@ trunc.dig <- function(x, digits = 1) trunc(x*10^digits)/10^digits
 
 #' @export
 truncator <- column_transformation(truncator_fn, mutating = TRUE, named = TRUE)
+

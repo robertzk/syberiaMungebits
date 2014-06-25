@@ -1,22 +1,25 @@
-Package: mungebitsTransformations
-Title: Mungebits transformations
+Package: syberiaMungebits
+Title: Common mungebits used with Syberia projects.
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
-    with the mungebits package.
+    with the mungebits package, designed for syberia models.
 Version: 0.2
+Author: Robert Krzyzanowski <technoguyrob@gmail.com>
+Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
 Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
 Depends:
     R (>= 3.0.1),
     Rcpp (>= 0.10.6)
 Imports:
-    mungebits
+    mungebits,
+    arules,
+    statsUtils
 LinkingTo: Rcpp
 License: MIT
 LazyData: true
 Suggests:
     testthat,
     knitr,
-    microbenchmark,
-    statsUtils
+    microbenchmark
 Roxygen: list(wrap = FALSE)
