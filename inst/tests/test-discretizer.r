@@ -1,95 +1,95 @@
-#context("discretizer")
-#require(mungebits)
-## TODO: (RK) Figure out why this is broken on CI
-#
-##test_that("it correctly discretizes iris data set", {
-##  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb <- mungebits:::mungebit(discretizer)
-##  mb$run(iris2, 1:4, mode_freq_threshold = 0.2)
-##  expect_equal(iris2$data, iris_discretized,
-##    info = paste0("The iris dataset must have been discretized correctly and ",
-##                  "match the values in the iris_discretized dataset."))
-##  if (!mungebits_loaded) unloadNamespace('mungebits')
-##})
-##
-##test_that("it correctly restores iris data set", {
-##  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb <- mungebits:::mungebit(discretizer)
-##  # mode_freq_threshold = 0.15 actually fails to discretize...
-##  mb$run(iris2, 1:4, mode_freq_threshold = 0.2)
-##  # prediction run
-##  one_row_discretized <- iris_discretized[1, , drop = FALSE]
-##  iris2$data <- iris[1, , drop = FALSE]
-##  mb$run(iris2, 1:4)
-##  expect_equal(iris2$data, one_row_discretized,
-##    info = paste0("The discretizer must be able to restore levels using",
-##                  "the levels generated during the training run."))
-##
-##  # for good measure, test multiple row datasets as well
-##  ten_rows_discretized <- iris_discretized[1:10, , drop = FALSE]
-##  iris2$data <- iris[1:10, , drop = FALSE]
-##  mb$run(iris2, 1:4)
-##  expect_equal(iris2$data, ten_rows_discretized,
-##    info = paste0("The discretizer must be able to restore levels using",
-##                  "the levels generated during the training run."))
-##  if (!mungebits_loaded) unloadNamespace('mungebits')
-##})
-##
-##test_that("it does not discretize values with uniques below the lower bnd", {
-##  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb <- mungebits:::mungebit(discretizer)
-##  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
-##         lower_count_bound = 22)
-##  # Only the fourth column of iris has <= 22 uniques
-##  expect_equal(iris2$data[, -4], iris_discretized[, -4]);
-##  expect_equal(iris2$data[, 4], iris[, 4])
-##
-##  # test prediction
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb$run(iris2, 1:4)
-##  expect_equal(iris2$data[, -4], iris_discretized[, -4]);
-##  expect_equal(iris2$data[, 4], iris[, 4])
-##  if (!mungebits_loaded) unloadNamespace('mungebits')
-##})
-##
-##test_that("it does not discretize values with uniques above the upper bnd", {
-##  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb <- mungebits:::mungebit(discretizer)
-##  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
-##         upper_count_bound = 23)
-##  # Only the fourth column of iris has < 23 uniques
-##  expect_equal(iris2$data[, -4], iris[, -4]);
-##  expect_equal(iris2$data[, 4], iris_discretized[, 4])
-##
-##  # test prediction
-##  iris2 <- mungebits:::mungeplane(iris)
-##  mb$run(iris2, 1:4)
-##  expect_equal(iris2$data[, -4], iris[, -4]);
-##  expect_equal(iris2$data[, 4], iris_discretized[, 4])
-##  if (!mungebits_loaded) unloadNamespace('mungebits')
-##})
-##
-##detach(iris_discretized)
-#
-#test_that("it correctly uses the missing_level argument", {
-#          
-#  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
+context("discretizer")
+require(mungebits)
+# TODO: (RK) Figure out why this is broken on CI
+
+#test_that("it correctly discretizes iris data set", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#  iris2 <- mungebits:::mungeplane(iris)
 #  mb <- mungebits:::mungebit(discretizer)
-#  mb$run(df, 1, missing_level = "Not here")
+#  mb$run(iris2, 1:4, mode_freq_threshold = 0.2)
+#  expect_equal(iris2$data, iris_discretized,
+#    info = paste0("The iris dataset must have been discretized correctly and ",
+#                  "match the values in the iris_discretized dataset."))
+#  if (!mungebits_loaded) unloadNamespace('mungebits')
+#})
 #
-#  expected_discretized_column <-
-#    factor(c('Not here', rep('[ 2, 35)', 33), rep('[35, 68)', 33), rep('[68,100]', 33)))
-#  expect_equal(df$data[[1]], expected_discretized_column)
+#test_that("it correctly restores iris data set", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#  iris2 <- mungebits:::mungeplane(iris)
+#  mb <- mungebits:::mungebit(discretizer)
+#  # mode_freq_threshold = 0.15 actually fails to discretize...
+#  mb$run(iris2, 1:4, mode_freq_threshold = 0.2)
+#  # prediction run
+#  one_row_discretized <- iris_discretized[1, , drop = FALSE]
+#  iris2$data <- iris[1, , drop = FALSE]
+#  mb$run(iris2, 1:4)
+#  expect_equal(iris2$data, one_row_discretized,
+#    info = paste0("The discretizer must be able to restore levels using",
+#                  "the levels generated during the training run."))
+#
+#  # for good measure, test multiple row datasets as well
+#  ten_rows_discretized <- iris_discretized[1:10, , drop = FALSE]
+#  iris2$data <- iris[1:10, , drop = FALSE]
+#  mb$run(iris2, 1:4)
+#  expect_equal(iris2$data, ten_rows_discretized,
+#    info = paste0("The discretizer must be able to restore levels using",
+#                  "the levels generated during the training run."))
+#  if (!mungebits_loaded) unloadNamespace('mungebits')
+#})
+#
+#test_that("it does not discretize values with uniques below the lower bnd", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#  iris2 <- mungebits:::mungeplane(iris)
+#  mb <- mungebits:::mungebit(discretizer)
+#  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
+#         lower_count_bound = 22)
+#  # Only the fourth column of iris has <= 22 uniques
+#  expect_equal(iris2$data[, -4], iris_discretized[, -4]);
+#  expect_equal(iris2$data[, 4], iris[, 4])
 #
 #  # test prediction
-#  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
-#  mb$run(df, 1, missing_level = "Not here")
-#  expect_equal(df$data[[1]], expected_discretized_column[1:50])
+#  iris2 <- mungebits:::mungeplane(iris)
+#  mb$run(iris2, 1:4)
+#  expect_equal(iris2$data[, -4], iris_discretized[, -4]);
+#  expect_equal(iris2$data[, 4], iris[, 4])
+#  if (!mungebits_loaded) unloadNamespace('mungebits')
 #})
+#
+#test_that("it does not discretize values with uniques above the upper bnd", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#  iris2 <- mungebits:::mungeplane(iris)
+#  mb <- mungebits:::mungebit(discretizer)
+#  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
+#         upper_count_bound = 23)
+#  # Only the fourth column of iris has < 23 uniques
+#  expect_equal(iris2$data[, -4], iris[, -4]);
+#  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+#
+#  # test prediction
+#  iris2 <- mungebits:::mungeplane(iris)
+#  mb$run(iris2, 1:4)
+#  expect_equal(iris2$data[, -4], iris[, -4]);
+#  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+#  if (!mungebits_loaded) unloadNamespace('mungebits')
+#})
+#
+#detach(iris_discretized)
+
+test_that("it correctly uses the missing_level argument", {
+          
+  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
+  mb <- mungebits:::mungebit(discretizer)
+  mb$run(df, 1, missing_level = "Not here")
+
+  expected_discretized_column <-
+    factor(c('Not here', rep('[ 2, 35)', 33), rep('[35, 68)', 33), rep('[68,100]', 33)))
+  expect_equal(df$data[[1]], expected_discretized_column)
+
+  # test prediction
+  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
+  mb$run(df, 1, missing_level = "Not here")
+  expect_equal(df$data[[1]], expected_discretized_column[1:50])
+})
 #
 #test_that("it correctly uses the missing_level argument if it is NULL", {
 #  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
