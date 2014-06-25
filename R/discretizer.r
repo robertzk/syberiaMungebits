@@ -30,6 +30,10 @@ discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
     upper_count_bound = NULL, missing_level = 'Missing', ...) {
+
+  old_options <- options(digits = 10, scipen = 10)
+  on.exit(options(old_options))
+
   colname <- names(column)[[1]]
   column <- column[[1]]
   if (!is.numeric(column)) return(column)
@@ -48,7 +52,7 @@ discretizer_fn <- function(column,
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(suppressWarnings(arules::discretize(column, digits = 22,
+        discretized_column <- try(suppressWarnings(arules::discretize(column, digits = 10,
                                              method = 'frequency',
                                              categories = i, ...)))
         if (inherits(discretized_column, 'try-error')) next 
@@ -68,12 +72,12 @@ discretizer_fn <- function(column,
       }
     }
     if (!mode_corrected) {
-      discretized_column <- try(arules::discretize(column, digits = 22,
+      discretized_column <- try(arules::discretize(column, digits = 10,
                                 method = 'frequency',
                                 categories = granularity, ...))
       }
   } else {
-    discretized_column <- try(arules::discretize(column, digits = 22,
+    discretized_column <- try(arules::discretize(column, digits = 10,
                                      method = 'frequency',
                                      categories = granularity, ...))
   }
@@ -87,7 +91,7 @@ discretizer_fn <- function(column,
     stop(paste0("Problem discretizing variable '", colname, "': ", discretized_column))
   else {
     # Store the levels for restoring during prediction
-    if (!is.null(missing_level) && sum(prevous_missing_values) > 0) {
+    if (!is.null(missing_level) && sum(previous_missing_values) > 0) {
       discretized_column <- factor(discretized_column,
         levels = c(levels(discretized_column), missing_level))
       discretized_column[previous_missing_values] <- missing_level
@@ -97,15 +101,17 @@ discretizer_fn <- function(column,
   }
 }
 
-restore_levels_fn <- function(column, missing_level, ...) {
+restore_levels_fn <- function(column, missing_level = 'Missing', ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
     previous_missing_values <- is.na(column[[1]])
     col <- syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
                                                 na.to.missing = FALSE) 
     if (!is.null(missing_level))
-      factor(ifelse(previous_missing_values, missing_level, col))
+      factor(ifelse(previous_missing_values,
+            as.character(missing_level), as.character(col)))
     else col
+  }
 }
 
 #' Discretizer
