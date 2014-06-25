@@ -106,6 +106,7 @@ restore_levels_fn <- function(column, missing_level, ...) {
     if (!is.null(missing_level))
       factor(ifelse(previous_missing_values, missing_level, col))
     else col
+  }
 }
 
 #' Discretizer
