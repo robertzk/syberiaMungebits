@@ -11,5 +11,5 @@ missing_indicator <- multi_column_transformation(function(x) {
   mode <- x[which.max(table(x))]
   x[is.na(x)] <- mode
 
-  list(x,z, NULL)
+  list(x,z,NULL)
 })

@@ -163,3 +163,26 @@ test_that('it doubles a column no more than 5x as slow as a raw operation', {
      " (see code for this unit test)"))
 })
 
+test_that("it can apply a function to get the list of variables for a one-to-many transformation", {
+  
+  # define a one-to-many transformation
+  my_transformation <- multi_column_transformation(function(x) list(x,x+1,2*x,NULL))
+  
+  # make some fake data
+  x <- 1:10
+  y <- c('a','b','c','d','e','f','g','h','i','j')
+  z <- 3:12
+  df <- data.frame(x,y,z)
+  mp <- mungebits:::mungeplane(df)
+  
+  # make a mungebit with the one-to-many transformation
+  mb <- mungebits:::mungebit(my_transformation)
+  
+  # execute on the fake data
+  mb$run(mp,is.numeric,"_plus_1","_times_2")
+  
+  # check names
+  expect_equal(names(mp$data),c("y","x","x_missing","z","z_missing"),info="did not properly apply transformation")
+  
+})
+
