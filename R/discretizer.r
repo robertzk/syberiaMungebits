@@ -21,8 +21,7 @@
 #' @param upper_count_bound an integer. Variables with more than or equal to
 #'    this many unique values will not get discretized. Default is
 #'    \code{granularity}.
-#' @param ... a convenience for compatibility with its twin brother,
-#'    restore_levels_fn.
+#' @param ... additional arguments to pass to arules::discretize.
 #' @importFrom arules discretize
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
@@ -44,9 +43,9 @@ discretizer_fn <- function(column,
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(suppressWarnings(arules:::discretize(column,
+        discretized_column <- try(suppressWarnings(arules::discretize(column, digits = 22,
                                              method = 'frequency',
-                                             categories = i)))
+                                             categories = i, ...)))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
@@ -64,14 +63,14 @@ discretizer_fn <- function(column,
       }
     }
     if (!mode_corrected) {
-      discretized_column <- try(arules:::discretize(column,
+      discretized_column <- try(arules::discretize(column, digits = 22,
                                 method = 'frequency',
-                                categories = granularity))
+                                categories = granularity, ...))
       }
   } else {
-    discretized_column <- try(arules:::discretize(column,
+    discretized_column <- try(arules::discretize(column, digits = 22,
                                      method = 'frequency',
-                                     categories = granularity))
+                                     categories = granularity, ...))
   }
 
   # Handle weird discretizer bug
@@ -90,14 +89,8 @@ discretizer_fn <- function(column,
 
 restore_levels_fn <- function(column, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
-  else {
-    column <- column[[1]]
-    missing_indices <- if ('Missing' %in% inputs$levels) which(is.na(column)) else FALSE
-    column <- syberiaMungebits:::numeric_to_factor(column,
-      inputs$levels, na.to.missing = FALSE) 
-    column[missing_indices] <- 'Missing'
-    column
-  }
+  else syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
+                                            na.to.missing = FALSE) 
 }
 
 #' Discretizer
