@@ -95,10 +95,20 @@ multi_column_transformation <- function(transformation) {
 
       # The fastest way to do this. The alternative is to use pass by value
       # or replace list subset assignment below with mapply.
-      # This line below is a beast... 
-      # comment out for one-to-many (many>2) transformations
-      # but leave it intact for one-to-two transformations
-      assign("*tmp.fn.left.by.mungebits.library*", transformation, envir = parent.frame())
+
+      # Only assign *tmp.fn.left.by.mungebits.library* if the transformation is a normal function
+      transformation_is_itself_a_multicolumntranformation <- "multiColumnTransformation" %in% class(transformation)
+      if (transformation_is_itself_a_multicolumntranformation) {
+        #assign("*tmp.fn.left.by.mungebits.library*", transformation, envir = parent.frame())
+      } else {
+        assign("*tmp.fn.left.by.mungebits.library*", transformation, envir = parent.frame())
+      }
+      print(environment(transformation))
+      print(environment(`*tmp.fn.left.by.mungebits.library*`))
+      
+      print( transformation_is_itself_a_multicolumntranformation)
+      #print(transformation)
+      #print(class(transformation))
       
       input_cols <- force(input_cols)
       if (is.logical(input_cols)) input_cols <- which(input_cols)
