@@ -3,7 +3,7 @@
 \alias{print.transformation}
 \title{A convenience method to make printing of transformations more obvious.}
 \usage{
-print.transformation(x, ...)
+\method{print}{transformation}(x, ...)
 }
 \arguments{
 \item{x}{a \code{transformation}. Either a \code{column_transformation}
