@@ -1,4 +1,5 @@
 context("discretizer")
+require(mungebits)
 # TODO: (RK) Figure out why this is broken on CI
 
 #test_that("it correctly discretizes iris data set", {
@@ -73,6 +74,23 @@ context("discretizer")
 #})
 #
 #detach(iris_discretized)
+
+test_that("it correctly uses the missing_level argument", {
+  iris2 <- mungebits:::mungeplane(iris)
+  mb <- mungebits:::mungebit(discretizer)
+  mb$run(iris2, 1:4, mode_freq_threshold = 0.2,
+         upper_count_bound = 23, debug = TRUE)
+  # Only the fourth column of iris has < 23 uniques
+  expect_equal(iris2$data[, -4], iris[, -4]);
+  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+
+  # test prediction
+  iris2 <- mungebits:::mungeplane(iris)
+  mb$run(iris2, 1:4)
+  expect_equal(iris2$data[, -4], iris[, -4]);
+  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+})
+
 
 test_that("Discretizer Successfully Interacts with Truncators to Truncate Extreme values ", {
   mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)

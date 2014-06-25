@@ -21,15 +21,20 @@
 #' @param upper_count_bound an integer. Variables with more than or equal to
 #'    this many unique values will not get discretized. Default is
 #'    \code{granularity}.
+#' @param missing_level character. Any values that were \code{NA} prior to
+#'    discretization will be replaced with this level. If set to \code{NULL},
+#'    then the \code{NA}s will remain. The default is \code{"Missing"}.
 #' @param ... additional arguments to pass to arules::discretize.
 #' @importFrom arules discretize
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
-    upper_count_bound = NULL, ...) {
+    upper_count_bound = NULL, missing_level = 'Missing', ...) {
   colname <- names(column)[[1]]
   column <- column[[1]]
   if (!is.numeric(column)) return(column)
+
+  previous_missing_values <- is.na(column)
 
   # Some caching optimizations
   uniques <- syberiaMungebits:::present_uniques(column)
@@ -82,15 +87,25 @@ discretizer_fn <- function(column,
     stop(paste0("Problem discretizing variable '", colname, "': ", discretized_column))
   else {
     # Store the levels for restoring during prediction
+    if (!is.null(missing_level) && sum(prevous_missing_values) > 0) {
+      discretized_column <- factor(discretized_column,
+        levels = c(levels(discretized_column), missing_level))
+      discretized_column[previous_missing_values] <- missing_level
+    }
     inputs$levels <<- levels(discretized_column)
     discretized_column
   }
 }
 
-restore_levels_fn <- function(column, ...) {
+restore_levels_fn <- function(column, missing_level, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
-  else syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
-                                            na.to.missing = FALSE) 
+  else {
+    previous_missing_values <- is.na(column[[1]])
+    col <- syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
+                                                na.to.missing = FALSE) 
+    if (!is.null(missing_level))
+      factor(ifelse(previous_missing_values, missing_level, col))
+    else col
 }
 
 #' Discretizer
