@@ -71,22 +71,6 @@ multi_column_transformation <- function(transformation) {
           for (col in whichcols)
             my_mct(dataframe, col, paste0(col, suffixes), ...)
           
-          # Note about suffix parameter:
-          # It is expected that the first column returned by the one-to-many transformation
-          # will have the same name as the input column, and all others will be denoted by
-          # some suffix.  Thus if we expect 4 output columns, we would specify three suffixes:
-          #  suffix = c(_1,_2,_3) 
-          # The additional columns would then be labeled as follows:
-          #  x -> (x, x_1, x_2, x_3)
-          
-          # now restore the names of the imputed columns
-          #origcols <- whichcols
-          #newcols <- paste0(whichcols,'TMP')
-          #replacements <- origcols
-          #names(replacements) <- newcols
-          #replacements <- as.list(replacements)
-          #renamer(dataframe,replacements)
-          
           # clean up environment 
           suppressWarnings({rm("*tmp.fn.left.by.mungebits.library*")})
                  
@@ -102,9 +86,6 @@ multi_column_transformation <- function(transformation) {
       transformation_is_itself_a_multicolumntransformation <-
         is(transformation, "multiColumnTransformation")
       if (transformation_is_itself_a_multicolumntransformation) {
-        # there is some bug in the logic of these next three lines
-        # such that when transformatin is a multi_column_transformation
-        # the code will only successfully run every other time
         assign("*tmp.fn.left.by.mungebits.library*",
           environment(transformation)$transformation, envir = parent.frame())
       } else {
