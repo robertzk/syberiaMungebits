@@ -107,13 +107,17 @@ test_that("it correctly uses the missing_level argument if it is NULL", {
 })
 
 test_that("it leaves values that are not observed in the train set as NA", {
-  df <- mungebits:::mungeplane(data.frame(first = 1:50))
+  df <- mungebits:::mungeplane(data.frame(first = 1:100))
   mb <- mungebits:::mungebit(discretizer)
   mb$run(df, 1)
   # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = 1:100))
+  expected_discretized_column <-
+    factor(c(rep('[ 1, 35)', 34), rep('[35, 68)', 33), rep('[68,100]', 33)))
+  df <- mungebits:::mungeplane(data.frame(first = 1:150))
   mb$run(df, 1)
-  expect_equal(df$data[[1]], expected_discretized_column[1:50])
+  expect_equal(df$data[[1]],
+    factor(c(as.character(expected_discretized_column), rep(NA, 50)),
+           levels = levels(df$data[[1]])))
 })
 
 
