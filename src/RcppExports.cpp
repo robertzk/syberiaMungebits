@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // numeric_to_factor
 CharacterVector numeric_to_factor(NumericVector num, CharacterVector levs, bool na_to_missing = true);
-RcppExport SEXP mungebitsTransformations_numeric_to_factor(SEXP numSEXP, SEXP levsSEXP, SEXP na_to_missingSEXP) {
+RcppExport SEXP syberiaMungebits_numeric_to_factor(SEXP numSEXP, SEXP levsSEXP, SEXP na_to_missingSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {

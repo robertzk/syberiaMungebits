@@ -15,6 +15,6 @@ respective values new names.}
 Rename columns in a dataframe
 }
 \examples{
-renamer(iris, list('Sepal.Length' = 'seplen', 'Sepal.Width', = 'sepwid'))
+renamer(iris, list('Sepal.Length' = 'seplen', 'Sepal.Width' = 'sepwid'))
 }
 

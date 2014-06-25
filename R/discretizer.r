@@ -21,33 +21,36 @@
 #' @param upper_count_bound an integer. Variables with more than or equal to
 #'    this many unique values will not get discretized. Default is
 #'    \code{granularity}.
-#' @param ... a convenience for compatibility with its twin brother,
-#'    restore_levels_fn.
+#' @param missing_level character. Any values that were \code{NA} prior to
+#'    discretization will be replaced with this level. If set to \code{NULL},
+#'    then the \code{NA}s will remain. The default is \code{"Missing"}.
+#' @param ... additional arguments to pass to arules::discretize.
 #' @importFrom arules discretize
-#' @importFrom Ramd pp
 discretizer_fn <- function(column,
     granularity = 3, mode_freq_threshold = 0.15, mode_ratio_threshold = 1.5,
     category_range = min(granularity, 20):20, lower_count_bound = granularity,
-    upper_count_bound = NULL, ...) {
+    upper_count_bound = NULL, missing_level = 'Missing', ...) {
   colname <- names(column)[[1]]
   column <- column[[1]]
   if (!is.numeric(column)) return(column)
 
+  previous_missing_values <- is.na(column)
+
   # Some caching optimizations
-  uniques <- mungebitsTransformations:::present_uniques(column)
+  uniques <- syberiaMungebits:::present_uniques(column)
   if (!is.null(lower_count_bound) && length(uniques) <= lower_count_bound) return(column)
   if (!is.null(upper_count_bound) && length(uniques) >= upper_count_bound) return(column)
-  variable_freqs <- mungebitsTransformations:::freqs(column, uniques)
-  mode_value <- mungebitsTransformations:::Mode(column, uniques, variable_freqs)
+  variable_freqs <- syberiaMungebits:::freqs(column, uniques)
+  mode_value <- syberiaMungebits:::Mode(column, uniques, variable_freqs)
 
   if (mean(column == mode_value, na.rm = TRUE) > mode_freq_threshold &&
-      mungebitsTransformations:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
+      syberiaMungebits:::mode_ratio(column, variable_freqs) > mode_ratio_threshold) {
     mode_corrected <- FALSE
     if (!is.null(category_range)) {
       for(i in category_range) {
-        discretized_column <- try(suppressWarnings(arules:::discretize(column,
+        discretized_column <- try(suppressWarnings(arules::discretize(column, digits = 22,
                                              method = 'frequency',
-                                             categories = i)))
+                                             categories = i, ...)))
         if (inherits(discretized_column, 'try-error')) next 
         trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
@@ -58,21 +61,21 @@ discretizer_fn <- function(column,
       if (!mode_corrected) {
         # TODO: Turn into binary variable
 
-        warning(pp("Mode of variable '#{colname}' is above #{100 * mode_freq_threshold}% ",
-                "and/or mode ratio is above #{mode_ratio_threshold} and no number of buckets between ",
-                "#{min(category_range)} and #{max(category_range)} fixes the problem. May want to ",
+        warning(paste0("Mode of variable '", colname ,"' is above ", 100 * mode_freq_threshold, "% ",
+                "and/or mode ratio is above ", mode_ratio_threshold, " and no number of buckets between ",
+                min(category_range), " and ", max(category_range), " fixes the problem. May want to ",
                 "discretize manually")) 
       }
     }
     if (!mode_corrected) {
-      discretized_column <- try(arules:::discretize(column,
+      discretized_column <- try(arules::discretize(column, digits = 22,
                                 method = 'frequency',
-                                categories = granularity))
+                                categories = granularity, ...))
       }
   } else {
-    discretized_column <- try(arules:::discretize(column,
+    discretized_column <- try(arules::discretize(column, digits = 22,
                                      method = 'frequency',
-                                     categories = granularity))
+                                     categories = granularity, ...))
   }
 
   # Handle weird discretizer bug
@@ -81,29 +84,28 @@ discretizer_fn <- function(column,
     discretized_column <- sapply(discretized_column, function(column) column[[1]])
 
   if (inherits(discretized_column, 'try-error'))
-    stop(pp("Problem discretizing variable '#{colname}': #{discretized_column}"))
+    stop(paste0("Problem discretizing variable '", colname, "': ", discretized_column))
   else {
     # Store the levels for restoring during prediction
+    if (!is.null(missing_level) && sum(prevous_missing_values) > 0) {
+      discretized_column <- factor(discretized_column,
+        levels = c(levels(discretized_column), missing_level))
+      discretized_column[previous_missing_values] <- missing_level
+    }
     inputs$levels <<- levels(discretized_column)
     discretized_column
   }
 }
 
-restore_levels_fn <- function(column, ...) {
+restore_levels_fn <- function(column, missing_level, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
-    column <- column[[1]]
-    missing_indices <- if ('Missing' %in% inputs$levels)  which(is.na(column)) else FALSE
-    column <- mungebitsTransformations:::numeric_to_factor(column,
-      inputs$levels, na.to.missing = FALSE) 
-    column[missing_indices] <- 'Missing'
-    column
-    # Catches NewLevels within test(Prediction) that were unforeseen during TrainingPhase
-    # and assigns them to most common bucket i.e. mode(levels(df))
-    #LogicVector <- is.element(column, inputs$levels)
-    #column[!LogicVector] <- mungebitsTransformations:::Mode(inputs$levels)
-    #column
-  }
+    previous_missing_values <- is.na(column[[1]])
+    col <- syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
+                                                na.to.missing = FALSE) 
+    if (!is.null(missing_level))
+      factor(ifelse(previous_missing_values, missing_level, col))
+    else col
 }
 
 #' Discretizer
@@ -114,8 +116,8 @@ restore_levels_fn <- function(column, ...) {
 #' @export
 discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
   on.exit(inputs$trained <<- TRUE)
-  fn <- if ('trained' %in% names(inputs)) mungebitsTransformations:::restore_levels_fn
-        else mungebitsTransformations:::discretizer_fn
+  fn <- if ('trained' %in% names(inputs)) syberiaMungebits:::restore_levels_fn
+        else syberiaMungebits:::discretizer_fn
   environment(fn) <- environment() # Make inputs available
   if (verbose) {
     fn(column, ...)
@@ -126,7 +128,7 @@ discretizer <- column_transformation(function(column, verbose = FALSE, ...) {
 
 # Some helper functions
 mode_ratio <- function(variable,
-                       variable_freqs = mungebitsTransformations:::freqs(variable)) {
+                       variable_freqs = syberiaMungebits:::freqs(variable)) {
   if (length(variable_freqs) < 2) stop('Cannot compute mode ratio of variable with ',
                               'less than 2 unique values.')
   variable_freqs[order(-variable_freqs)[1]] / variable_freqs[order(-variable_freqs)[2]]
@@ -134,8 +136,8 @@ mode_ratio <- function(variable,
 
 # http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode
 Mode <- function(variable,
-                 uniques = mungebitsTransformations:::present_uniques(variable),
-                 variable_freqs = mungebitsTransformations:::freqs(variable, uniques)) {
+                 uniques = syberiaMungebits:::present_uniques(variable),
+                 variable_freqs = syberiaMungebits:::freqs(variable, uniques)) {
   uniques[which.max(variable_freqs)]
 }
 
@@ -144,7 +146,7 @@ present_uniques <- function(variable) {
 }
 
 freqs <- function(variable,
-                  uniques = mungebitsTransformations:::present_uniques(variable)) {
+                  uniques = syberiaMungebits:::present_uniques(variable)) {
   tabulate(match(variable, uniques))
 }
 

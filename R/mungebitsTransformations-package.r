@@ -1,8 +1,8 @@
-#' mungebitsTransformations
+#' syberiaMungebits
 #'
-#' @name mungebitsTransformations
+#' @name syberiaMungebits
 #' @docType package
-#' @useDynLib mungebitsTransformations
+#' @useDynLib syberiaMungebits
 #' @exportPattern .*numeric_to_factor.*
 #' @import mungebits
 NULL

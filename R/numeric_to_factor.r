@@ -7,8 +7,8 @@
 #' @param na.to.missing a logical. Whether to convert NAs to a "Missing" level.
 #' @keywords internal
 numeric_to_factor <- function(num, levs, na.to.missing = TRUE) {
-  res <- .Call('mungebitsTransformations_numeric_to_factor',
-         num, levs, na.to.missing, PACKAGE = 'mungebitsTransformations')
+  res <- .Call('syberiaMungebits_numeric_to_factor',
+         num, levs, na.to.missing, PACKAGE = 'syberiaMungebits')
   if (na.to.missing && 'Missing' %in% res) levs <- union(levs, 'Missing')
   factor(res, levs) 
 }
