@@ -90,132 +90,131 @@ test_that("it correctly uses the missing_level argument", {
   mb$run(df, 1, missing_level = "Not here")
   expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
-
-test_that("it correctly uses the missing_level argument if it is NULL", {
-  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
-  mb <- mungebits:::mungebit(discretizer)
-  mb$run(df, 1, missing_level = NULL)
-
-  expected_discretized_column <-
-    factor(c(NA, rep('[ 2, 35)', 33), rep('[35, 68)', 33), rep('[68,100]', 33)))
-  expect_equal(df$data[[1]], expected_discretized_column)
-
-  # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
-  mb$run(df, 1, missing_level = NULL)
-  expect_equal(df$data[[1]], expected_discretized_column[1:50])
-})
-
-test_that("it leaves values that are not observed in the train set as NA", {
-  df <- mungebits:::mungeplane(data.frame(first = 1:100))
-  mb <- mungebits:::mungebit(discretizer)
-  mb$run(df, 1)
-  # test prediction
-  expected_discretized_column <-
-    factor(c(rep('[ 1, 35)', 34), rep('[35, 68)', 33), rep('[68,100]', 33)))
-  df <- mungebits:::mungeplane(data.frame(first = 1:150))
-  mb$run(df, 1)
-  expect_equal(df$data[[1]],
-    factor(c(as.character(expected_discretized_column), rep(NA, 50)),
-           levels = levels(df$data[[1]])))
-})
-
-
-test_that("it supports up to 10 digits in discretization levels", {
-  df <- mungebits:::mungeplane(data.frame(first = 1:100 / 4000000))
-  mb <- mungebits:::mungebit(discretizer)
-  mb$run(df, 1)
-  expected_discretized_column <-
-    factor(c(rep("[0.00000025,0.00000875)", 34), rep("[0.00000875,0.00001700)", 33),
-             rep("[0.00001700,0.00002500]", 33)))
-  expect_equal(df$data[[1]], expected_discretized_column)
-
-  # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = (1:100 / 4000000)[1:50]))
-  mb$run(df, 1)
-  expect_equal(df$data[[1]], expected_discretized_column[1:50])
-})
-
-
-test_that("Discretizer Successfully Interacts with Truncators to Truncate Extreme values ", {
-  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-
-  xmin = -83.892
-  xmax = 16.108
-  
-  x.train <- seq(xmin,xmax,length.out=100) 
-  df1 <- data.frame(x=x.train)
-  mp1 <- mungebits:::mungeplane(df1)
-  
-  x.predict <- c(xmin,mean(c(xmin,xmax)),xmax)
-  df2 <- data.frame(x=x.predict)
-  mp2 <- mungebits:::mungeplane(df2)
-    
-  mbTrunc <- mungebits:::mungebit(truncator)
-  mbDisc <- mungebits:::mungebit(discretizer)
-  
-  mbTrunc$run(mp1)
-  mbDisc$run(mp1, 1, lower_count_bound=0)
-  
-  
-  mbTrunc$run(mp2)
-  mbDisc$run(mp2, 1, lower_count_bound=0)
-  
-
-
-  # check that none of the outputs are missing in discretizer
-  expect_equal(sum(mp2$data[,1]=="Missing"),0)
-  if (!mungebits_loaded) unloadNamespace('mungebits')
-})
-
-test_that("Discretizer can handle unforseen Factor Levels", {
-  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-
-  xmin = -83.892
-  xmax = 16.108
-  
-  x.train <- seq(xmin,xmax,length.out=100) 
-  df1 <- data.frame(x=x.train)
-  mp1 <- mungebits:::mungeplane(df1)
-  
-  x.predict <- c(xmin,mean(c(xmin,xmax)),xmax)
-  df2 <- data.frame(x=x.predict)
-  mp2 <- mungebits:::mungeplane(df2)
-    
-  mbDisc <- mungebits:::mungebit(discretizer)
-  mbVR   <-  mungebits:::mungebit(valuereplacer)
-  mbDisc$run(mp1, 1, lower_count_bound=0)
-  mbDisc$run(mp2, 1, lower_count_bound=0)
-  
-    
-
-
-  # check that none of the outputs are missing in discretizer
-  expect_equal(sum(mp2$data[,1]=="Missing"),0)
-  if (!mungebits_loaded) unloadNamespace('mungebits')
-})
-
-
-# test_that("it successfully bins values on the boundary of the training phase", {
-
-#test_that("Within Discretizer It Doesent Contain Factor Gaps", {
-#  
-#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
-#  
-#  iris2 <- mungebits:::mungeplane(iris)
-#  iris2$data[100:nrow(iris2$data),1]<-0 
-#   
 #
+#test_that("it correctly uses the missing_level argument if it is NULL", {
+#  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
 #  mb <- mungebits:::mungebit(discretizer)
+#  mb$run(df, 1, missing_level = NULL)
 #
-#  mb$run(iris2, 1, mode_freq_threshold = .1,granularity = 4)
-#   
+#  expected_discretized_column <-
+#    factor(c(NA, rep('[ 2, 35)', 33), rep('[35, 68)', 33), rep('[68,100]', 33)))
+#  expect_equal(df$data[[1]], expected_discretized_column)
+#
 #  # test prediction
-#  iris2 <- mungebits:::mungeplane(iris)
-#  mb$run(iris2, 1:4)
-#  expect_equal(iris2$data[, -4], iris[, -4]);
-#  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+#  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
+#  mb$run(df, 1, missing_level = NULL)
+#  expect_equal(df$data[[1]], expected_discretized_column[1:50])
+#})
+#
+#test_that("it leaves values that are not observed in the train set as NA", {
+#  df <- mungebits:::mungeplane(data.frame(first = 1:100))
+#  mb <- mungebits:::mungebit(discretizer)
+#  mb$run(df, 1)
+#  # test prediction
+#  expected_discretized_column <-
+#    factor(c(rep('[ 1, 35)', 34), rep('[35, 68)', 33), rep('[68,100]', 33)))
+#  df <- mungebits:::mungeplane(data.frame(first = 1:150))
+#  mb$run(df, 1)
+#  expect_equal(df$data[[1]],
+#    factor(c(as.character(expected_discretized_column), rep(NA, 50)),
+#           levels = levels(df$data[[1]])))
+#})
+#
+#
+#test_that("it supports up to 10 digits in discretization levels", {
+#  df <- mungebits:::mungeplane(data.frame(first = 1:100 / 4000000))
+#  mb <- mungebits:::mungebit(discretizer)
+#  mb$run(df, 1)
+#  expected_discretized_column <-
+#    factor(c(rep("[0.00000025,0.00000875)", 34), rep("[0.00000875,0.00001700)", 33),
+#             rep("[0.00001700,0.00002500]", 33)))
+#  expect_equal(df$data[[1]], expected_discretized_column)
+#
+#  # test prediction
+#  df <- mungebits:::mungeplane(data.frame(first = (1:100 / 4000000)[1:50]))
+#  mb$run(df, 1)
+#  expect_equal(df$data[[1]], expected_discretized_column[1:50])
+#})
+#
+#
+#test_that("Discretizer Successfully Interacts with Truncators to Truncate Extreme values ", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#
+#  xmin = -83.892
+#  xmax = 16.108
 #  
+#  x.train <- seq(xmin,xmax,length.out=100) 
+#  df1 <- data.frame(x=x.train)
+#  mp1 <- mungebits:::mungeplane(df1)
+#  
+#  x.predict <- c(xmin,mean(c(xmin,xmax)),xmax)
+#  df2 <- data.frame(x=x.predict)
+#  mp2 <- mungebits:::mungeplane(df2)
+#    
+#  mbTrunc <- mungebits:::mungebit(truncator)
+#  mbDisc <- mungebits:::mungebit(discretizer)
+#  
+#  mbTrunc$run(mp1)
+#  mbDisc$run(mp1, 1, lower_count_bound=0)
+#  
+#  
+#  mbTrunc$run(mp2)
+#  mbDisc$run(mp2, 1, lower_count_bound=0)
+#  
+#
+#
+#  # check that none of the outputs are missing in discretizer
+#  expect_equal(sum(mp2$data[,1]=="Missing"),0)
 #  if (!mungebits_loaded) unloadNamespace('mungebits')
 #})
-  
+#
+#test_that("Discretizer can handle unforseen Factor Levels", {
+#  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+#
+#  xmin = -83.892
+#  xmax = 16.108
+#  
+#  x.train <- seq(xmin,xmax,length.out=100) 
+#  df1 <- data.frame(x=x.train)
+#  mp1 <- mungebits:::mungeplane(df1)
+#  
+#  x.predict <- c(xmin,mean(c(xmin,xmax)),xmax)
+#  df2 <- data.frame(x=x.predict)
+#  mp2 <- mungebits:::mungeplane(df2)
+#    
+#  mbDisc <- mungebits:::mungebit(discretizer)
+#  
+#  mbDisc$run(mp1, 1, lower_count_bound=0)
+#  mbDisc$run(mp2, 1, lower_count_bound=0)
+#  
+#
+#
+#  # check that none of the outputs are missing in discretizer
+#  expect_equal(sum(mp2$data[,1]=="Missing"),0)
+#  if (!mungebits_loaded) unloadNamespace('mungebits')
+#})
+#
+#
+## test_that("it successfully bins values on the boundary of the training phase", {
+#
+##test_that("Within Discretizer It Doesent Contain Factor Gaps", {
+##  
+##  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+##  
+##  iris2 <- mungebits:::mungeplane(iris)
+##  iris2$data[100:nrow(iris2$data),1]<-0 
+##   
+##
+##  mb <- mungebits:::mungebit(discretizer)
+##
+##  mb$run(iris2, 1, mode_freq_threshold = .1,granularity = 4)
+##   
+##  # test prediction
+##  iris2 <- mungebits:::mungeplane(iris)
+##  mb$run(iris2, 1:4)
+##  expect_equal(iris2$data[, -4], iris[, -4]);
+##  expect_equal(iris2$data[, 4], iris_discretized[, 4])
+##  
+##  if (!mungebits_loaded) unloadNamespace('mungebits')
+##})
+#  
