@@ -93,7 +93,7 @@ restore_levels_fn <- function(column, ...) {
   if (!'levels' %in% names(inputs)) column[[1]]
   else {
     column <- column[[1]]
-    missing_indices <- if ('Missing' %in% inputs$levels) which(is.na(column)) else FALSE
+    missing_indices <- if ('Missing' %in% inputs$levels)  which(is.na(column)) else FALSE
     column <- mungebitsTransformations:::numeric_to_factor(column,
       inputs$levels, na.to.missing = FALSE) 
     column[missing_indices] <- 'Missing'

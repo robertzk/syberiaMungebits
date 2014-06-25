@@ -117,10 +117,11 @@ test_that("Discretizer can handle unforseen Factor Levels", {
   mp2 <- mungebits:::mungeplane(df2)
     
   mbDisc <- mungebits:::mungebit(discretizer)
-  
+  mbVR   <-  mungebits:::mungebit(valuereplacer)
   mbDisc$run(mp1, 1, lower_count_bound=0)
   mbDisc$run(mp2, 1, lower_count_bound=0)
   
+    
 
 
   # check that none of the outputs are missing in discretizer
