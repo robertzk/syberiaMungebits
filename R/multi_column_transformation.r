@@ -46,7 +46,7 @@
 #' # Note the missing second and third arguments.
 multi_column_transformation <- function(transformation) {
   invisible(structure(function(dataframe, input_cols = colnames(dataframe),
-           output_cols = input_cols, suffixes = c(), ...) {
+           output_cols = input_cols, ..., suffixes = c()) {
     
     # If input_cols is any of the following functions:
     #   is.numeric, is.double, is.factor, is.character
