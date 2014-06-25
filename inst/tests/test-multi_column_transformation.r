@@ -163,10 +163,7 @@ test_that('it doubles a column no more than 5x as slow as a raw operation', {
      " (see code for this unit test)"))
 })
 
-test_that("it can apply a function to get the list of variables for a one-to-many transformation", {
-  
-  # define a one-to-many transformation
-  my_transformation <- multi_column_transformation(function(x) list(x,x+1,2*x,NULL))
+test_that("it applied a one-to-many function over numeric columns", {
   
   # make some fake data
   x <- 1:10
@@ -175,14 +172,25 @@ test_that("it can apply a function to get the list of variables for a one-to-man
   df <- data.frame(x,y,z)
   mp <- mungebits:::mungeplane(df)
   
-  # make a mungebit with the one-to-many transformation
+  # test when the transformation is a normal function
+  my_transformation <- multi_column_transformation(function(x) list(x,x+1,2*x))
   mb <- mungebits:::mungebit(my_transformation)
-  
-  # execute on the fake data
-  mb$run(mp,is.numeric,"_plus_1","_times_2")
+  mb$run(mp,is.numeric,suffixes=c('',"_plus1","_times2"))
   
   # check names
-  expect_equal(names(mp$data),c("y","x","x_missing","z","z_missing"),info="did not properly apply transformation")
+  expect_equal(names(mp$data),c("x","y","z","x_plus1","x_times2","z_plus1","z_times2"),info="did not properly apply transformation")
+  
+  # reset mungeplace
+  df <- data.frame(x,y,z)
+  mp <- mungebits:::mungeplane(df)
+  
+  # test when the transformation is itself a multi_column_transformation
+  fn_transformation <- multi_column_transformation(function(x) list(x,0.5*x))
+  my_transformation <- multi_column_transformation(fn_transformation)
+  mb <- mungebits:::mungebit(my_transformation)
+  mb$run(mp,is.numeric,suffixes=c('',"_half"))
+  
+  # check names
+  expect_equal(names(mp$data),c("x","y","z","x_half","z_half"),info="did not properly apply transformation")
   
 })
-

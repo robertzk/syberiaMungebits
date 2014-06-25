@@ -45,6 +45,7 @@
 #' scaler(iris[c('Petal.Length', 'Petal.Width')], , , 2)
 #' # Note the missing second and third arguments.
 multi_column_transformation <- function(transformation) {
+  force(transformation)
   invisible(structure(function(dataframe, input_cols = colnames(dataframe),
            output_cols = input_cols, ..., suffixes = c()) {
     
@@ -57,20 +58,18 @@ multi_column_transformation <- function(transformation) {
         identical(input_cols,is.character)) { # input_cols is a function
       
         # this is basically a synonym for the current function
-        my_mct <- Recall(transformation)
+        my_mct <- multi_column_transformation(transformation)
+        #my_mct <- Recall(transformation)
       
         dataframe <- substitute(dataframe)
         invisible(eval(substitute({
             
           # get list of variables in dataframe
-          whichcols <- names(dataframe)[which(sapply(dataframe,input_cols))]
-
+          whichcols <- names(dataframe)[sapply(dataframe, input_cols)]
+          
           # do the transformation for each column
-          for (col in whichcols) {
-            newcol <- paste0(col,"TMP")
-            indcol <- paste0(col,suffixes)
-            my_mct(dataframe, col, c(newcol,indcol,col))
-          }
+          for (col in whichcols)
+            my_mct(dataframe, col, paste0(col, suffixes), ...)
           
           # Note about suffix parameter:
           # It is expected that the first column returned by the one-to-many transformation
@@ -81,12 +80,15 @@ multi_column_transformation <- function(transformation) {
           #  x -> (x, x_1, x_2, x_3)
           
           # now restore the names of the imputed columns
-          origcols <- whichcols
-          newcols <- paste0(whichcols,'TMP')
-          replacements <- origcols
-          names(replacements) <- newcols
-          replacements <- as.list(replacements)
-          renamer(dataframe,replacements)
+          #origcols <- whichcols
+          #newcols <- paste0(whichcols,'TMP')
+          #replacements <- origcols
+          #names(replacements) <- newcols
+          #replacements <- as.list(replacements)
+          #renamer(dataframe,replacements)
+          
+          # clean up environment 
+          suppressWarnings({rm("*tmp.fn.left.by.mungebits.library*")})
                  
           NULL
           
@@ -97,19 +99,18 @@ multi_column_transformation <- function(transformation) {
       # or replace list subset assignment below with mapply.
 
       # Only assign *tmp.fn.left.by.mungebits.library* if the transformation is a normal function
-      transformation_is_itself_a_multicolumntranformation <- "multiColumnTransformation" %in% class(transformation)
-      if (transformation_is_itself_a_multicolumntranformation) {
-        #assign("*tmp.fn.left.by.mungebits.library*", transformation, envir = parent.frame())
+      transformation_is_itself_a_multicolumntransformation <-
+        is(transformation, "multiColumnTransformation")
+      if (transformation_is_itself_a_multicolumntransformation) {
+        # there is some bug in the logic of these next three lines
+        # such that when transformatin is a multi_column_transformation
+        # the code will only successfully run every other time
+        assign("*tmp.fn.left.by.mungebits.library*",
+          environment(transformation)$transformation, envir = parent.frame())
       } else {
         assign("*tmp.fn.left.by.mungebits.library*", transformation, envir = parent.frame())
       }
-      print(environment(transformation))
-      print(environment(`*tmp.fn.left.by.mungebits.library*`))
-      
-      print( transformation_is_itself_a_multicolumntranformation)
-      #print(transformation)
-      #print(class(transformation))
-      
+
       input_cols <- force(input_cols)
       if (is.logical(input_cols)) input_cols <- which(input_cols)
       output_cols <- force(output_cols)
@@ -117,6 +118,7 @@ multi_column_transformation <- function(transformation) {
   
       dataframe <- substitute(dataframe)
       invisible(eval(substitute({
+        
         # Trick to make assignment incredibly fast. Could screw up the
         # data.frame if the function is interrupted, however.
         class(dataframe) <- 'list'
@@ -163,21 +165,4 @@ multi_column_transformation <- function(transformation) {
 ##' @export
 # MCT <- multi_column_transformation
 
-
-
-# TESTING PURPOSES
-my_mct <- multi_column_transformation(missing_indicator)
-x <- 1:10; x[4] <- NA
-y <- 10:1; y[8] <- NA
-dataframe <- data.frame(x,y)
-my_mct(dataframe, is.numeric, suffix="_missing"); print(dataframe)
-
-# make some fake data
-x <- 1:10
-y <- c('a','b','c','d','e','f','g','h','i','j')
-z <- 3:12
-dataframe <- data.frame(x,y,z)
-
-my_mct <- multi_column_transformation(function(x) list(x,x+1,2*x,NULL))
-#my_mct(dataframe, is.numeric, suffixes=c("_1","_2")); print(dataframe)
 
