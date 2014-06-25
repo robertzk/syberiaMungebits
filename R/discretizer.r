@@ -109,7 +109,7 @@ restore_levels_fn <- function(column, missing_level = 'Missing', ...) {
                                                 na.to.missing = FALSE) 
     if (!is.null(missing_level))
       factor(ifelse(previous_missing_values,
-            as.character(missing_level), as.character(col)))
+            as.character(missing_level), as.character(col)), levels = levels(col))
     else col
   }
 }

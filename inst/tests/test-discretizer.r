@@ -86,9 +86,9 @@ test_that("it correctly uses the missing_level argument", {
   expect_equal(df$data[[1]], expected_discretized_column)
 
   # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
+  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
   mb$run(df, 1, missing_level = "Not here")
-  expect_equal(df$data[[1]], expected_discretized_column)
+  expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
 
 test_that("it correctly uses the missing_level argument if it is NULL", {
@@ -102,9 +102,9 @@ test_that("it correctly uses the missing_level argument if it is NULL", {
   expect_equal(df$data[[1]], expected_discretized_column)
 
   # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = 1:100)); df$data[1, 1] <- NA
+  df <- mungebits:::mungeplane(data.frame(first = 1:50)); df$data[1, 1] <- NA
   mb$run(df, 1, missing_level = NULL)
-  expect_equal(df$data[[1]], expected_discretized_column)
+  expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
 
 test_that("it supports up to 10 digits in discretization levels", {
@@ -117,9 +117,9 @@ test_that("it supports up to 10 digits in discretization levels", {
   expect_equal(df$data[[1]], expected_discretized_column)
 
   # test prediction
-  df <- mungebits:::mungeplane(data.frame(first = 1:100 / 4000000))
+  df <- mungebits:::mungeplane(data.frame(first = (1:100 / 4000000)[1:50]))
   mb$run(df, 1)
-  expect_equal(df$data[[1]], expected_discretized_column)
+  expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
 
 
