@@ -1,9 +1,10 @@
 #'  Find Optimal Subset of Predictors to pass along to the Modeling Stage.  Based on CaretPackage RFE
 #'
 #' @param dataframe from which to run feature selection upon 
+#' @param exclude character. A vector of variables to never remove.
 #' @export
 
-caret_sis <- function(dataframe) { 
+caret_sis <- function(dataframe,exclude= character(0)) { 
   library(caret) 
   
   if (!'toKeepColumns' %in% names(inputs)) {
@@ -20,10 +21,12 @@ caret_sis <- function(dataframe) {
     rfFuncs$summary <-twoClassSummary 
     caretFuncs$summary <-twoClassSummary 
     
-
     profile.test <- rfe(dataframe[,names(dataframe)!='dep_var'], factor(dataframe$dep_var), sizes = sizeBuckets , rfeControl = control,metric='ROC') # ,method='gbm')  #if one wants to utilize gbm
-    inputs$toKeepColumns <<- c('dep_var', predictors(profile.test))  
-    eval(substitute( dataframe <- dataframe[,c('dep_var',predictors(profile.test)) ] ), envir = parent.frame() ) 
+    
+    passedOnColumns <- union( c('dep_var', predictors(profile.test)) , exclude)
+    inputs$toKeepColumns <<- passedOnColumns
+    
+    eval(substitute( dataframe <- dataframe[,c('dep_var',passedOnColumns) ] ), envir = parent.frame() ) 
     
   }
   else { 
