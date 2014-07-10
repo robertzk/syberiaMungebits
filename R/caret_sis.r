@@ -4,9 +4,13 @@
 #' @param exclude character. A vector of variables to never remove.
 #' @export
 
-caret_sis <- function(dataframe,exclude= character(0)) { 
+caret_sis <- function(dataframe,exclude= character(0) , parallelize=TRUE) { 
   library(caret) 
-  
+  if (parallelize) {
+    library(doMC)
+    numCores = detectCores()
+    registerDoMC(cores = numCores)
+  }
   if (!'toKeepColumns' %in% names(inputs)) {
     
     # a caret control Object that dictates the behavior or RFE
@@ -23,9 +27,10 @@ caret_sis <- function(dataframe,exclude= character(0)) {
     
     profile.test <- rfe(dataframe[,names(dataframe)!='dep_var'], factor(dataframe$dep_var), sizes = sizeBuckets , rfeControl = control,metric='ROC') # ,method='gbm')  #if one wants to utilize gbm
     
+    browser() 
     passedOnColumns <- union( c('dep_var', predictors(profile.test)) , exclude)
     inputs$toKeepColumns <<- passedOnColumns
-    
+     
     eval(substitute( dataframe <- dataframe[,c('dep_var',passedOnColumns) ] ), envir = parent.frame() ) 
     
   }
