@@ -17,20 +17,23 @@ caret_sis <- function(dataframe,exclude= character(0) , parallelize=TRUE) {
 
     # a caret control Object that dictates the behavior or RFE
     # http://caret.r-forge.r-project.org/featureselection.html
-    control <- rfeControl(functions = rfFuncs , method = "repeatedcv", repeats = 1, verbose = TRUE,
+    control <- rfeControl(functions = rfFuncs , method = "repeatedcv", repeats = 3, verbose = TRUE,
                         returnResamp = "final", number = 5)
 
     # Number of variables to fit in each sub-model. Sizes of 15 were arbitrarily chosen
     sizeBuckets <-seq(1,length(names(dataframe)),by = round(ncol(dataframe)/15))
    
     profile.test <- rfe(dataframe[,names(dataframe)!='dep_var'], factor(dataframe$dep_var), sizes = sizeBuckets , rfeControl = control,metric='ROC') # ,method='gbm')  #if one wants to utilize gbm
-    
+    print(profile.test)
+
     passedOnColumns <- union( c('dep_var', predictors(profile.test)) , exclude)
     inputs$toKeepColumns <<- passedOnColumns
-     
     eval(substitute( dataframe <- dataframe[,passedOnColumns ] ), envir = parent.frame() ) 
-    
+
+    # Otherwise there will be a namespace collision fof the AUC function with evaluation stage
+    unloadNamespace('pROC') 
   }
+
   else { 
      #within the predict stage. Passing on columns filtered out by caret_sis 
       
@@ -38,6 +41,10 @@ caret_sis <- function(dataframe,exclude= character(0) , parallelize=TRUE) {
      passedOnColumns <- intersect(inputs$toKeepColumns , names(dataframe))
      
      eval(substitute( dataframe <- dataframe[,passedOnColumns ] ), envir = parent.frame() ) 
+
+    # Otherwise there will be a namespace collision fof the AUC function with evaluation stage
+    unloadNamespace('pROC') 
+
   }
 
   
