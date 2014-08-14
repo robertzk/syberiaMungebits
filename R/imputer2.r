@@ -141,7 +141,7 @@ imputer2 <- function(dataframe) {
       df.pred <- subset(df, select=!factor.cols)
       
       # subset rows for quicker imputation
-      if (nrow(x.sub) > nrows) {
+      if (nrow(df.sub) > nrows) {
         which.rows <- sample.int(nrow(df.sub), nrows)
         df.sub <- df.sub[which.rows, ]
       }
