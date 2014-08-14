@@ -17,14 +17,15 @@
 imputer2 <- function(dataframe) {
   
   sink('~/dev/null')
-  library(lars, quietly = TRUE)
-  library(MASS, quietly = TRUE)
+  library(lars)
+  library(MASS)
   sink()
   
   # get parameters
   trained <- inputs$trained %||% FALSE
   dep_var_name <- inputs$dep_var_name %||% "dep_var"
   maxlevels <- inputs$maxlevels %||% 30
+  nrows <- inputs$nrows %||% nrow(dataframe) # to speed up imputation, use only a random subset of rows
   
   if (trained) {
     cat("Imputer2 applies only during training\n")
@@ -39,8 +40,8 @@ imputer2 <- function(dataframe) {
     
   # loop over columns to be imputed
   new_columns <- list()
-  for (col in impute_cols) {
-    
+  for (col in impute_cols[-(1:55)]) {
+
     cat('              Imputing ',col,'\n',sep='')
 
     # get the response
@@ -94,7 +95,7 @@ imputer2 <- function(dataframe) {
       df[[cc]] <- x
       
     }
-    
+
     # get rid of the bad variables
     keep.vars <- setdiff(names(df), badvars)
     df <- subset(df, select=keep.vars)
@@ -108,6 +109,13 @@ imputer2 <- function(dataframe) {
       # make model matrices
       x <- model.matrix(formula('~.'), data=df)
       x.sub <- x[!which.missing,]
+      
+      # subset rows for quicker imputation
+      if (nrow(x.sub) > nrows) {
+        which.rows <- sample.int(nrow(x.sub), nrows)
+        x.sub <- x.sub[which.rows, ]
+        y.sub <- y.sub[which.rows]
+      }
       
       # Fit with LASSO penalty
       success <- TRUE
@@ -131,6 +139,12 @@ imputer2 <- function(dataframe) {
         apply(df, 2, function(x) any(is.na(as.numeric(as.character(x))))))
       df.sub <- subset(df, subset=!which.missing, select=!factor.cols)
       df.pred <- subset(df, select=!factor.cols)
+      
+      # subset rows for quicker imputation
+      if (nrow(x.sub) > nrows) {
+        which.rows <- sample.int(nrow(df.sub), nrows)
+        df.sub <- df.sub[which.rows, ]
+      }
       
       # do the lda
       success <- TRUE
