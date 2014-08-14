@@ -12,10 +12,12 @@
 #'
 #' @param dep_var_name Name of the dependent variable.  (Default is "dep_var".)
 #' @param maxlevels Maximum number of levels allowed for a factor variable to be imputed.  Too many levels would cause the mungebit to be very slow.
+#' @param nrows Use no more than nrows rows to fit the imputation model
+#' @param mincorr For numeric variables, if mincorr>0, do a preliminary filtering to only those variables with correlation > mincorr
 
 #' @export
 imputer2 <- function(dataframe, dep_var_name="dep_var", 
-                     maxlevels=30, nrows=NULL) {
+                     maxlevels=30, nrows=NULL, mincorr=0) {
   
   sink('~/dev/null')
   library(lars)
@@ -59,9 +61,33 @@ imputer2 <- function(dataframe, dep_var_name="dep_var",
       next
     }
     
-    # quick imputation of remaining variables
+    # get the predictor matrix
     vars <- setdiff(names(dataframe), c(dep_var_name, col))
     df <- dataframe[, vars]
+    
+    # optional preliminary filtering
+    if (mincorr>0) {
+      keep.vars <- c()
+      if (is.numeric(y)) {
+        for (cc in names(df)) {
+          x <- df[[cc]]
+          if (is.numeric(x)) {
+            okay.rows <- !is.na(x) & !is.na(y)
+            if (sum(okay.rows) > 1) {
+              xx <- x[okay.rows]
+              yy <- y[okay.rows]
+              if (sd(xx)>0 && sd(yy)>0) {
+                if (abs(cor(xx,yy)) > mincorr) {
+                  keep.vars <- c(keep.vars, cc) 
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    # quick imputation of remaining variables
     badvars <- c()
     for (cc in names(df)) {
       
