@@ -14,7 +14,8 @@
 #' @param maxlevels Maximum number of levels allowed for a factor variable to be imputed.  Too many levels would cause the mungebit to be very slow.
 
 #' @export
-imputer2 <- function(dataframe) {
+imputer2 <- function(dataframe, dep_var_name="dep_var", 
+                     maxlevels=30, nrows=NULL) {
   
   sink('~/dev/null')
   library(lars)
@@ -23,9 +24,7 @@ imputer2 <- function(dataframe) {
   
   # get parameters
   trained <- inputs$trained %||% FALSE
-  dep_var_name <- inputs$dep_var_name %||% "dep_var"
-  maxlevels <- inputs$maxlevels %||% 30
-  nrows <- inputs$nrows %||% nrow(dataframe) # to speed up imputation, use only a random subset of rows
+  if (is.null(nrows)) nrows <- nrow(dataframe) # to speed up imputation, use only a random subset of rows
   
   if (trained) {
     cat("Imputer2 applies only during training\n")
@@ -40,7 +39,7 @@ imputer2 <- function(dataframe) {
     
   # loop over columns to be imputed
   new_columns <- list()
-  for (col in impute_cols[-(1:55)]) {
+  for (col in impute_cols) {
 
     cat('              Imputing ',col,'\n',sep='')
 
