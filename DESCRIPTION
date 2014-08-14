@@ -23,4 +23,3 @@ Suggests:
     knitr,
     microbenchmark
 Roxygen: list(wrap = FALSE)
-

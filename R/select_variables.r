@@ -9,7 +9,7 @@
 #' df <- iris; select_variables(df, c('Sepal.Length', 'Petal.Length'))
 #' df <- iris; select_variables(df, c(TRUE,TRUE,FALSE,FALSE,TRUE)) # Exclude cols 3 and 4
 select_variables <- function(dataframe, cols, weak = TRUE) {
-  cols <- standard_column_format(cols, dataframe)
+  cols <- mungebits:::standard_column_format(cols, dataframe)
   if (weak) {
     na_cols <- setdiff(cols, colnames(dataframe))
     cols <- intersect(colnames(dataframe), cols)
