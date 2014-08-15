@@ -85,6 +85,7 @@ imputer2 <- function(dataframe, dep_var_name="dep_var",
           }
         }
       }
+      df <- df[,keep.vars]
     }
     
     # quick imputation of remaining variables
