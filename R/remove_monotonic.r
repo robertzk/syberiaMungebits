@@ -7,22 +7,22 @@
 #'   dropped.
 #' @export
 remove_monotonic <- function(dataframe, threshold, verbose=FALSE) {
-  
-  # subset to numeric columns only
-  numeric_cols <- unlist(lapply(dataframe, is.numeric))
-  numeric_cols <- dataframe[, numeric_cols]
-  
-  # simple imputation
-  for (i in 1:ncol(numeric_cols)) {
-    x <- numeric_cols[,i]
-    x[is.na(x)] <- median(x, na.rm=TRUE)
-    numeric_cols[,i]<- x
-  }
 
-  # keep complete cases only
-  numeric_cols <- numeric_cols[complete.cases(numeric_cols), ]
-  
   if (!'drop_columns' %in% names(inputs)) {
+    
+    # subset to numeric columns only
+    numeric_cols <- unlist(lapply(dataframe, is.numeric))
+    numeric_cols <- dataframe[, numeric_cols]
+    
+    # simple imputation
+    for (i in 1:ncol(numeric_cols)) {
+      x <- numeric_cols[,i]
+      x[is.na(x)] <- median(x, na.rm=TRUE)
+      numeric_cols[,i]<- x
+    }
+    
+    # keep complete cases only
+    numeric_cols <- numeric_cols[complete.cases(numeric_cols), ]
     
     # get spearman correlation coefficients
     corr_matrix <- cor(numeric_cols, method='spearman')
@@ -37,16 +37,16 @@ remove_monotonic <- function(dataframe, threshold, verbose=FALSE) {
           drop_columns <- append(drop_columns, varnames[j])
           if (verbose) {
             cat("Dropping ", varnames[j], " due to correlation with ",
-                varnames[i], '(corr=', formatC(corr_matrix[i,j], digits=3),
+                varnames[i], ' (corr=', formatC(corr_matrix[i,j], digits=3),
                 ')\n', sep='')
           }
         }
       }
     }
-    inputs$drop_columns <- unique(drop_columns)
+    inputs$drop_columns <<- unique(drop_columns)
   }
   
-  drop_cols <- inputs$drop_cols
+  drop_columns <- inputs$drop_columns
   eval.parent(substitute(for (varname in drop_columns) dataframe[[varname]] <- NULL))
   
   TRUE
