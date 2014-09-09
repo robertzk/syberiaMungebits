@@ -6,7 +6,7 @@
 #' @param threshold If the Spearman rank correlation exceeds this value, columns will be
 #'   dropped.
 #' @export
-remove_monotonic <- function(dataframe, threshold) {
+remove_monotonic <- function(dataframe, threshold, verbose=FALSE) {
   
   # subset to numeric columns only
   numeric_cols <- unlist(lapply(dataframe, is.numeric))
@@ -33,7 +33,14 @@ remove_monotonic <- function(dataframe, threshold) {
     varnames <- names(numeric_cols)
     for (i in 1:(ncols-1)) {
       for (j in (i+1):ncols) {
-        if (abs(corr_matrix[i,j]) > threshold) drop_columns <- append(drop_columns, varnames[j])
+        if (abs(corr_matrix[i,j]) > threshold) {
+          drop_columns <- append(drop_columns, varnames[j])
+          if (verbose) {
+            cat("Dropping ", varnames[j], " due to correlation with ",
+                varnames[i], '(corr=', formatC(corr_matrix[i,j], digits=3),
+                ')\n', sep='')
+          }
+        }
       }
     }
     inputs$drop_columns <- unique(drop_columns)
