@@ -9,8 +9,7 @@ Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
 Authors@R: c(person("Robert", "Krzyzanowski",
     email = "technoguyrob@gmail.com", role = c("aut", "cre")))
 Depends:
-    R (>= 3.0.1),
-    Rcpp (>= 0.10.6)
+    R (>= 3.0.1)
 Imports:
     mungebits,
     arules,
