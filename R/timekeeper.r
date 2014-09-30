@@ -1,6 +1,6 @@
 #' Take input in a wide variety of date/time formats and output it in a variety of consistent formats.
 #'
-#' @param formatdate contains the date to be formatted
+#' @param input contains the date to be formatted
 #'
 #' @param mode tells the desired output format
 #'   "date" will return a R date
@@ -9,8 +9,13 @@
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "holidayweekend" will return TRUE if it's a weekend or holiday
 
-timekeeper_fn <- function(formatdate, mode="date") {
-  date = as.Date(formatdate[[1]])
+timekeeper_fn <- function(input, mode="date") {
+  # Standardize from many inputs
+  input = input[[1]]
+  if (is.numeric(input)) { date = as.Date(input, origin='1970/1/1') }
+  else { date = as.Date(input[[1]]) }
+
+  # Pipe to many outputs
   if (mode == "numeric") { date = as.numeric(date) }
   date
 }
