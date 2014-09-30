@@ -9,8 +9,10 @@
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "holidayweekend" will return TRUE if it's a weekend or holiday
 
-timekeeper_fn <- function(formatdate) {
-  as.Date(formatdate[[1]]) 
+timekeeper_fn <- function(formatdate, mode="date") {
+  date = as.Date(formatdate[[1]])
+  if (mode == "numeric") { date = as.numeric(date) }
+  date
 }
 
 #' @export
