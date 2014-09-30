@@ -9,7 +9,7 @@
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "holidayweekend" will return TRUE if it's a weekend or holiday
 
-timekeeper_fn <- function(input, mode="date") {
+convert_incoming <- function(input) {
   # Standardize from many inputs
   input = input[[1]]
   date = tryCatch({
@@ -17,15 +17,23 @@ timekeeper_fn <- function(input, mode="date") {
     else if (is.character(input)) { as.Date(input) }
     else { "NA" }
   }, error = function(cond) { return("NA") })
+  date
+}
 
+convert_outgoing <- function(input, mode="date") {
   # Pipe to many outputs
   if (as.character(date) != "NA") {
     if (mode == "numeric") { date = as.numeric(date) }
-    if (mode == "holiday") { date = is.holiday(date) }
-    if (mode == "weekend") { date = is.weekend(date) }
-    if (mode == "holidayweekend") { date = is.holiday(date) || is.weekend(date) }
+    else if (mode == "holiday") { date = is.holiday(date) }
+    else if (mode == "weekend") { date = is.weekend(date) }
+    else if (mode == "holidayweekend") { date = is.holiday(date) || is.weekend(date) }
   }
   date
+}
+
+timekeeper_fn <- function(input, mode="date") {
+  input = input[[1]]
+  convert_outgoing(convert_incoming(input), mode=mode)
 }
 
 #' @export
