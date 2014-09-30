@@ -39,3 +39,36 @@ test_that("it converts to numeric date", {
   mb$run(mp, 1, mode="numeric")
   expect_equal(8014, mp$data$x)
 })
+
+test_that("it converts to TRUE in is weekend mode if weekend", {
+  df <- data.frame(x='2014-10-04', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1, mode="weekend")
+  expect_equal(TRUE, mp$data$x)
+})
+
+test_that("it converts to FALSE in is weekend mode if not weekend", {
+  df <- data.frame(x='2014-09-30', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1, mode="weekend")
+  expect_equal(FALSE, mp$data$x)
+})
+
+test_that("it converts to TRUE in is holiday mode if holiday", {
+  df <- data.frame(x='2012-11-22', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1, mode="holiday")
+  expect_equal(TRUE, mp$data$x)
+})
+
+test_that("it converts to FALSE in is holiday mode if not holiday", {
+  df <- data.frame(x='2012-11-21', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1, mode="holiday")
+  expect_equal(FALSE, mp$data$x)
+})
+

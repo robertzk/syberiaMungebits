@@ -21,6 +21,9 @@ timekeeper_fn <- function(input, mode="date") {
   # Pipe to many outputs
   if (as.character(date) != "NA") {
     if (mode == "numeric") { date = as.numeric(date) }
+    if (mode == "holiday") { date = is.holiday(date) }
+    if (mode == "weekend") { date = is.weekend(date) }
+    if (mode == "holidayweekend") { date = is.holiday(date) || is.weekend(date) }
   }
   date
 }
