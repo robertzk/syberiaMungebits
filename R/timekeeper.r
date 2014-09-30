@@ -12,15 +12,16 @@
 timekeeper_fn <- function(input, mode="date") {
   # Standardize from many inputs
   input = input[[1]]
-  if (is.numeric(input)) { date = as.Date(input, origin='1970/1/1') }
-  else if (is.character(input)) {
-    if (!is.na(grep("-", input) || grep("\\/", input))) { date = as.Date(input) }
-    else { return("NA") }
-  }
-  else { return("NA") }
+  date = tryCatch({
+    if (is.numeric(input)) { as.Date(input, origin='1970/1/1') }
+    else if (is.character(input)) { as.Date(input) }
+    else { "NA" }
+  }, error = function(cond) { return("NA") })
 
   # Pipe to many outputs
-  if (mode == "numeric") { date = as.numeric(date) }
+  if (as.character(date) != "NA") {
+    if (mode == "numeric") { date = as.numeric(date) }
+  }
   date
 }
 
