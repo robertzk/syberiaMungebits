@@ -2,6 +2,11 @@
 #'
 #' @param input contains the date to be formatted
 #'
+#' Makes three assumptions about dates:
+#'  - 12/11/1991 will be December 11, 1991 (US dates)
+#'  - two-digit years > 20 refer to 20th century ('91 refers to 1991)
+#'  - two-digit years <= 20 refer to 21st century ('14 refers to 2014)
+#'
 #' @param mode tells the desired output format
 #'   "date" will return a R date
 #'   "numeric" will return the number of days since Jan 1, 1970

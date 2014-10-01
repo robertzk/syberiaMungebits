@@ -24,8 +24,48 @@ test_that("it converts YYYY MM DD to date", {
   expect_equal(as.Date('1991/12/11'), mp$data$x)
 })
 
-test_that("it converts YYYY [Written Month] DD to date", {
+test_that("it converts MM-DD-YYYY to date", {
+  df <- data.frame(x='12-11-1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts YYYY [Short Written Month] DD to date", {
   df <- data.frame(x='1991 Dec 11', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts YYYY [Long Written Month] DD to date", {
+  df <- data.frame(x='1991 December 11', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts [Short Written Month] DD YYYY to date", {
+  df <- data.frame(x='Dec 11 1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts DD [Short Written Month] YYYY to date", {
+  df <- data.frame(x='11 Dec 1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts DD [Short Written Month] YY to date", {
+  df <- data.frame(x='11 Dec 91', y='blah')
   mp <- mungebits:::mungeplane(df)
   mb <- mungebits:::mungebit(timekeeper)
   mb$run(mp, 1)
