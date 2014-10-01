@@ -68,6 +68,10 @@ standardize_dividers <- function(input) {
   tolower(output)
 }
 
+remove_punctuation <- function(input) {
+  gsub('[^a-zA-Z0-9-]', '', input)
+}
+
 convert_incoming <- function(input) {
   # Standardize from many inputs
   input = input[[1]]
@@ -101,6 +105,7 @@ timekeeper_fn <- function(input, mode="date") {
   }
   else {
     date = standardize_dividers(input)
+    date = remove_punctuation(date)
     date = handle_two_digit_years(date)
     date = handle_order(date)
     date = handle_month(date)
