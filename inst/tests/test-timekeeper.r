@@ -32,21 +32,21 @@ test_that("it converts MM-DD-YYYY to date", {
   expect_equal(as.Date('1991/12/11'), mp$data$x)
 })
 
-# test_that("it converts MM-DD-YY to date (20th century)", {
-#   df <- data.frame(x='12-11-91', y='blah')
-#   mp <- mungebits:::mungeplane(df)
-#   mb <- mungebits:::mungebit(timekeeper)
-#   mb$run(mp, 1)
-#   expect_equal(as.Date('1991/12/11'), mp$data$x)
-# })
+test_that("it converts MM-DD-YY to date (20th century)", {
+  df <- data.frame(x='12-11-91', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
 
-# test_that("it converts MM-DD-YY to date (21st century)", {
-#   df <- data.frame(x='10-01-14', y='blah')
-#   mp <- mungebits:::mungeplane(df)
-#   mb <- mungebits:::mungebit(timekeeper)
-#   mb$run(mp, 1)
-#   expect_equal(as.Date('2014/10/01'), mp$data$x)
-# })
+test_that("it converts MM-DD-YY to date (21st century)", {
+  df <- data.frame(x='10-01-14', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('2014/10/01'), mp$data$x)
+})
 
 test_that("it converts YYYY [Short Written Month] DD to date", {
   df <- data.frame(x='1991 Dec 11', y='blah')
@@ -66,6 +66,14 @@ test_that("it converts YYYY [Long Written Month] DD to date", {
 
 test_that("it converts [Short Written Month] DD YYYY to date", {
   df <- data.frame(x='Dec 11 1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts [Short Written Month] DD YY to date", {
+  df <- data.frame(x='Dec 11 91', y='blah')
   mp <- mungebits:::mungeplane(df)
   mb <- mungebits:::mungebit(timekeeper)
   mb$run(mp, 1)
@@ -151,5 +159,8 @@ test_that("it converts to FALSE in is holiday mode if not holiday", {
   mb$run(mp, 1, mode="holiday")
   expect_equal(FALSE, mp$data$x)
 })
+# TODO: Smart enough to assume 91-12-11 is in YY-MM-DD
+# TODO: Smart enough to assume 12-31-91 is in MM-DD-YY
+# TODO: Smart enough to assume 31-12-91 is in DD-MM-YY
 # TODO: "12111991" to date, and as a numeric, distinguish this from days by length
 # TODO: Can override assumptions

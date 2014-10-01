@@ -2,10 +2,11 @@
 #'
 #' @param input contains the date to be formatted
 #'
-#' Makes four assumptions about dates:
+#' Makes five assumptions about dates:
 #'  - 12/11/1991 will be December 11, 1991 (US dates)
 #'  - two-digit years > 20 refer to 20th century ('91 refers to 1991)
 #'  - two-digit years <= 20 refer to 21st century ('14 refers to 2014)
+#'  - two-digit years will be at end (12/11/20 will refer to December 11, 1920)
 #'  - numeric strings are dates if length 8, days since 1970 otherwise
 #'
 #' @param mode tells the desired output format
@@ -28,6 +29,17 @@ is.holiday <- function(date) {
   if (date == as.Date(LaborDay(year))) { return(TRUE) }
   if (date == as.Date(USThanksgivingDay(year))) { return(TRUE) }
   FALSE
+}
+
+handle_two_digit_years <- function(input) {
+  strips = strsplit(input, "-")
+  if (length(strips[[1]]) != 3) { return("NA") }
+  for (strip in strips[[1]]) {
+    if (nchar(strip) == 4) { return(input) }
+  }
+  if (as.numeric(strips[[1]][3]) > 20) { year_beginning = 19 }
+  else { year_beginning = 20 }
+  paste0(strips[[1]][1], '-', strips[[1]][2], '-', year_beginning, strips[[1]][3])
 }
 
 handle_order <- function(input) {
@@ -88,6 +100,7 @@ timekeeper_fn <- function(input, mode="date") {
   }
   else {
     date = standardize_dividers(input)
+    date = handle_two_digit_years(date)
     date = handle_order(date)
     date = handle_month(date)
     date = convert_incoming(date)
