@@ -7,7 +7,7 @@
 #'   "numeric" will return the number of days since Jan 1, 1970
 #'   "holiday" will return TRUE if it's a US federal holiday and FALSE if not
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
-#'   "holidayweekend" will return TRUE if it's a weekend or holiday
+#'   "businessday" will return TRUE if it's a weekend or holiday
 
 is.weekend <- function(date) {
   weekdays(date) == 'Saturday' || weekdays(date) == 'Sunday'
@@ -65,7 +65,7 @@ convert_outgoing <- function(input, mode="date") {
     if (mode == "numeric") { output = as.numeric(input) }
     else if (mode == "holiday") { output = is.holiday(input) }
     else if (mode == "weekend") { output = is.weekend(input) }
-    else if (mode == "holidayweekend") { output = is.holiday(input) || is.weekend(input) }
+    else if (mode == "businessday") { output = !is.holiday(input) && !is.weekend(input) }
     else { output = input }
   }
   output
