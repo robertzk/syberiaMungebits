@@ -1,4 +1,4 @@
-context("timekeeper")
+context("datekeeper")
 
 test_that("it converts YYYY-MM-DD to date", {
   df <- data.frame(x='1991-12-11', y='blah')
@@ -191,7 +191,3 @@ test_that("it converts to FALSE in is holiday mode if not holiday", {
   mb$run(mp, 1, mode="holiday")
   expect_equal(FALSE, mp$data$x)
 })
-# TODO: Smart enough to assume 91-12-11 is in YY-MM-DD
-# TODO: Smart enough to assume 12-31-91 is in MM-DD-YY
-# TODO: Smart enough to assume 31-12-91 is in DD-MM-YY
-# TODO: Can override assumptions
