@@ -52,10 +52,11 @@ handle_order <- function(input) {
 handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
     months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
+    strips = strsplit(input, "-")
+    if (length(strips[[1]]) != 3) { return("NA") }
     for (month in months) {
-      if (grepl(month, input)) {
-        input = as.Date(input, '%Y-%B-%d')
-      }
+      if (grepl(month, strips[[1]][2])) { input = as.Date(input, '%Y-%B-%d') }
+      if (grepl(month, strips[[1]][3])) { input = as.Date(input, '%Y-%d-%B') }
     }
   }
   input

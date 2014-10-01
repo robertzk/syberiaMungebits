@@ -80,21 +80,21 @@ test_that("it converts [Short Written Month] DD YY to date", {
   expect_equal(as.Date('1991/12/11'), mp$data$x)
 })
 
-# test_that("it converts DD [Short Written Month] YYYY to date", {
-#   df <- data.frame(x='11 Dec 1991', y='blah')
-#   mp <- mungebits:::mungeplane(df)
-#   mb <- mungebits:::mungebit(timekeeper)
-#   mb$run(mp, 1)
-#   expect_equal(as.Date('1991/12/11'), mp$data$x)
-# })
+test_that("it converts DD [Short Written Month] YYYY to date", {
+  df <- data.frame(x='11 Dec 1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
 
-# test_that("it converts DD [Short Written Month] YY to date", {
-#   df <- data.frame(x='11 Dec 91', y='blah')
-#   mp <- mungebits:::mungeplane(df)
-#   mb <- mungebits:::mungebit(timekeeper)
-#   mb$run(mp, 1)
-#   expect_equal(as.Date('1991/12/11'), mp$data$x)
-# })
+test_that("it converts DD [Short Written Month] YY to date", {
+  df <- data.frame(x='11 Dec 91', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
 
 # test_that("it handles punctuation", {
 #   df <- data.frame(x="December 11, '91", y="blah")
@@ -159,8 +159,9 @@ test_that("it converts to FALSE in is holiday mode if not holiday", {
   mb$run(mp, 1, mode="holiday")
   expect_equal(FALSE, mp$data$x)
 })
+# TODO: "12111991" to date, and as a numeric, distinguish this from days by length
+# TODO: Handle dates without spaces (11jan1991)
 # TODO: Smart enough to assume 91-12-11 is in YY-MM-DD
 # TODO: Smart enough to assume 12-31-91 is in MM-DD-YY
 # TODO: Smart enough to assume 31-12-91 is in DD-MM-YY
-# TODO: "12111991" to date, and as a numeric, distinguish this from days by length
 # TODO: Can override assumptions
