@@ -115,7 +115,7 @@ convert_outgoing <- function(input, mode="date") {
   output
 }
 
-timekeeper_fn <- function(input, mode="date") {
+datekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
   Ramd::packages('timeDate')
   if(is.numeric(input)) {
@@ -134,4 +134,4 @@ timekeeper_fn <- function(input, mode="date") {
 }
 
 #' @export
-timekeeper <- column_transformation(timekeeper_fn, mutating = TRUE, named = TRUE)
+datekeeper <- column_transformation(datekeeper_fn, mutating = TRUE, named = TRUE)
