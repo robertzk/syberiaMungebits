@@ -112,6 +112,14 @@ test_that("it converts 1000 to date", {
   expect_equal(as.Date('1972/09/27'), mp$data$x)
 })
 
+test_that("it converts 19911211 to the proper date", {
+  df <- data.frame(x=19911211, y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
 test_that("it converts garbage to NA", {
   df <- data.frame(x='garbage', y='blah')
   mp <- mungebits:::mungeplane(df)

@@ -72,11 +72,19 @@ remove_punctuation <- function(input) {
   gsub('[^a-zA-Z0-9-]', '', input)
 }
 
+handle_numeric <- function(input) {
+  if (nchar(input) != 8) { output = as.Date(input, origin='1970/1/1') }
+  else {
+    output = as.Date(paste0(substring(input,0,4), '-', substring(input,5,6), '-', substring(input,7,8)))
+  }
+  output
+}
+
 convert_incoming <- function(input) {
   # Standardize from many inputs
   input = input[[1]]
   date = tryCatch({
-    if (is.numeric(input)) { as.Date(input, origin='1970/1/1') }
+    if (is.numeric(input)) { handle_numeric(input) }
     else if (is.character(input)) { as.Date(input) }
     else if (class(input) == 'Date') { input }
     else { "NA" }
