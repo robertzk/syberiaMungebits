@@ -2,10 +2,11 @@
 #'
 #' @param input contains the date to be formatted
 #'
-#' Makes three assumptions about dates:
+#' Makes four assumptions about dates:
 #'  - 12/11/1991 will be December 11, 1991 (US dates)
 #'  - two-digit years > 20 refer to 20th century ('91 refers to 1991)
 #'  - two-digit years <= 20 refer to 21st century ('14 refers to 2014)
+#'  - numeric strings are dates if length 8, days since 1970 otherwise
 #'
 #' @param mode tells the desired output format
 #'   "date" will return a R date
@@ -29,7 +30,14 @@ is.holiday <- function(date) {
   FALSE
 }
 
-convert_text <- function(input) {
+handle_order <- function(input) {
+  strips = strsplit(input, "-")
+  if (nchar(strips[[1]][3]) == 4) { output = paste0(strips[[1]][3], "-", strips[[1]][1], "-", strips[[1]][2]) }
+  else { output = input }
+  output
+}
+
+handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
     months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
     for (month in months) {
@@ -76,10 +84,15 @@ timekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
   Ramd::packages('timeDate')
   if(is.numeric(input)) {
-    date = convert_outgoing(convert_incoming(input), 1)
+    date = convert_outgoing(convert_incoming(input), mode)
   }
   else {
-    convert_outgoing(convert_incoming(convert_text(standardize_dividers(input))), mode)
+    date = standardize_dividers(input)
+    date = handle_order(date)
+    date = handle_month(date)
+    date = convert_incoming(date)
+    date = convert_outgoing(date, mode)
+    date
   }
 }
 
