@@ -24,36 +24,22 @@ is.holiday <- function(date) {
   FALSE
 }
 
-swap_month <- function(input) {
-  output <- tolower(input)
-  output <- gsub('january', '01', output)
-  output <- gsub('jan', '01', output)
-  output <- gsub('february', '02', output)
-  output <- gsub('feb', '02', output)
-  output <- gsub('march', '03', output)
-  output <- gsub('mar', '03', output)
-  output <- gsub('april', '04', output)
-  output <- gsub('apr', '04', output)
-  output <- gsub('may', '05', output)
-  output <- gsub('june', '06', output)
-  output <- gsub('jun', '06', output)
-  output <- gsub('july', '07', output)
-  output <- gsub('jul', '07', output)
-  output <- gsub('august', '08', output)
-  output <- gsub('aug', '08', output)
-  output <- gsub('september', '09', output)
-  output <- gsub('sep', '09', output)
-  output <- gsub('october', '10', output)
-  output <- gsub('oct', '10', output)
-  output <- gsub('november', '11', output)
-  output <- gsub('nov', '11', output)
-  output <- gsub('december', '12', output)
-  output <- gsub('dec', '12', output)
-  output
+convert_text <- function(input) {
+  if (is.character(input) && input != "NA") {
+    months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
+    for (month in months) {
+      if (grepl(month, input)) {
+        input = as.Date(input, '%Y-%B-%d')
+      }
+    }
+  }
+  input
 }
 
-swap_spaces <- function(input) {
-  gsub(' ', '-', input)
+standardize_dividers <- function(input) {
+  output = gsub(' ', '-', input)
+  output = gsub('\\/', '-', output)
+  tolower(output)
 }
 
 convert_incoming <- function(input) {
@@ -62,6 +48,7 @@ convert_incoming <- function(input) {
   date = tryCatch({
     if (is.numeric(input)) { as.Date(input, origin='1970/1/1') }
     else if (is.character(input)) { as.Date(input) }
+    else if (class(input) == 'Date') { input }
     else { "NA" }
   }, error = function(cond) { return("NA") })
   date
@@ -87,7 +74,7 @@ timekeeper_fn <- function(input, mode="date") {
     date = convert_outgoing(convert_incoming(input), 1)
   }
   else {
-    convert_outgoing(convert_incoming(swap_spaces(swap_month(input))), mode)
+    convert_outgoing(convert_incoming(convert_text(standardize_dividers(input))), mode)
   }
 }
 
