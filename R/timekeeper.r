@@ -13,7 +13,16 @@ is.weekend <- function(date) {
   weekdays(date) == 'Saturday' || weekdays(date) == 'Sunday'
 }
 
-is.holiday <- function(date) { date }
+is.holiday <- function(date) {
+  year = as.numeric(format(date, '%Y'))
+  if (date == as.Date(ChristmasDay(year))) { return(TRUE) }
+  if (date == as.Date(USNewYearsDay(year))) { return(TRUE) }
+  if (date == as.Date(USMemorialDay(year))) { return(TRUE) }
+  if (date == as.Date(USIndependenceDay(year))) { return(TRUE) }
+  if (date == as.Date(LaborDay(year))) { return(TRUE) }
+  if (date == as.Date(USThanksgivingDay(year))) { return(TRUE) }
+  FALSE
+}
 
 swap_month <- function(input) {
   output <- tolower(input)
