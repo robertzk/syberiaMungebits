@@ -82,6 +82,7 @@ convert_outgoing <- function(input, mode="date") {
 
 timekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
+  Ramd::packages('timeDate')
   if(is.numeric(input)) {
     date = convert_outgoing(convert_incoming(input), 1)
   }
