@@ -63,9 +63,18 @@ handle_month <- function(input) {
 }
 
 standardize_dividers <- function(input) {
-  output = gsub(' ', '-', input)
+  output = tolower(input)
+  output = gsub(' ', '-', output)
   output = gsub('\\/', '-', output)
-  tolower(output)
+  output = gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
+  output = gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
+
+  splits = strsplit(output, "-")
+  if (length(splits[[1]]) == 2 && nchar(splits[[1]][2]) == 6) {
+    output = paste0(splits[[1]][1], '-', substr(splits[[1]][2],0,2), '-', substr(splits[[1]][2],3,7))
+  }
+
+  output
 }
 
 remove_punctuation <- function(input) {

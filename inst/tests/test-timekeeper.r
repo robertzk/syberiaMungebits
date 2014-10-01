@@ -120,6 +120,30 @@ test_that("it converts 19911211 to the proper date", {
   expect_equal(as.Date('1991/12/11'), mp$data$x)
 })
 
+test_that("it converts 1991dec11 to the proper date", {
+  df <- data.frame(x='1991dec11', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts 11dec1991 to the proper date", {
+  df <- data.frame(x='11dec1991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
+test_that("it converts dec111991 to the proper date", {
+  df <- data.frame(x='dec111991', y='blah')
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(timekeeper)
+  mb$run(mp, 1)
+  expect_equal(as.Date('1991/12/11'), mp$data$x)
+})
+
 test_that("it converts garbage to NA", {
   df <- data.frame(x='garbage', y='blah')
   mp <- mungebits:::mungeplane(df)
@@ -167,8 +191,6 @@ test_that("it converts to FALSE in is holiday mode if not holiday", {
   mb$run(mp, 1, mode="holiday")
   expect_equal(FALSE, mp$data$x)
 })
-# TODO: "12111991" to date, and as a numeric, distinguish this from days by length
-# TODO: Handle dates without spaces (11jan1991)
 # TODO: Smart enough to assume 91-12-11 is in YY-MM-DD
 # TODO: Smart enough to assume 12-31-91 is in MM-DD-YY
 # TODO: Smart enough to assume 31-12-91 is in DD-MM-YY
