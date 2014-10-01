@@ -8,6 +8,7 @@
 #'  - two-digit years <= 20 refer to 21st century ('14 refers to 2014)
 #'  - two-digit years will be at end (12/11/20 will refer to December 11, 1920)
 #'  - numeric strings are dates if length 8, days since 1970 otherwise
+#'  - numeric strings as dates will be YYYYMMDD
 #'
 #' @param mode tells the desired output format
 #'   "date" will return a R date
