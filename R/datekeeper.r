@@ -53,7 +53,7 @@ remove_punctuation <- function(input) {
 
 handle_order <- function(input) {
   strips = strsplit(input, "-")[[1]]
-  if (nchar(strips[3]) == 4) { output = paste0(strips[3], "-", strips[1], "-", strips[2]) }
+  if (nchar(strips[3]) == 4) { output = paste(strips[c(3,1,2)],collapse='-') }
   else { output = input }
   output
 }
