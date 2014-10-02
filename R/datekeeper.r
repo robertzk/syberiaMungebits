@@ -70,12 +70,12 @@ handle_two_digit_years <- function(input) {
   paste0(strips[1], '-', strips[2], '-', year_beginning, strips[3])
 }
 
+months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
 handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
-    months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
     strips = strsplit(input, "-")[[1]]
     if (length(strips) != 3) { return("NA") }
-    for (month in months) {
+    for (month in syberiaMungebits:::months) {
       if (grepl(month, strips[2])) { input = as.Date(input, '%Y-%B-%d') }
       if (grepl(month, strips[3])) { input = as.Date(input, '%Y-%d-%B') }
     }
