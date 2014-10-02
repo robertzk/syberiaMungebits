@@ -40,9 +40,9 @@ standardize_dividers <- function(input) {
   output = gsub('\\/', '-', output)
   output = gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
   output = gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
-  splits = strsplit(output, "-")
-  if (length(splits[[1]]) == 2 && nchar(splits[[1]][2]) == 6) {
-    output = paste0(splits[[1]][1], '-', substr(splits[[1]][2],0,2), '-', substr(splits[[1]][2],3,7))
+  splits = strsplit(output, "-")[[1]]
+  if (length(splits) == 2 && nchar(splits[2]) == 6) {
+    output = paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7))
   }
   output
 }
@@ -67,7 +67,7 @@ handle_two_digit_years <- function(input) {
   if (as.numeric(strips[3]) > 20) { year_beginning = 19 }
   else { year_beginning = 20 }
   year_beginning = 19 + as.numeric(as.numeric(strips[3]) <= 20)
-  paste0(strips[1], '-', strips[2], '-', year_beginning, strips[3])
+  paste(c(strips[1:2], paste0(year_beginning, strips[3])), collapse = '-')
 }
 
 months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
