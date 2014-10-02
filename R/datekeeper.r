@@ -97,13 +97,14 @@ convert_incoming <- function(input) {
 convert_outgoing <- function(input, mode="date") {
   output = "NA"
   if (as.character(input) != "NA") {
-    if (mode == "numeric") { output = as.numeric(input) }
-    else if (mode == "holiday") { output = syberiaMungebits:::is.holiday(input) }
-    else if (mode == "weekend") { output = syberiaMungebits:::is.weekend(input) }
-    else if (mode == "businessday") { output = !syberiaMungebits:::is.holiday(input) && !syberiaMungebits:::is.weekend(input) }
-    else { output = input }
-  }
-  output
+    switch(mode,
+      "numeric" = as.numeric(input),
+      "holiday" = syberiaMungebits:::is.holiday(input),
+      "weekend" = syberiaMungebits:::is.weekend(input),
+      "businessday" = !syberiaMungebits:::is.holiday(input) && !syberiaMungebits:::is.weekend(input),
+      input
+    )
+  } else "NA"
 }
 
 is.weekend <- function(date) {
