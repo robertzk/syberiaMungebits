@@ -52,31 +52,31 @@ remove_punctuation <- function(input) {
 }
 
 handle_order <- function(input) {
-  strips = strsplit(input, "-")
-  if (nchar(strips[[1]][3]) == 4) { output = paste0(strips[[1]][3], "-", strips[[1]][1], "-", strips[[1]][2]) }
+  strips = strsplit(input, "-")[[1]]
+  if (nchar(strips[3]) == 4) { output = paste0(strips[3], "-", strips[1], "-", strips[2]) }
   else { output = input }
   output
 }
 
 handle_two_digit_years <- function(input) {
-  strips = strsplit(input, "-")
-  if (length(strips[[1]]) != 3) { return("NA") }
-  for (strip in strips[[1]]) {
+  strips = strsplit(input, "-")[[1]]
+  if (length(strips) != 3) { return("NA") }
+  for (strip in strips) {
     if (nchar(strip) == 4) { return(input) }
   }
-  if (as.numeric(strips[[1]][3]) > 20) { year_beginning = 19 }
+  if (as.numeric(strips[3]) > 20) { year_beginning = 19 }
   else { year_beginning = 20 }
-  paste0(strips[[1]][1], '-', strips[[1]][2], '-', year_beginning, strips[[1]][3])
+  paste0(strips[1], '-', strips[2], '-', year_beginning, strips[3])
 }
 
 handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
     months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
-    strips = strsplit(input, "-")
-    if (length(strips[[1]]) != 3) { return("NA") }
+    strips = strsplit(input, "-")[[1]]
+    if (length(strips) != 3) { return("NA") }
     for (month in months) {
-      if (grepl(month, strips[[1]][2])) { input = as.Date(input, '%Y-%B-%d') }
-      if (grepl(month, strips[[1]][3])) { input = as.Date(input, '%Y-%d-%B') }
+      if (grepl(month, strips[2])) { input = as.Date(input, '%Y-%B-%d') }
+      if (grepl(month, strips[3])) { input = as.Date(input, '%Y-%d-%B') }
     }
   }
   input
