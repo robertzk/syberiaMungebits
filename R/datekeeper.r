@@ -17,7 +17,7 @@
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "businessday" will return TRUE if it's a weekend or holiday
 datekeeper_fn <- function(input, mode="date") {
-  input = input[[1]]
+  input <- input[[1]]
   Ramd::packages('timeDate')
   waterfall <- list(syberiaMungebits:::standardize_dividers, syberiaMungebits:::remove_punctuation, syberiaMungebits:::handle_two_digit_years, syberiaMungebits:::handle_order, syberiaMungebits:::handle_month, syberiaMungebits:::convert_incoming)
   if(is.numeric(input)) { syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode) }
@@ -25,14 +25,14 @@ datekeeper_fn <- function(input, mode="date") {
 }
 
 standardize_dividers <- function(input) {
-  output = tolower(input)
-  output = gsub(' ', '-', output)
-  output = gsub('\\/', '-', output)
-  output = gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
-  output = gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
-  splits = strsplit(output, "-")[[1]]
+  output <- tolower(input)
+  output <- gsub(' ', '-', output)
+  output <- gsub('\\/', '-', output)
+  output <- gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
+  output <- gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
+  splits <- strsplit(output, "-")[[1]]
   if (length(splits) == 2 && nchar(splits[2]) == 6) {
-    output = paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7))
+    output <- paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7))
   }
   output
 }
@@ -42,28 +42,26 @@ remove_punctuation <- function(input) {
 }
 
 handle_order <- function(input) {
-  strips = strsplit(input, "-")[[1]]
-  if (nchar(strips[3]) == 4) { output = paste(strips[c(3,1,2)],collapse='-') }
-  else { output = input }
+  strips <- strsplit(input, "-")[[1]]
+  if (nchar(strips[3]) == 4) { output <- paste(strips[c(3,1,2)],collapse='-') }
+  else { output <- input }
   output
 }
 
 handle_two_digit_years <- function(input) {
-  strips = strsplit(input, "-")[[1]]
+  strips <- strsplit(input, "-")[[1]]
   if (length(strips) != 3) { return("NA") }
   for (strip in strips) {
     if (nchar(strip) == 4) { return(input) }
   }
-  if (as.numeric(strips[3]) > 20) { year_beginning = 19 }
-  else { year_beginning = 20 }
-  year_beginning = 19 + as.numeric(as.numeric(strips[3]) <= 20)
+  year_beginning <- 19 + as.numeric(as.numeric(strips[3]) <= 20)
   paste(c(strips[1:2], paste0(year_beginning, strips[3])), collapse = '-')
 }
 
 months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
 handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
-    strips = strsplit(input, "-")[[1]]
+    strips <- strsplit(input, "-")[[1]]
     if (length(strips) != 3) { return("NA") }
     for (month in syberiaMungebits:::months) {
       if (grepl(month, strips[2])) { input = as.Date(input, '%Y-%B-%d') }
@@ -74,8 +72,8 @@ handle_month <- function(input) {
 }
 
 convert_incoming <- function(input) {
-  input = input[[1]]
-  date = tryCatch({
+  input <- input[[1]]
+  date <- tryCatch({
     if (is.numeric(input)) { syberiaMungebits:::handle_numeric(input) }
     else if (is.character(input)) { as.Date(input) }
     else if (class(input) == 'Date') { input }
@@ -85,7 +83,6 @@ convert_incoming <- function(input) {
 }
 
 convert_outgoing <- function(input, mode="date") {
-  output = "NA"
   if (as.character(input) != "NA") {
     switch(mode,
       "numeric" = as.numeric(input),
