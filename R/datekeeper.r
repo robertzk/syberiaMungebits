@@ -27,8 +27,8 @@ standardize_dividers <- function(input) {
   output <- tolower(input)
   output <- gsub(' ', '-', output)
   output <- gsub('\\/', '-', output)
-  output <- gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
-  output <- gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
+  output <- gsub('([a-z])(?=[0-9])', '\\1-', output, perl=TRUE)
+  output <- gsub('([0-9])(?=[a-z])', '\\1-', output, perl=TRUE)
   splits <- strsplit(output, "-")[[1]]
   if (length(splits) == 2 && nchar(splits[2]) == 6) paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7)) else output
 }
