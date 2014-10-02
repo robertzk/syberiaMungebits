@@ -18,7 +18,12 @@
 #'   "businessday" will return TRUE if it's a weekend or holiday
 datekeeper_fn <- function(input, mode="date") {
   Ramd::packages('timeDate')
-  waterfall <- list(syberiaMungebits:::standardize_dividers, syberiaMungebits:::remove_punctuation, syberiaMungebits:::handle_two_digit_years, syberiaMungebits:::handle_order, syberiaMungebits:::handle_month, syberiaMungebits:::convert_incoming)
+  waterfall <- list(syberiaMungebits:::standardize_dividers,
+                    syberiaMungebits:::remove_punctuation,
+                    syberiaMungebits:::handle_two_digit_years,
+                    syberiaMungebits:::handle_order,
+                    syberiaMungebits:::handle_month,
+                    syberiaMungebits:::convert_incoming)
   if(is.numeric(input)) { syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode) }
   else { syberiaMungebits:::convert_outgoing(Reduce(function(v,fn) fn(v), waterfall, input), mode) }
 }
