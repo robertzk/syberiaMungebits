@@ -66,6 +66,7 @@ handle_two_digit_years <- function(input) {
   }
   if (as.numeric(strips[3]) > 20) { year_beginning = 19 }
   else { year_beginning = 20 }
+  year_beginning = 19 + as.numeric(as.numeric(strips[3]) <= 20)
   paste0(strips[1], '-', strips[2], '-', year_beginning, strips[3])
 }
 
