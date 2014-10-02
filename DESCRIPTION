@@ -14,7 +14,9 @@ Depends:
 Imports:
     mungebits,
     arules,
-    statsUtils
+    statsUtils,
+    Ramd,
+    timeDate
 LinkingTo: Rcpp
 License: MIT
 LazyData: true

@@ -16,9 +16,6 @@
 #'   "holiday" will return TRUE if it's a US federal holiday and FALSE if not
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "businessday" will return TRUE if it's a weekend or holiday
-#' @export
-datekeeper <- column_transformation(datekeeper_fn, mutating = TRUE, named = TRUE)
-
 datekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
   Ramd::packages('timeDate')
@@ -130,3 +127,6 @@ handle_numeric <- function(input) {
   }
   output
 }
+
+#' @export
+datekeeper <- column_transformation(datekeeper_fn, mutating = TRUE, named = TRUE)
