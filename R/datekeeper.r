@@ -22,7 +22,6 @@ datekeeper_fn <- function(input, mode="date") {
   waterfall <- list(syberiaMungebits:::standardize_dividers, syberiaMungebits:::remove_punctuation, syberiaMungebits:::handle_two_digit_years, syberiaMungebits:::handle_order, syberiaMungebits:::handle_month, syberiaMungebits:::convert_incoming)
   if(is.numeric(input)) { syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode) }
   else { syberiaMungebits:::convert_outgoing(Reduce(function(v,fn) fn(v), waterfall, input), mode) }
-  }
 }
 
 standardize_dividers <- function(input) {
