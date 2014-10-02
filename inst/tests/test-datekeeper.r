@@ -27,6 +27,7 @@ test_that("it converts 19911211 to the proper date", { check_date(19911211, as.D
 test_that("it converts 1991dec11 to the proper date", { check_date('1991dec11', as.Date('1991/12/11')) })
 test_that("it converts 11dec1991 to the proper date", { check_date('11dec1991', as.Date('1991/12/11')) })
 test_that("it converts dec111991 to the proper date", { check_date('dec111991', as.Date('1991/12/11')) })
+test_that("it converts 1991-12-11 03:14:15.9265 to the proper date", { check_date('1991-12-11 03:14:15.9265', as.Date('1991/12/11')) })
 test_that("it converts garbage to NA", { check_date('garbage', 'NA') })
 test_that("it converts to numeric date", { check_date('1991-12-11', 8014, 'numeric') })
 test_that("it converts to TRUE in is weekend mode if weekend", { check_date('2014-10-04', TRUE, 'weekend') })

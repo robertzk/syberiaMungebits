@@ -20,6 +20,7 @@ datekeeper_fn <- function(input, mode="date") {
   Ramd::packages('timeDate')
   waterfall <- list(syberiaMungebits:::standardize_dividers,
                     syberiaMungebits:::remove_punctuation,
+                    syberiaMungebits:::handle_time,
                     syberiaMungebits:::handle_two_digit_years,
                     syberiaMungebits:::handle_order,
                     syberiaMungebits:::handle_month,
@@ -31,6 +32,8 @@ datekeeper_fn <- function(input, mode="date") {
 standardize_dividers <- function(input) {
   output <- tolower(input)
   output <- gsub(' ', '-', output)
+  output <- gsub(':', '-', output)
+  output <- gsub('\\.', '-', output)
   output <- gsub('\\/', '-', output)
   output <- gsub('([a-z])(?=[0-9])', '\\1-', output, perl=TRUE)
   output <- gsub('([0-9])(?=[a-z])', '\\1-', output, perl=TRUE)
@@ -45,6 +48,12 @@ remove_punctuation <- function(input) {
 handle_order <- function(input) {
   strips <- strsplit(input, "-")[[1]]
   if (nchar(strips[3]) == 4) paste(strips[c(3,1,2)],collapse='-') else input
+}
+
+handle_time <- function(input) {
+  strips <- strsplit(input, "-")[[1]]
+  if(any(sapply(strips, nchar) > 4)) return("NA")
+  paste(c(strips[1:3]), collapse='-') 
 }
 
 handle_two_digit_years <- function(input) {
