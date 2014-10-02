@@ -19,19 +19,9 @@
 datekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
   Ramd::packages('timeDate')
-  if(is.numeric(input)) {
-    date = syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode)
-  }
-  else {
-    date = syberiaMungebits:::standardize_dividers(input)
-    date = syberiaMungebits:::remove_punctuation(date)
-    date = syberiaMungebits:::handle_two_digit_years(date)
-    date = syberiaMungebits:::handle_order(date)
-    date = syberiaMungebits:::handle_month(date)
-    date = syberiaMungebits:::convert_incoming(date)
-    date = syberiaMungebits:::convert_outgoing(date, mode)
-    date
-  }
+  waterfall <- list(syberiaMungebits:::standardize_dividers, syberiaMungebits:::remove_punctuation, syberiaMungebits:::handle_two_digit_years, syberiaMungebits:::handle_order, syberiaMungebits:::handle_month, syberiaMungebits:::convert_incoming)
+  if(is.numeric(input)) { syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode) }
+  else { syberiaMungebits:::convert_outgoing(Reduce(function(v,fn) fn(v), waterfall, input), mode) }
 }
 
 standardize_dividers <- function(input) {
