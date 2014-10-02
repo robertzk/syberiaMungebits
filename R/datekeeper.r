@@ -97,7 +97,13 @@ is.weekend <- function(date) {
 
 is.holiday <- function(date) {
   year = as.numeric(format(date, '%Y'))
-  any(is.element(date, sapply(list(ChristmasDay, USNewYearsDay, USMemorialDay, USIndependenceDay, LaborDay, USThanksgivingDay), function(fn) as.Date(fn(year)))))
+  any(is.element(date, sapply(list(ChristmasDay,
+                                   USNewYearsDay,
+                                   USMemorialDay,
+                                   USIndependenceDay,
+                                   LaborDay,
+                                   USThanksgivingDay),
+                              function(fn) as.Date(fn(year)))))
 }
 
 handle_numeric <- function(input) {
