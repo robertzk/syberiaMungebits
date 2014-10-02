@@ -50,14 +50,12 @@ handle_order <- function(input) {
 handle_two_digit_years <- function(input) {
   strips <- strsplit(input, "-")[[1]]
   if (length(strips) != 3) { return("NA") }
-  for (strip in strips) {
-    if (nchar(strip) == 4) { return(input) }
-  }
+  if (any(sapply(strips, nchar) == 4)) return(input)
   year_beginning <- 19 + as.numeric(as.numeric(strips[3]) <= 20)
   paste(c(strips[1:2], paste0(year_beginning, strips[3])), collapse = '-')
 }
 
-months = c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
+months <- c('jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
 handle_month <- function(input) {
   if (is.character(input) && input != "NA") {
     strips <- strsplit(input, "-")[[1]]
@@ -75,9 +73,9 @@ convert_incoming <- function(input) {
   date <- tryCatch({
     if (is.numeric(input)) { syberiaMungebits:::handle_numeric(input) }
     else if (is.character(input)) { as.Date(input) }
-    else if (class(input) == 'Date') { input }
+    else if (class(input)[1] == 'Date') { input }
     else { "NA" }
-  }, error = function(cond) { return("NA") })
+  }, error = function(cond) "NA")
   date
 }
 
