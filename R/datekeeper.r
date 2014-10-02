@@ -44,7 +44,7 @@ remove_punctuation <- function(input) {
 
 handle_order <- function(input) {
   strips <- strsplit(input, "-")[[1]]
-  if (nchar(strips[3]) == 4) output <- paste(strips[c(3,1,2)],collapse='-') else input
+  if (nchar(strips[3]) == 4) paste(strips[c(3,1,2)],collapse='-') else input
 }
 
 handle_two_digit_years <- function(input) {
