@@ -30,10 +30,7 @@ standardize_dividers <- function(input) {
   output <- gsub('([a-z])(?=[0-9])', '\\1-', output, perl=T)
   output <- gsub('([0-9])(?=[a-z])', '\\1-', output, perl=T)
   splits <- strsplit(output, "-")[[1]]
-  if (length(splits) == 2 && nchar(splits[2]) == 6) {
-    output <- paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7))
-  }
-  output
+  if (length(splits) == 2 && nchar(splits[2]) == 6) paste0(splits[1], '-', substr(splits[2],0,2), '-', substr(splits[2],3,7)) else output
 }
 
 remove_punctuation <- function(input) {
@@ -42,9 +39,7 @@ remove_punctuation <- function(input) {
 
 handle_order <- function(input) {
   strips <- strsplit(input, "-")[[1]]
-  if (nchar(strips[3]) == 4) { output <- paste(strips[c(3,1,2)],collapse='-') }
-  else { output <- input }
-  output
+  if (nchar(strips[3]) == 4) output <- paste(strips[c(3,1,2)],collapse='-') else input
 }
 
 handle_two_digit_years <- function(input) {
@@ -103,11 +98,7 @@ is.holiday <- function(date) {
 }
 
 handle_numeric <- function(input) {
-  if (nchar(input) != 8) { output = as.Date(input, origin='1970/1/1') }
-  else {
-    output = as.Date(paste0(substring(input,0,4), '-', substring(input,5,6), '-', substring(input,7,8)))
-  }
-  output
+  if (nchar(input) != 8) as.Date(input, origin='1970/1/1') else as.Date(paste0(substring(input,0,4), '-', substring(input,5,6), '-', substring(input,7,8)))
 }
 
 #' @export
