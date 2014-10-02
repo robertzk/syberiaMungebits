@@ -20,16 +20,16 @@ datekeeper_fn <- function(input, mode="date") {
   input = input[[1]]
   Ramd::packages('timeDate')
   if(is.numeric(input)) {
-    date = convert_outgoing(convert_incoming(input), mode)
+    date = syberiaMungebits:::convert_outgoing(syberiaMungebits:::convert_incoming(input), mode)
   }
   else {
-    date = standardize_dividers(input)
-    date = remove_punctuation(date)
-    date = handle_two_digit_years(date)
-    date = handle_order(date)
-    date = handle_month(date)
-    date = convert_incoming(date)
-    date = convert_outgoing(date, mode)
+    date = syberiaMungebits:::standardize_dividers(input)
+    date = syberiaMungebits:::remove_punctuation(date)
+    date = syberiaMungebits:::handle_two_digit_years(date)
+    date = syberiaMungebits:::handle_order(date)
+    date = syberiaMungebits:::handle_month(date)
+    date = syberiaMungebits:::convert_incoming(date)
+    date = syberiaMungebits:::convert_outgoing(date, mode)
     date
   }
 }
@@ -85,7 +85,7 @@ handle_month <- function(input) {
 convert_incoming <- function(input) {
   input = input[[1]]
   date = tryCatch({
-    if (is.numeric(input)) { handle_numeric(input) }
+    if (is.numeric(input)) { syberiaMungebits:::handle_numeric(input) }
     else if (is.character(input)) { as.Date(input) }
     else if (class(input) == 'Date') { input }
     else { "NA" }
@@ -97,9 +97,9 @@ convert_outgoing <- function(input, mode="date") {
   output = "NA"
   if (as.character(input) != "NA") {
     if (mode == "numeric") { output = as.numeric(input) }
-    else if (mode == "holiday") { output = is.holiday(input) }
-    else if (mode == "weekend") { output = is.weekend(input) }
-    else if (mode == "businessday") { output = !is.holiday(input) && !is.weekend(input) }
+    else if (mode == "holiday") { output = syberiaMungebits:::is.holiday(input) }
+    else if (mode == "weekend") { output = syberiaMungebits:::is.weekend(input) }
+    else if (mode == "businessday") { output = !syberiaMungebits:::is.holiday(input) && !syberiaMungebits:::is.weekend(input) }
     else { output = input }
   }
   output
@@ -111,13 +111,7 @@ is.weekend <- function(date) {
 
 is.holiday <- function(date) {
   year = as.numeric(format(date, '%Y'))
-  if (date == as.Date(ChristmasDay(year))) { return(TRUE) }
-  if (date == as.Date(USNewYearsDay(year))) { return(TRUE) }
-  if (date == as.Date(USMemorialDay(year))) { return(TRUE) }
-  if (date == as.Date(USIndependenceDay(year))) { return(TRUE) }
-  if (date == as.Date(LaborDay(year))) { return(TRUE) }
-  if (date == as.Date(USThanksgivingDay(year))) { return(TRUE) }
-  FALSE
+  any(is.element(date, sapply(list(ChristmasDay, USNewYearsDay, USMemorialDay, USIndependenceDay, LaborDay, USThanksgivingDay), function(fn) as.Date(fn(year)))))
 }
 
 handle_numeric <- function(input) {
@@ -129,4 +123,4 @@ handle_numeric <- function(input) {
 }
 
 #' @export
-datekeeper <- column_transformation(datekeeper_fn, mutating = TRUE, named = TRUE)
+datekeeper <- column_transformation(syberiaMungebits:::datekeeper_fn, mutating = TRUE, named = TRUE)
