@@ -19,9 +19,9 @@ Makes five assumptions about dates:
 \item{mode}{tells the desired output format
 "date" will return a R date
 "numeric" will return the number of days since Jan 1, 1970
-"holiday" will return TRUE if it's a US federal holiday and FALSE if not
-"weekend" will return TRUE if it's a weekend and FALSE if not
-"businessday" will return TRUE if it's a weekend or holiday}
+"holiday" will return \code{TRUE} if it's a US federal holiday and FALSE if not
+"weekend" will return \code{TRUE} if it's a weekend and FALSE if not
+"businessday" will return \code{TRUE} if it's a weekend or holiday}
 }
 \description{
 Take input in a wide variety of date/time formats and output it in a variety of consistent formats.

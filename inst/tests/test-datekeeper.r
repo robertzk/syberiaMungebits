@@ -9,6 +9,7 @@ check_date <- function(date, expectation, mode="date") {
   eval(substitute(expect_equal(expectation, mp$data$x)))
 }
 
+test_that("it pends", { pending() })
 test_that("it converts YYYY-MM-DD to date", { check_date('1991-12-11', as.Date('1991-12-11')) })
 test_that("it converts YYYY/MM/DD to date", { check_date('1991/12/11', as.Date('1991/12/11')) })
 test_that("it converts YYYY MM DD to date", { check_date('1991 12 11', as.Date('1991/12/11')) })
