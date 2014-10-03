@@ -17,10 +17,8 @@
 #'   "weekend" will return TRUE if it's a weekend and FALSE if not
 #'   "businessday" will return TRUE if it's a weekend or holiday
 datekeeper_fn <- function(input, mode="date") {
-  Ramd::packages('timeDate')
   waterfall <- list(syberiaMungebits:::standardize_dividers,
                     syberiaMungebits:::remove_punctuation,
-                    syberiaMungebits:::handle_time,
                     syberiaMungebits:::handle_two_digit_years,
                     syberiaMungebits:::handle_order,
                     syberiaMungebits:::handle_month,
