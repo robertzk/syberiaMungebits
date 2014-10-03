@@ -16,7 +16,8 @@ Imports:
     arules,
     statsUtils,
     Ramd,
-    timeDate
+    timeDate,
+    lubridate
 LinkingTo: Rcpp
 License: MIT
 LazyData: true
