@@ -98,20 +98,6 @@ convert_outgoing <- function(input, mode="date") {
   } else "NA"
 }
 
-is.weekend <- function(date) {
-  weekdays(date) == 'Saturday' || weekdays(date) == 'Sunday'
-}
-
-is.holiday <- function(date) {
-  year = as.numeric(format(date, '%Y'))
-  any(is.element(date, sapply(list(ChristmasDay,
-                                   USNewYearsDay,
-                                   USMemorialDay,
-                                   USIndependenceDay,
-                                   LaborDay,
-                                   USThanksgivingDay),
-                              function(fn) as.Date(fn(year)))))
-}
 
 handle_numeric <- function(input) {
   if (nchar(input) != 8) as.Date(input, origin='1970/1/1') else as.Date(paste0(substring(input,0,4), '-', substring(input,5,6), '-', substring(input,7,8)))
