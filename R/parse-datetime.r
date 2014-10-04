@@ -11,7 +11,7 @@
 
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
-createdat_fn <- function(createdat, mode="since") {
+datetime_fn <- function(createdat, mode="since") {
   datetime = lubridate:::ymd_hms(createdat)
   switch(mode,
     "since" = as.numeric(as.Date(datetime)),
@@ -49,4 +49,4 @@ is.holiday <- function(date) {
 }
 
 #' @export
-createdat_munger <- column_transformation(syberiaMungebits:::createdat_fn, mutating = TRUE)
+parse_datetime <- column_transformation(syberiaMungebits:::datetime_fn, mutating = TRUE)

@@ -1,10 +1,10 @@
-context("datekeeper")
+context("parse_datetime")
 library(timeDate)
 
 check_date <- function(date, expectation, mode='since') {
   df <- data.frame(x = date, y = 'bleh')
   mp <- mungebits:::mungeplane(df)
-  mb <- mungebits:::mungebit(createdat_munger)
+  mb <- mungebits:::mungebit(parse_datetime)
   mb$run(mp, 1, mode=mode)
   eval(substitute(expect_equal(expectation, mp$data$x)))
 }
