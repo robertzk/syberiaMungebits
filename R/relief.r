@@ -18,10 +18,10 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     dataframe[[depvarname]] <- NULL
     
     # Drop records with missings
-    keep <- complete.cases(dataframe)
-    dataframe <- dataframe[keep, ]
-    if (verbose) cat("Dropping ", sum(!keep), " rows with NAs\n", sep='')
-    if (nrow(dataframe)==0) stop("No rows in dataframe")
+    #keep <- complete.cases(dataframe)
+    #dataframe <- dataframe[keep, ]
+    #if (verbose) cat("Dropping ", sum(!keep), " rows with NAs\n", sep='')
+    #if (nrow(dataframe)==0) stop("No rows in dataframe")
     
     # Drop factors
     #keep <- !unlist(lapply(dataframe, is.factor))
@@ -45,23 +45,60 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     response <- response[rows]
 
     # Convert to model.matrix
-    orig.col.names <- colnames(dataframe)
-    mm <- model.matrix(~.-1, dataframe)
-    dataframe <- as.data.frame(mm)
+    #orig.col.names <- colnames(dataframe)
+    #mm <- model.matrix(~.-1, dataframe)
+    #dataframe <- as.data.frame(mm)
     
-    # Standardize columns
-    dataframe <- as.data.frame(lapply(dataframe, scale))
+    # Standardize numeric columns
+    #dataframe <- as.data.frame(lapply(dataframe, scale))
+    for (n in 1:ncol(dataframe)) {
+      x <- dataframe[ ,n]
+      if (is.numeric(x)) dataframe[ ,n] <- (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
+    }
     if (sum(response==0)<2) stop("Not enough 0s in data")
     if (sum(response==1)<2) stop("Not enough 1s in data")
     if (length(unique(response))>2) stop("Response variable has more than two levels")
     
-    # difference function (between records)
-    df.range <- apply(dataframe, 2, range)
-    df.range <- df.range[2,] - df.range[1,]
-    difference <- function(r1, r2) {
-      abs(r1 - r2)/df.range
+    # which columns are factors
+    factor.cols <- sapply(dataframe, function(x) is.factor(x) || is.character(x))
+    
+    # basic difference between two records
+    n.levels <- apply(dataframe, 2, function(x) length(table(x)))
+    delta <- function(r1, r2) {
+      
+      r1.n <- as.numeric(r1[!factor.cols])
+      r2.n <- as.numeric(r2[!factor.cols])
+      r1.f <- r1[factor.cols]
+      r2.f <- r2[factor.cols]
+      
+      # difference of numeric part
+      results.n <- abs(r1.n - r2.n)
+      
+      # difference of factor part
+      results.f <- ifelse(r1.f==r2.f, 0, 1)
+      
+      # combine parts
+      results <- r1
+      results[!factor.cols] <- results.n
+      results[factor.cols] <- results.f
+      
+      # fill in missings with RELIEF-B method
+      results[is.na(results)] <- 1 - 1/n.levels[is.na(results)]
+      
+      # return results
+      results
     }
     
+    # range of variable (1 for factors)
+    range2 <- function(x) if (is.numeric(x)) range(x, na.rm=T) else c(0,1)
+    df.range <- sapply(dataframe, range2)
+    df.range <- df.range[2,] - df.range[1,]
+    
+    # difference function (normalized by range of variable)
+    difference <- function(r1, r2) {
+      delta(r1,r2)/df.range
+    }
+  
     # function to find the smallest n things
     which.min.n <- function(x,n) {
       order(x)[1:min(n, length(x))]
@@ -74,11 +111,11 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     for (i in seq_len(nrow(dataframe))) {
       
       # Retrieve the record and associated class
-      record <- as.numeric(dataframe[i, ])
+      record <- dataframe[i, ]
       my_class <- response[i]
       
       # Compute distances to other records (Euclidean)
-      distances <- apply(dataframe, 1, function(r) sum((record - r)^2))
+      distances <- apply(dataframe, 1, function(r) sum(delta(record,r)^2))
       
       # Find closest hit and closest miss
       hits <- setdiff(which(response==my_class), i)
@@ -104,10 +141,7 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
   }
   
   # output the final scores
-  # for factors print the maximum score over all levels
-  group.scores <- tapply(scores, attributes(mm)$assign, max)
-  names(group.scores) <- orig.col.names
-  print(group.scores)
+  print(scores)
   
   # drop_columns <- inputs$drop_columns
   # eval.parent(substitute(for (varname in drop_columns) dataframe[[varname]] <- NULL))
@@ -129,23 +163,43 @@ for (i in 1:5) {
 }
 
 
+
+
+
 dataframe <- list()
+complete.df <- list()
 for (i in 1:5) {
+  
   varname <- paste0('var',i)
+  
+  # 4 numeric columns and 1 factor column
   if (i==5) {
     dataframe[[varname]] <- sample(LETTERS[1:5], size=200, replace=TRUE)
   } else {
     dataframe[[varname]] <- rnorm(200)
   }
+  
+  # original dataframe without missing values
+  complete.df[[varname]] <- dataframe[[varname]]
+  
+  # make some rows missing
+  na.rows <- sample.int(n=200, size=20)
+  dataframe[[varname]][na.rows] <- NA 
 }
+complete.df <- as.data.frame(complete.df)
 dataframe <- as.data.frame(dataframe)
+
 for (i in 1:5) {
   if (i==5) {
-    p <- ifelse(dataframe$var5=='C', 0.8, 0.2)
+    p <- ifelse(complete.df$var5=='C', 0.99, 0.01)
   } else {
-    p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+    p <- 1/(1 + exp(-5*scale(complete.df[,i])))
   }
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
-  relief_alg(dataframe, frac=NA, k=5, verbose=TRUE)
+  relief_alg(dataframe, frac=NA, k=10, verbose=TRUE)
 }
+
+
+
+
 
