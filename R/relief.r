@@ -17,18 +17,6 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     response <- dataframe[[depvarname]]
     dataframe[[depvarname]] <- NULL
     
-    # Drop records with missings
-    #keep <- complete.cases(dataframe)
-    #dataframe <- dataframe[keep, ]
-    #if (verbose) cat("Dropping ", sum(!keep), " rows with NAs\n", sep='')
-    #if (nrow(dataframe)==0) stop("No rows in dataframe")
-    
-    # Drop factors
-    #keep <- !unlist(lapply(dataframe, is.factor))
-    #dataframe <- dataframe[ , keep]
-    #if (verbose) cat("Dropping ", sum(!keep), " factor columns\n", sep='')
-    #if (ncol(dataframe)==0) stop("No columns in dataframe")
-    
     # Select random rows for measuring variable importance
     if (is.null(frac)) {
       n.rows <- min(100, nrow(dataframe))
@@ -43,14 +31,8 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     if (verbose) cat("Computing variable importances on ", n.rows, " rows\n", sep='')
     dataframe <- dataframe[rows, ]
     response <- response[rows]
-
-    # Convert to model.matrix
-    #orig.col.names <- colnames(dataframe)
-    #mm <- model.matrix(~.-1, dataframe)
-    #dataframe <- as.data.frame(mm)
     
     # Standardize numeric columns
-    #dataframe <- as.data.frame(lapply(dataframe, scale))
     for (n in 1:ncol(dataframe)) {
       x <- dataframe[ ,n]
       if (is.numeric(x)) dataframe[ ,n] <- (x - mean(x, na.rm=TRUE))/sd(x, na.rm=TRUE)
@@ -127,11 +109,11 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       
       # Update score vector
       for (row in 1:nrow(closest.hits)) {
-        hit <- as.numeric(closest.hits[row, ])
+        hit <- closest.hits[row, ]
         scores <- scores - difference(record, hit) / nrow(dataframe) / k
       }
       for (row in 1:nrow(closest.misses)) {
-        miss <- as.numeric(closest.misses[row, ])
+        miss <- closest.misses[row, ]
         scores <- scores + difference(record, miss) / nrow(dataframe) / k
       }
       
