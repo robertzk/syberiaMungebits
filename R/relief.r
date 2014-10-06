@@ -1,4 +1,4 @@
-#' Drop one of each monotonically related pair
+#' Drop unimportant variables.
 #'
 #' @param dataframe A data.frame.
 #' @param depvarname string Name of the dependent variable
@@ -49,6 +49,13 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     if (sum(response==1)<2) stop("Not enough 1s in data")
     if (length(unique(response))>2) stop("Response variable has more than two levels")
     
+    # difference function (between records)
+    df.range <- apply(dataframe, 2, range)
+    df.range <- df.range[2,] - df.range[1,]
+    difference <- function(r1, r2) {
+      abs(r1 - r2)/df.range
+    }
+    
     # Initialize scores
     scores <- rep(0, ncol(dataframe))
     
@@ -70,8 +77,8 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       
       # Update score vector
       scores <- (scores
-                 -(record - dataframe[closest.hit, ])^2 / ncol(dataframe) 
-                 +(record - dataframe[closest.miss, ])^2 / ncol(dataframe))
+                 -difference(record, dataframe[closest.hit,  ]) / nrow(dataframe)
+                 +difference(record, dataframe[closest.miss, ]) / nrow(dataframe))
       
     #}
     
@@ -86,12 +93,25 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
   TRUE
 }
 
+
+
 dataframe <- iris
 for (i in 1:4) {
-  p <- 1/(1 + exp(-3*scale(dataframe[,i])))
+  p <- 1/(1 + exp(-5*scale(dataframe[,i])))
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
   relief_alg(dataframe, frac=NA, verbose=TRUE)
 }
 
 
+dataframe <- list()
+for (i in 1:5) {
+  varname <- paste0('var',i)
+  dataframe[[varname]] <- rnorm(200)
+}
+dataframe <- as.data.frame(dataframe)
+for (i in 1:5) {
+  p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+  dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
+  relief_alg(dataframe, frac=NA, verbose=TRUE)
+}
 
