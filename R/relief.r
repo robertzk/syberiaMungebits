@@ -41,16 +41,16 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     }
     rows <- sample.int(nrow(dataframe), n.rows)
     if (verbose) cat("Computing variable importances on ", n.rows, " rows\n", sep='')
-    
+    dataframe <- dataframe[rows, ]
+    response <- response[rows]
+
     # Convert to model.matrix
     orig.col.names <- colnames(dataframe)
     mm <- model.matrix(~.-1, dataframe)
     dataframe <- as.data.frame(mm)
     
-    # Subset data and standardize columns
-    dataframe <- dataframe[rows, ]
+    # Standardize columns
     dataframe <- as.data.frame(lapply(dataframe, scale))
-    response <- response[rows]
     if (sum(response==0)<2) stop("Not enough 0s in data")
     if (sum(response==1)<2) stop("Not enough 1s in data")
     if (length(unique(response))>2) stop("Response variable has more than two levels")
@@ -74,7 +74,7 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     for (i in seq_len(nrow(dataframe))) {
       
       # Retrieve the record and associated class
-      record <- dataframe[i, ]
+      record <- as.numeric(dataframe[i, ])
       my_class <- response[i]
       
       # Compute distances to other records (Euclidean)
@@ -85,23 +85,29 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       misses <- which(response!=my_class)
       closest.hit.indices <- hits[which.min.n(distances[hits], k)]
       closest.miss.indices <- misses[which.min.n(distances[misses], k)]
-      closest.hits <- as.data.frame(t(dataframe[closest.hit.indices, ]))
-      closest.misses <- as.data.frame(t(dataframe[closest.miss.indices, ]))
+      closest.hits <- dataframe[closest.hit.indices, ]
+      closest.misses <- dataframe[closest.miss.indices, ]
       
       # Update score vector
-      for (hit in closest.hits) scores <- scores - difference(record, hit) / nrow(dataframe)
-      for (miss in closest.misses) scores <- scores + difference(record, miss) / nrow(dataframe)
+      for (row in 1:nrow(closest.hits)) {
+        hit <- as.numeric(closest.hits[row, ])
+        scores <- scores - difference(record, hit) / nrow(dataframe) / k
+      }
+      for (row in 1:nrow(closest.misses)) {
+        miss <- as.numeric(closest.misses[row, ])
+        scores <- scores + difference(record, miss) / nrow(dataframe) / k
+      }
       
     #}
     
     # inputs$drop_columns <<- unique(drop_columns)
   }
   
-  print(scores)
-  
   # output the final scores
   # for factors print the maximum score over all levels
-  tapply(scores, attributes(mm)$assign, max)
+  group.scores <- tapply(scores, attributes(mm)$assign, max)
+  names(group.scores) <- orig.col.names
+  print(group.scores)
   
   # drop_columns <- inputs$drop_columns
   # eval.parent(substitute(for (varname in drop_columns) dataframe[[varname]] <- NULL))
@@ -119,18 +125,26 @@ for (i in 1:5) {
     p <- 1/(1 + exp(-5*scale(dataframe[,i])))
   }
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
-  relief_alg(dataframe, frac=NA, verbose=TRUE)
+  relief_alg(dataframe, frac=NA, k=10, verbose=TRUE)
 }
 
 
 dataframe <- list()
 for (i in 1:5) {
   varname <- paste0('var',i)
-  dataframe[[varname]] <- rnorm(200)
+  if (i==5) {
+    dataframe[[varname]] <- sample(LETTERS[1:5], size=200, replace=TRUE)
+  } else {
+    dataframe[[varname]] <- rnorm(200)
+  }
 }
 dataframe <- as.data.frame(dataframe)
 for (i in 1:5) {
-  p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+  if (i==5) {
+    p <- ifelse(dataframe$var5=='C', 0.8, 0.2)
+  } else {
+    p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+  }
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
   relief_alg(dataframe, frac=NA, k=5, verbose=TRUE)
 }
