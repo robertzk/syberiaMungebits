@@ -4,7 +4,7 @@
 #' @param depvarname string Name of the dependent variable
 #' @param threshold double Score above which to keep variables.
 #' @param frac double Fraction of data to use for estimating predictor scores.  If NA, then use all rows.  If NULL, then min(100, nrow(dataframe)) rows are chosen at random.
-#' @param k integer Number of nearest neighbors to use
+#' @param k integer Number of nearest neighbors to use.  Higher values should improve accuracy but slow the algorithm down.
 #' @param verbose logical Whether to output information.
 #' @export
 relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
@@ -24,10 +24,10 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     if (nrow(dataframe)==0) stop("No rows in dataframe")
     
     # Drop factors
-    keep <- !unlist(lapply(dataframe, is.factor))
-    dataframe <- dataframe[ , keep]
-    if (verbose) cat("Dropping ", sum(!keep), " factor columns\n", sep='')
-    if (ncol(dataframe)==0) stop("No columns in dataframe")
+    #keep <- !unlist(lapply(dataframe, is.factor))
+    #dataframe <- dataframe[ , keep]
+    #if (verbose) cat("Dropping ", sum(!keep), " factor columns\n", sep='')
+    #if (ncol(dataframe)==0) stop("No columns in dataframe")
     
     # Select random rows for measuring variable importance
     if (is.null(frac)) {
@@ -41,6 +41,11 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
     }
     rows <- sample.int(nrow(dataframe), n.rows)
     if (verbose) cat("Computing variable importances on ", n.rows, " rows\n", sep='')
+    
+    # Convert to model.matrix
+    orig.col.names <- colnames(dataframe)
+    mm <- model.matrix(~.-1, dataframe)
+    dataframe <- as.data.frame(mm)
     
     # Subset data and standardize columns
     dataframe <- dataframe[rows, ]
@@ -75,14 +80,13 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       # Compute distances to other records (Euclidean)
       distances <- apply(dataframe, 1, function(r) sum((record - r)^2))
       
-      
       # Find closest hit and closest miss
       hits <- setdiff(which(response==my_class), i)
       misses <- which(response!=my_class)
       closest.hit.indices <- hits[which.min.n(distances[hits], k)]
       closest.miss.indices <- misses[which.min.n(distances[misses], k)]
-      closest.hits <- dataframe[closest.hit.indices, ]
-      closest.misses <- dataframe[closest.miss.indices, ]
+      closest.hits <- as.data.frame(t(dataframe[closest.hit.indices, ]))
+      closest.misses <- as.data.frame(t(dataframe[closest.miss.indices, ]))
       
       # Update score vector
       for (hit in closest.hits) scores <- scores - difference(record, hit) / nrow(dataframe)
@@ -95,6 +99,10 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
   
   print(scores)
   
+  # output the final scores
+  # for factors print the maximum score over all levels
+  tapply(scores, attributes(mm)$assign, max)
+  
   # drop_columns <- inputs$drop_columns
   # eval.parent(substitute(for (varname in drop_columns) dataframe[[varname]] <- NULL))
   
@@ -104,8 +112,12 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
 
 
 dataframe <- iris
-for (i in 1:4) {
-  p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+for (i in 1:5) {
+  if (i==5) {
+    p <- ifelse(dataframe$Species=='setosa', 0.8, 0.2)
+  } else {
+    p <- 1/(1 + exp(-5*scale(dataframe[,i])))
+  }
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
   relief_alg(dataframe, frac=NA, verbose=TRUE)
 }
