@@ -4,10 +4,11 @@
 #' @param depvarname string Name of the dependent variable
 #' @param threshold double Score above which to keep variables.
 #' @param frac double Fraction of data to use for estimating predictor scores.  If NA, then use all rows.  If NULL, then min(100, nrow(dataframe)) rows are chosen at random.
+#' @param k integer Number of nearest neighbors to use
 #' @param verbose logical Whether to output information.
 #' @export
 relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
-                       threshold, verbose=FALSE) {
+                       k=1, threshold, verbose=FALSE) {
 
   #if (!'drop_columns' %in% names(inputs)) {
     
@@ -56,6 +57,11 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       abs(r1 - r2)/df.range
     }
     
+    # function to find the smallest n things
+    which.min.n <- function(x,n) {
+      order(x)[1:min(n, length(x))]
+    }
+    
     # Initialize scores
     scores <- rep(0, ncol(dataframe))
     
@@ -69,16 +75,18 @@ relief_alg <- function(dataframe, depvarname='dep_var', frac=NULL,
       # Compute distances to other records (Euclidean)
       distances <- apply(dataframe, 1, function(r) sum((record - r)^2))
       
+      
       # Find closest hit and closest miss
       hits <- setdiff(which(response==my_class), i)
       misses <- which(response!=my_class)
-      closest.hit <- hits[which.min(distances[hits])]
-      closest.miss <- misses[which.min(distances[misses])]
+      closest.hit.indices <- hits[which.min.n(distances[hits], k)]
+      closest.miss.indices <- misses[which.min.n(distances[misses], k)]
+      closest.hits <- dataframe[closest.hit.indices, ]
+      closest.misses <- dataframe[closest.miss.indices, ]
       
       # Update score vector
-      scores <- (scores
-                 -difference(record, dataframe[closest.hit,  ]) / nrow(dataframe)
-                 +difference(record, dataframe[closest.miss, ]) / nrow(dataframe))
+      for (hit in closest.hits) scores <- scores - difference(record, hit) / nrow(dataframe)
+      for (miss in closest.misses) scores <- scores + difference(record, miss) / nrow(dataframe)
       
     #}
     
@@ -112,6 +120,6 @@ dataframe <- as.data.frame(dataframe)
 for (i in 1:5) {
   p <- 1/(1 + exp(-5*scale(dataframe[,i])))
   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
-  relief_alg(dataframe, frac=NA, verbose=TRUE)
+  relief_alg(dataframe, frac=NA, k=5, verbose=TRUE)
 }
 
