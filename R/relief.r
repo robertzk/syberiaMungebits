@@ -9,7 +9,7 @@
 #' @param verbose logical Whether to output information.
 #' @param string file path at which to output the relief scores
 #' @export
-relief_alg_1 <- function(dataframe, depvarname='dep_var', threshold,
+relief_alg <- function(dataframe, depvarname='dep_var', threshold,
                          frac=NULL, k=1, drop.zero.range=TRUE, verbose=FALSE,
                          output=NULL) {
 
@@ -142,78 +142,14 @@ relief_alg_1 <- function(dataframe, depvarname='dep_var', threshold,
       
     }
     
-    saveRDS(scores, output)
+    #print(scores)
+    if (!is.null(output)) saveRDS(scores, output)
     drop_columns <- names(scores[scores < threshold])
     inputs$drop_columns <<- unique(drop_columns)
   }
   
-#   # output the final scores
-#   sink('~/Desktop/tmp.txt')
-#   dput(scores)
-#   sink()
-#   sink('~/Desktop/tmp2.txt')
-#   dput(names(scores))
-#   sink()
-  
-browser()
   drop_columns <- inputs$drop_columns
   eval.parent(substitute(for (varname in drop_columns) dataframe[[varname]] <- NULL))
 
   TRUE
 }
-
-
-
-
-# dataframe <- iris
-# for (i in 1:5) {
-#   if (i==5) {
-#     p <- ifelse(dataframe$Species=='setosa', 0.8, 0.2)
-#   } else {
-#     p <- 1/(1 + exp(-5*scale(dataframe[,i])))
-#   }
-#   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
-#   relief_alg(dataframe, frac=NA, k=10, verbose=TRUE)
-# }
-
-
-
-
-
-# dataframe <- list()
-# complete.df <- list()
-# for (i in 1:5) {
-#   
-#   varname <- paste0('var',i)
-#   
-#   # 4 numeric columns and 1 factor column
-#   if (i==5) {
-#     dataframe[[varname]] <- sample(LETTERS[1:5], size=200, replace=TRUE)
-#   } else {
-#     dataframe[[varname]] <- rnorm(200)
-#   }
-#   
-#   # original dataframe without missing values
-#   complete.df[[varname]] <- dataframe[[varname]]
-#   
-#   # make some rows missing
-#   na.rows <- sample.int(n=200, size=20)
-#   dataframe[[varname]][na.rows] <- NA 
-# }
-# complete.df <- as.data.frame(complete.df)
-# dataframe <- as.data.frame(dataframe)
-# 
-# for (i in 1:5) {
-#   if (i==5) {
-#     p <- ifelse(complete.df$var5=='C', 0.99, 0.01)
-#   } else {
-#     p <- 1/(1 + exp(-5*scale(complete.df[,i])))
-#   }
-#   dataframe$dep_var <- rbinom(length(p), size = 1, prob=p)
-#   relief_alg_1(dataframe, threshold=0.1, frac=NA, k=10, verbose=TRUE)
-# }
-
-
-
-
-
