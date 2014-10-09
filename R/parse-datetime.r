@@ -12,7 +12,13 @@
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
 datetime_fn <- function(createdat, mode="since") {
-  datetime = lubridate:::ymd_hms(createdat)
+  datetime <- lubridate:::ymd_hms(createdat)
+  if (is.na(datetime)) {
+    if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
+    datetime <- lubridate:::ymd(createdat)
+  }
+  if (is.na(datetime)) { stop('Improper date format.') }
+
   switch(mode,
     "since" = as.numeric(as.Date(datetime)),
     "hod" = lubridate:::hour(datetime),
