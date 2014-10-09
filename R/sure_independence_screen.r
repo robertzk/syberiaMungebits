@@ -30,9 +30,6 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     granularity <- if (sum(categorical_variables) < 5) 3
       else round(mean(vapply(dataframe[, categorical_variables], nlevels, integer(1))))
 
-    # Raise an exception if the number of levels exceeds 100
-    if (granularity > 100) stop("factor exceeds 100 levels")
-
     discretizer_params <- mungebits:::list_merge(discretizer_params, list(
       granularity = granularity, upper_count_bound = NULL, lower_count_bound = 1))
 
@@ -43,6 +40,12 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     mb$run(sisdf, discretize_cols, granularity = discretizer_params$granularity,
       upper_count_bound = discretizer_params$upper_count_bound,
       lower_count_bound = discretizer_params$lower_count_bound)
+
+    # Raise an exception if the number of levels exceeds 100
+    if (any(sapply(dataframe, function(x) is.factor(x) &&
+                   length(table(x))>max.levels))) {
+      stop("Too many levels")
+    }
 
     # Replace NAs with a new level, "Missing", so that sure independence screening
     # can pick up on potential significance / insignificance of missing values.
