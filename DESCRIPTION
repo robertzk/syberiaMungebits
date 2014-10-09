@@ -23,6 +23,7 @@ License: MIT
 LazyData: true
 Suggests:
     testthat,
+    testthatsomemore,
     knitr,
     microbenchmark
 Roxygen: list(wrap = FALSE)
