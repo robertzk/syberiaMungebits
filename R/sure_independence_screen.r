@@ -15,6 +15,7 @@
 #' @importFrom statsUtils sure_independence_screening
 #' @export
 sure_independence_screen <- function(dataframe, ..., exclude = character(0),
+                                     max.levels = 100,
                                      discretizer_params = list()) {
   if (!'remaining_columns' %in% names(inputs)) {
     # To use statsUtils::sure_independence_screening, we must discretize all variables
