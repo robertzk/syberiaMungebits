@@ -14,7 +14,7 @@
 datetime_fn <- function(createdat, mode="since") {
   datetime <- lubridate:::ymd_hms(createdat)
   if (is.na(datetime)) {
-    if (mode == 'hod') { stop('Improper date format') }
+    if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
     datetime <- lubridate:::ymd(createdat)
   }
   if (is.na(datetime)) { stop('Improper date format.') }
