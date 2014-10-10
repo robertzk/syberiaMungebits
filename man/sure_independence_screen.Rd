@@ -4,7 +4,7 @@
 \title{Sure independence screening function}
 \usage{
 sure_independence_screen(dataframe, ..., exclude = character(0),
-  discretizer_params = list())
+  max.levels = 100, discretizer_params = list())
 }
 \arguments{
 \item{dataframe}{a data.frame. Run sure independence screening on this

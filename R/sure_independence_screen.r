@@ -15,7 +15,7 @@
 #' @importFrom statsUtils sure_independence_screening
 #' @export
 sure_independence_screen <- function(dataframe, ..., exclude = character(0),
-                                     max.levels = 100,
+                                     max_levels = 100,
                                      discretizer_params = list()) {
   if (!'remaining_columns' %in% names(inputs)) {
     # To use statsUtils::sure_independence_screening, we must discretize all variables
@@ -43,9 +43,9 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
       lower_count_bound = discretizer_params$lower_count_bound)
 
     # Raise an exception if the number of levels exceeds 100
-    if (any(sapply(dataframe, function(x) is.factor(x) &&
-                   length(table(x))>max.levels))) {
-      stop("Too many levels")
+    if (any(violations <- vapply(dataframe, function(x) is.factor(x) &&
+          nlevels(x) > max_levels, logical(1)))) {
+      stop("Too many levels in ", paste(colnames(dataframe)[violations], collapse = ', '))
     }
 
     # Replace NAs with a new level, "Missing", so that sure independence screening
