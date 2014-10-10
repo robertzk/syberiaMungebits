@@ -15,6 +15,7 @@
 #' @importFrom statsUtils sure_independence_screening
 #' @export
 sure_independence_screen <- function(dataframe, ..., exclude = character(0),
+                                     max_levels = 100,
                                      discretizer_params = list()) {
   if (!'remaining_columns' %in% names(inputs)) {
     # To use statsUtils::sure_independence_screening, we must discretize all variables
@@ -40,6 +41,12 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     mb$run(sisdf, discretize_cols, granularity = discretizer_params$granularity,
       upper_count_bound = discretizer_params$upper_count_bound,
       lower_count_bound = discretizer_params$lower_count_bound)
+
+    # Raise an exception if the number of levels exceeds 100
+    if (any(violations <- vapply(dataframe, function(x) is.factor(x) &&
+          nlevels(x) > max_levels, logical(1)))) {
+      stop("Too many levels in ", paste(colnames(dataframe)[violations], collapse = ', '))
+    }
 
     # Replace NAs with a new level, "Missing", so that sure independence screening
     # can pick up on potential significance / insignificance of missing values.
