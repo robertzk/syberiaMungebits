@@ -12,14 +12,14 @@
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
 datetime_fn <- function(createdat, mode="since") {
-  datetime <- lubridate:::ymd_hms(createdat)
+  datetime <- suppressWarnings(lubridate:::ymd_hms(createdat))
   if (any(is.na(datetime))) {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
-    datetime <- lubridate:::ymd(createdat)
+    datetime <- suppressWarnings(lubridate:::ymd(createdat))
   }
   if (any(is.na(datetime))) { stop('Improper date format.') }
 
-  switch(mode,
+  suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
     "hod" = lubridate:::hour(datetime),
     "dow" = weekdays(datetime),
@@ -30,7 +30,7 @@ datetime_fn <- function(createdat, mode="since") {
     "weekend" = syberiaMungebits:::is.weekend(datetime),
     "bizday" = !syberiaMungebits:::is.holiday(datetime) && !syberiaMungebits:::is.weekend,
     date
-  )
+  ))
 }
 
 get.doy <- function(date) {
