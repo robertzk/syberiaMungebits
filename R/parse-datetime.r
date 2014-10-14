@@ -28,7 +28,7 @@ datetime_fn <- function(createdat, mode="since") {
     "moy" = lubridate:::month(datetime),
     "holiday" = syberiaMungebits:::is.holiday(datetime),
     "weekend" = syberiaMungebits:::is.weekend(datetime),
-    "bizday" = !syberiaMungebits:::is.holiday(datetime) && !syberiaMungebits:::is.weekend,
+    "bizday" = !syberiaMungebits:::is.holiday(datetime) && !syberiaMungebits:::is.weekend(datetime),
     date
   ))
 }
