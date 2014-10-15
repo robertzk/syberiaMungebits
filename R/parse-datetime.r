@@ -28,30 +28,27 @@ datetime_fn <- function(createdat, mode="since") {
     "moy" = lubridate:::month(datetime),
     "holiday" = syberiaMungebits:::is.holiday(datetime),
     "weekend" = syberiaMungebits:::is.weekend(datetime),
-    "bizday" = !syberiaMungebits:::is.holiday(datetime) && !syberiaMungebits:::is.weekend(datetime),
+    "bizday" = !syberiaMungebits:::is.holiday(datetime) & !syberiaMungebits:::is.weekend(datetime),
     date
   ))
 }
 
 get.doy <- function(date) {
-  thisyear = lubridate:::year(date)
-  janprime = as.Date(paste(c(thisyear,'1','1'), collapse='-'))
+  thisyear <- lubridate:::year(date)
+  janprime <- as.Date(paste(c(thisyear,'1','1'), collapse='-'))
   as.numeric(as.Date(date)) - as.numeric(janprime) + 1
 }
 
 is.weekend <- function(date) {
-  weekdays(date) == 'Saturday' || weekdays(date) == 'Sunday'
+  weekdays(date) == 'Saturday' | weekdays(date) == 'Sunday'
 }
 
 is.holiday <- function(date) {
-  year = lubridate:::year(as.Date(date))
-  any(is.element(as.Date(date), sapply(list(ChristmasDay,
-                                   USNewYearsDay,
-                                   USMemorialDay,
-                                   USIndependenceDay,
-                                   LaborDay,
-                                   USThanksgivingDay),
-                              function(fn) as.Date(fn(year)))))
+  year <- lubridate:::year(as.Date(date))
+  holidays_fun <- list(ChristmasDay, USNewYearsDay, USMemorialDay, LaborDay, USThanksgivingDay)
+  fun <- function(f, ...) { f(...) }
+  holidays <- lapply(lapply(holidays_fun, fun, year), as.Date)
+  as.Date(date) %in% do.call('c',holidays)
 }
 
 #' @export
