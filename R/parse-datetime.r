@@ -48,7 +48,7 @@ is.holiday <- function(date) {
   holidays_fun <- list(ChristmasDay, USNewYearsDay, USMemorialDay, LaborDay, USThanksgivingDay)
   fun <- function(f, ...) { f(...) }
   holidays <- lapply(lapply(holidays_fun, fun, year), as.Date)
-  as.Date(date) %in% do.call('c',holidays)
+  as.Date(date) %in% unlist(holidays)
 }
 
 #' @export
