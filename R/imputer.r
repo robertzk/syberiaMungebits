@@ -5,7 +5,7 @@
 imputer_fn <- function(x) {
   if (!'replacement' %in% names(inputs)) {
     if (is.numeric(x)) {
-      inputs$replacement <- mean(x, na.rm=TRUE)
+      inputs$replacement <- median(x, na.rm=TRUE)
     } else {
       tt <- table(x)
       inputs$replacement <- names(tt)[max(tt)]
