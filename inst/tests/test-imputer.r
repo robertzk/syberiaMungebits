@@ -64,7 +64,7 @@ test_that("it can handle imputation with a function column specifier",  {
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 
-test_that("it can impute factors", {
+test_that("it can impute factors (base case)", {
   
   # make a data.frame
   df <- data.frame(x=1:3, y=factor(c('A','B','B')))
@@ -84,7 +84,7 @@ test_that("it can impute factors", {
   
 })
 
-test_that("it can impute factors", {
+test_that("for imputing factors it will take the first mode when there are more than one", {
   
   # make a data.frame
   df <- data.frame(x=1:3, y=factor(c('A','B','C')))
@@ -104,7 +104,7 @@ test_that("it can impute factors", {
   
 })
 
-test_that("it can impute factors", {
+test_that("it can impute new levels that the validation data.frame has not seen before", {
   
   # make a data.frame
   df <- data.frame(x=1:3, y=factor(c('A','B','A')))
