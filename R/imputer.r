@@ -3,8 +3,16 @@
 #'
 #' @param x an atomic vector.
 imputer_fn <- function(x) {
-  if (!'median' %in% names(inputs)) inputs$median <<- median(x, na.rm = TRUE)
-  x[is.na(x)] <- inputs$median
+  if (!'replacement' %in% names(inputs)) {
+    if (is.numeric(x)) {
+      inputs$replacement <- mean(x, na.rm=TRUE)
+    } else {
+      tt <- table(x)
+      inputs$replacement <- names(tt)[max(tt)]
+    }
+    if (length(inputs$replacement)==0) inputs$replacement <- NA
+  }
+  x[is.na(x)] <- inputs$replacement
   x
 }
 
