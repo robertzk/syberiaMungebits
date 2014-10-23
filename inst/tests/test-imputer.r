@@ -84,6 +84,45 @@ test_that("it can impute factors", {
   
 })
 
+test_that("it can impute factors", {
+  
+  # make a data.frame
+  df <- data.frame(x=1:3, y=factor(c('A','B','C')))
+  
+  # train it
+  mp <- mungebits:::mungeplane(df) 
+  mb <- mungebits:::mungebit(imputer)
+  mb$run(mp)
+  
+  # run it on a data.frame with a missing value
+  df[3,2] <- NA
+  mp2 <- mungebits:::mungeplane(df)
+  mb$run(mp2)
+  
+  # check that it works in the simplest case
+  expect_identical(as.character(mp2$data$y), c('A','B','A'), "Fails when there are multiple modes")
+  
+})
 
-# no mode
-# missing level in new data frame
+test_that("it can impute factors", {
+  
+  # make a data.frame
+  df <- data.frame(x=1:3, y=factor(c('A','B','A')))
+  
+  # train it
+  mp <- mungebits:::mungeplane(df) 
+  mb <- mungebits:::mungebit(imputer)
+  mb$run(mp)
+  
+  # run it on a data.frame with a missing value
+  df <- data.frame(x=1:3, y=factor(c(NA, NA, NA)))
+  mp2 <- mungebits:::mungeplane(df)
+  mb$run(mp2)
+  
+  # check that it works in the simplest case
+  expect_identical(as.character(mp2$data$y), c('A','A','A'), 
+                   "Fails when there is a new level in the factor to be imputed")
+  
+})
+
+
