@@ -99,7 +99,7 @@ test_that("for imputing factors it will take the first mode when there are more 
   mp2 <- mungebits:::mungeplane(df)
   mb$run(mp2)
   
-  # check that it works in the simplest case
+  # check that it imputes 
   expect_identical(as.character(mp2$data$y), c('A','B','A'), "Fails when there are multiple modes")
   
 })
@@ -119,7 +119,7 @@ test_that("it can impute new levels that the validation data.frame has not seen 
   mp2 <- mungebits:::mungeplane(df)
   mb$run(mp2)
   
-  # check that it works in the simplest case
+  # check that it imputes 
   expect_identical(as.character(mp2$data$y), c('A','A','A'), 
                    "Fails when there is a new level in the factor to be imputed")
   
