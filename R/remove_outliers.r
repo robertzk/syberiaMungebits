@@ -5,8 +5,9 @@
 
 remove_outliers_fn <- function(x , threshold ) {
     x[abs(as.vector(scale(x))) > threshold] <- NA
+    x
 }
 
 #' @export
-remove_outliers <- column_transformation(remove_outliers_fn, mutating = TRUE, named = TRUE)
+remove_outliers <- column_transformation(remove_outliers_fn )
 
