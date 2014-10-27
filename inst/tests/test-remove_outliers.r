@@ -4,7 +4,7 @@ context("remove_outliers")
 mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); suppressMessages(require(mungebits))
 
 test_that("removes eggregious outliers ", {
-  vec = rnorm(20)
+  vec = runif(min = 0, max = 1, n=20) 
   vec[10] = 10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -14,7 +14,7 @@ test_that("removes eggregious outliers ", {
 })
 
 test_that("works with negative values ", {
-  vec = rnorm(20)
+  vec = runif(min = 0, max = 1, n=20) 
   vec[10] = -10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -24,7 +24,7 @@ test_that("works with negative values ", {
 })
 
 test_that("will remove outliers based upon TRAIN mean & sd ", {
-  vec = rnorm(20)
+  vec = runif(min = 0, max = 1, n=20) 
   vec[10] = 10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -36,7 +36,7 @@ test_that("will remove outliers based upon TRAIN mean & sd ", {
 })
 
 test_that("threshold argument works ", {
-  vec = rnorm(20)
+  vec = runif(min = 0, max = 1, n=20) 
   vec[10] = -10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -44,13 +44,5 @@ test_that("threshold argument works ", {
   mb$run(mp, threshold = 0 )  # will remove all values as the absolute value of all z-scores > 0 
   expect_that(all(is.na(mp$data[, 1])), equals(TRUE))
 })
-
-
-run_mungebit <- function(runner) {
-  iris2 <- mungebits:::mungeplane(iris)
-  mb <- mungebits:::mungebit(renamer)
-  mb$run(iris2, runner)
-  iris2
-}
 
 if (!mungebits_loaded) unloadNamespace('mungebits')
