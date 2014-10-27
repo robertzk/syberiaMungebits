@@ -14,7 +14,7 @@ test_that("removes eggregious outliers ", {
 })
 
 test_that("works with negative values ", {
-  vec = runif(min = 0, max = 1, n=20) 
+  vec = runif(min = 0, max = 1, n = 20) 
   vec[10] = -10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -24,7 +24,7 @@ test_that("works with negative values ", {
 })
 
 test_that("will remove outliers based upon TRAIN mean & sd ", {
-  vec = runif(min = 0, max = 1, n=20) 
+  vec = runif(min = 0, max = 1, n = 20) 
   vec[10] = 10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
@@ -36,7 +36,7 @@ test_that("will remove outliers based upon TRAIN mean & sd ", {
 })
 
 test_that("threshold argument works ", {
-  vec = runif(min = 0, max = 1, n=20) 
+  vec = runif(min = 0, max = 1, n = 20) 
   vec[10] = -10 
   df <- data.frame(vec) 
   mb <- mungebits:::mungebit(remove_outliers)
