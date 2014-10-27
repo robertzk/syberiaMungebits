@@ -1,6 +1,7 @@
-syberiaMungebits
+Common mungebits for syberia [![Build Status](https://travis-ci.org/robertzk/syberiaMungebits.svg?branch=master)](https://travis-ci.org/robertzk/syberiaMungebits.svg?branch=master)
 ========================
 
-Mungebits transformations
+![syberia mungebits](http://i.imgur.com/bOIqR0i.png)
 
-[![Build Status](https://travis-ci.org/robertzk/syberiaMungebits.svg?branch=master)](https://travis-ci.org/robertzk/syberiaMungebits.svg?branch=master)
+Data preparation snack bites.
+
