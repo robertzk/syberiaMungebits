@@ -63,3 +63,66 @@ test_that("it can handle imputation with a function column specifier",  {
 
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
+
+test_that("it can impute factors (base case)", {
+  
+  # make a data.frame
+  df <- data.frame(x=1:3, y=factor(c('A','B','B')))
+  
+  # train it
+  mp <- mungebits:::mungeplane(df) 
+  mb <- mungebits:::mungebit(imputer)
+  mb$run(mp)
+  
+  # run it on a data.frame with a missing value
+  df[1,2] <- NA
+  mp2 <- mungebits:::mungeplane(df)
+  mb$run(mp2)
+  
+  # check that it works in the simplest case
+  expect_identical(as.character(mp2$data$y), c('B','B','B'), "Failed to impute")
+  
+})
+
+test_that("for imputing factors it will take the first mode when there are more than one", {
+  
+  # make a data.frame
+  df <- data.frame(x=1:3, y=factor(c('A','B','C')))
+  
+  # train it
+  mp <- mungebits:::mungeplane(df) 
+  mb <- mungebits:::mungebit(imputer)
+  mb$run(mp)
+  
+  # run it on a data.frame with a missing value
+  df[3,2] <- NA
+  mp2 <- mungebits:::mungeplane(df)
+  mb$run(mp2)
+  
+  # check that it imputes 
+  expect_identical(as.character(mp2$data$y), c('A','B','A'), "Fails when there are multiple modes")
+  
+})
+
+test_that("it can impute new levels that the validation data.frame has not seen before", {
+  
+  # make a data.frame
+  df <- data.frame(x=1:3, y=factor(c('A','B','A')))
+  
+  # train it
+  mp <- mungebits:::mungeplane(df) 
+  mb <- mungebits:::mungebit(imputer)
+  mb$run(mp)
+  
+  # run it on a data.frame with a missing value
+  df <- data.frame(x=1:3, y=factor(c(NA, NA, NA)))
+  mp2 <- mungebits:::mungeplane(df)
+  mb$run(mp2)
+  
+  # check that it imputes 
+  expect_identical(as.character(mp2$data$y), c('A','A','A'), 
+                   "Fails when there is a new level in the factor to be imputed")
+  
+})
+
+
