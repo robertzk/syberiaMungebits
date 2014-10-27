@@ -19,6 +19,7 @@ test_that("it imputes a column in a dataframe correctly", {
   mb <- x[[1]]; iris2 <- x[[2]]
   expect_equal(medians(iris), unlist(iris2$data[1, 1:2]))
   # Ignore starred attributes for now
+  browser()
   expect_equal(length(grep("^[^*].*[^*]?", names(mb$inputs))), 2,
     info = paste0("Expecting imputer mungebit to store inputs for 2 columns.",
                   " Did you set ",
