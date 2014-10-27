@@ -5,11 +5,11 @@
 
 remove_outliers_fn <- function(x, threshold = 3) {
   if (!'removed_outliers' %in% names(inputs)) {
-    inputs$mean <- mean(x, na.rm = TRUE)
-    inputs$sd <- sd(x, na.rm = TRUE) 
-    inputs$removed_outliers <- TRUE  ## not sure if another mungebit has a mean namespace 
+    inputs$mean <<- mean(x, na.rm = TRUE)
+    inputs$sd <<- sd(x, na.rm = TRUE) 
+    inputs$removed_outliers <<- TRUE  ## not sure if another mungebit has a mean namespace 
   }
-  x[abs((x - inputs$mean(x)) / inputs$sd) > threshold] <- NA
+  x[abs((x - inputs$mean) / inputs$sd) > threshold] <- NA
   x
 }
 
