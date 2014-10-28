@@ -30,9 +30,14 @@ information_gain <- function(x, y, min.category=10) {
     }
     probs <- seq(0, 1, length.out=num.buckets+1)
     probs <- probs[-c(1,length(probs))]
-    qq <- c(-Inf, quantile(x, probs=probs), Inf)
+    qq <- unique(c(-Inf, quantile(x, probs=probs, na.rm=TRUE), Inf))
     x <- factor(cut(x, qq))
   }
+  
+  # missing values get their own level
+  #z <- as.character(x)
+  #z[is.na(z)] <- "Missing"
+  #x <- factor(z)
   
   # compute the importance metric
   ig <- 0

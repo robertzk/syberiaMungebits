@@ -36,3 +36,55 @@ test_that("it (mostly) correctly filters out noisy variables in a simulated data
   
   if (!mungebits_loaded) unloadNamespace('mungebits')
 })
+
+test_that("it can handle missing values in the dataframe", {
+  
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+  
+  # create dataframe
+  x <- 1:10; x[3] <- NA; x[10] <- NA
+  y <- rbinom(10, 1, 0.5)
+  df <- data.frame(dep_var=y, x)
+  
+  # make a mungeplane and mungebit
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(infogain)
+  
+  # run the algorithm
+  success <- TRUE
+  tryCatch(
+    mb$run(mp, min.category=1),
+    error = function(e) success <<- FALSE
+  )
+  
+  # test
+  expect_true(success, info="Missing values caused infogain to crash")
+  
+  if (!mungebits_loaded) unloadNamespace('mungebits')
+})
+
+test_that("it can handle single-valued variables", {
+  
+  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
+  
+  # create dataframe
+  x <- rep(1, 100)
+  y <- rbinom(100, 1, 0.5)
+  df <- data.frame(dep_var=y, x)
+  
+  # make a mungeplane and mungebit
+  mp <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(infogain)
+  
+  # run the algorithm
+  success <- TRUE
+  tryCatch(
+    mb$run(mp, min.category=10),
+    error = function(e) success <<- FALSE
+  )
+  
+  # test
+  expect_true(success, info="Single-valued variable caused infogain to crash")
+  
+  if (!mungebits_loaded) unloadNamespace('mungebits')
+})
