@@ -1,7 +1,9 @@
-#' Impute a column by mean
-#' Only meant to be used as a mungebit
+#' Select topN features based on theoretical information gain
 #'
-#' @param x an atomic vector.
+#' @param dataframe data.frame It is what you think it is.
+#' @param depvar string Name of the 0/1 response variable
+#' @param topN integer Number of variables to keep
+#' @param min.category integer Numeric variables are discretized in bins, with the bin size chosen so that on average each bin should have at least min.category 0s and min.category 1s.
 
 entropy <- function(y) {
   N0 <- sum(y==0)
