@@ -35,9 +35,9 @@ information_gain <- function(x, y, min.category=10) {
   }
   
   # missing values get their own level
-  #z <- as.character(x)
-  #z[is.na(z)] <- "Missing"
-  #x <- factor(z)
+  z <- as.character(x)
+  z[is.na(z)] <- "Missing"
+  x <- factor(z)
   
   # compute the importance metric
   ig <- 0
