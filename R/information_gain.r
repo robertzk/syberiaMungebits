@@ -30,7 +30,7 @@ information_gain <- function(x, y, min.category=10) {
     }
     probs <- seq(0, 1, length.out=num.buckets+1)
     probs <- probs[-c(1,length(probs))]
-    qq <- unique(c(-Inf, quantile(x, probs=probs, na.rm=TRUE), Inf))
+    qq <- unique(c(-Inf, quantile(x, probs=probs, na.rm=TRUE, type=1), Inf))
     x <- factor(cut(x, qq))
   }
   
