@@ -1,7 +1,7 @@
 #' Replace arbitrary values in your data
 #' 
 #' @param x an atomic vector. The column to transform.
-#' @param values_map a list. If named, the values get replaced w/ the names.
+#' @param values_map a list. If named, the names get replaced w/ the values.
 #'    Otherwise, the list elements are lists of 2 elements, the first of
 #'    which are the values to be replaced and the second the replacement value.
 #' @return the replaced column
