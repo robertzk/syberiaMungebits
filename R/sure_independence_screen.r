@@ -52,13 +52,12 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
     # can pick up on potential significance / insignificance of missing values.
     (mungebits:::mungebit(value_replacer))$run(sisdf, is.factor, list(list(NA, 'Missing')))
 
-    screened_columns <- setdiff(colnames(sisdf$data), exclude)
-    sisdf <- sisdf$data
-    keeps <- unlist(parallel::mclapply(sisdf[, screened_columns], function(column) {
-      !is.null(statsUtils::sure_independence_screening(sisdf$dep_var, column, ...))
-    }))
+    mungebits:::mungebit(column_transformation(eval(bquote(function(column, ...) {
+      if (is.null(statsUtils::sure_independence_screening(.(dataframe$dep_var), column, ...))) NULL
+      else column
+    }))))$run(sisdf, setdiff(colnames(sisdf$data), exclude), ...)
 
-    inputs$remaining_columns <<- c(exclude, screened_columns[keeps])
+    inputs$remaining_columns <<- c(exclude, colnames(sisdf$data))
   }
   inputs$remaining_columns <- intersect(inputs$remaining_columns, colnames(dataframe))
   removed <- setdiff(colnames(dataframe), inputs$remaining_columns)
