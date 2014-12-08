@@ -17,7 +17,8 @@ datetime_fn <- function(createdat, mode="since") {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
     datetime <- suppressWarnings(lubridate:::ymd(createdat))
   }
-  if (any(is.na(datetime))) { stop('Improper date format.') }
+  
+  # if (any(is.na(datetime))) { stop('Improper date format.') }
 
   suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
