@@ -12,13 +12,21 @@
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
 datetime_fn <- function(createdat, mode="since") {
+  
+  # track which records are NA before the mungebit
+  originally_NA <- is.na(createdat)
+  
+  # do the conversion
   datetime <- suppressWarnings(lubridate:::ymd_hms(createdat))
   if (any(is.na(datetime))) {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
     datetime <- suppressWarnings(lubridate:::ymd(createdat))
   }
   
-  if (any(is.na(datetime))) { warning('Improper date format.') }
+  # check to see if any records are converted to NA
+  if (any(is.na(datetime[!originally_NA]))) { 
+    stop('Improper date format.') 
+  }
 
   suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
