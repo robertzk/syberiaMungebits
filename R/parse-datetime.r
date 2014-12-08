@@ -18,7 +18,7 @@ datetime_fn <- function(createdat, mode="since") {
     datetime <- suppressWarnings(lubridate:::ymd(createdat))
   }
   
-  # if (any(is.na(datetime))) { stop('Improper date format.') }
+  if (any(is.na(datetime))) { warning('Improper date format.') }
 
   suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
