@@ -1,7 +1,4 @@
-#' Constrain a numeric column to the range [min,max] of the training set 
-#'
-#' @param x an atomic vector
-#' @param digits how many decimal places you would like your numeric number to contain after its been truncated
+#' attain visualize insights into data  
 
 visualize <- function(df) {
   for (i in 1:ncol(df) {
