@@ -8,6 +8,13 @@ check_date <- function(date, expectation, mode='since') {
   eval(substitute(expect_equal(expectation, mp$data$x)))
 }
 
+check_NA <- function(date, mode='since') {
+  mb <- set_mungebit()
+  mp <- set_mungeplane(date)
+  mb$run(mp, 1, mode=mode)
+  expect_true(is.na(mp$data$x))
+}
+  
 check_invalid_date <- function(date, expectation, mode='since') {
   mb <- set_mungebit()
   mp <- set_mungeplane(date)
@@ -28,6 +35,7 @@ date = '1991-12-11'
 multiple_datetimes = c('1991-01-01 12:34:56.789', '1992-01-01 12:34:56.789', '1993-01-01 12:34:56.789')
 multiple_dates = c('1991-01-01', '1992-01-01', '1993-01-01')
 test_that("it converts to numeric date", { check_date(datetime, 8014) })
+test_that("it doesn't mind NAs", check_NA(NA))
 test_that("it converts to hour of day", { check_date(datetime, 3, 'hod') })
 test_that("it converts to day of week", { check_date(datetime, 'Wednesday', 'dow') })
 test_that("it converts to day of month", { check_date(datetime, 11, 'dom') })
