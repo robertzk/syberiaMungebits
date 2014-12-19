@@ -17,3 +17,11 @@ test_that("it correctly selects variables by character index", {
   select_variables(iris2, c('Sepal.Length', 'Sepal.Width'))
   expect_equal(iris2, iris[, 1:2])
 })
+
+test_that("it preserves attributes after subsetting", {
+  iris2 <- iris
+  attr(iris2, 'foo') <- 'bar'
+  select_variables(iris2, c('Sepal.Length', 'Sepal.Width'))
+  expect_identical(attr(iris2, 'foo'), 'bar')
+})
+
