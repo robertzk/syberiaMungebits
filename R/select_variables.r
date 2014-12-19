@@ -15,10 +15,10 @@ select_variables <- function(dataframe, cols, weak = TRUE) {
     cols <- intersect(colnames(dataframe), cols)
   }
   eval(substitute({
-    non_standard_attributes <- setdiff(
-      names(attributes(dataframe)),
-      syberiaMungebits:::standard_dataframe_attributes)
-    dataframe <- dataframe[, cols, drop = FALSE]
+    for (col in setdiff(colnames(dataframe), cols)) {
+      dataframe[[col]] <- NULL
+    }
+
     if (weak && length(na_cols) > 0) dataframe[, na_cols] <- NA
   }), envir = parent.frame())
 }
