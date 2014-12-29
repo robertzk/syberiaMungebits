@@ -3,14 +3,18 @@
 # The test input
 paragraph <- c("The lazy dog is a  dog.","dog jumps fox ,","fox outwits lazy dog","The fox out foxed the dog.","The lazy dog loses because of the lazy dog's lazy eye.")
 
-para.fn <- function(input, top_n_words = 5) {
+paramatch <- function(input, top_n_words = 5) {
+  # Make sure inputs are valid
+    stopifnot(is.character(input))
+    stopifnot(is.numeric(top_n_words))
+    stopifnot(top_n_words >= 1)
+    stopifnot(top_n_words %% 1 == 0)
   # Standardize the input
     paragraph <- toupper(input)
     paragraph <- gsub("[[:punct:]]", " ", paragraph)
     paragraph <- gsub("[[:space:]]+", " ", paragraph)
   # Split string into words  
-    split_para <- strsplit(paragraph, " ")
-    allwords <- unlist(split_para)
+    allwords <- unlist(strsplit(paragraph, " "))
   # Split into unique words
     words <- unique(allwords)
   # Full word matching
@@ -26,7 +30,7 @@ para.fn <- function(input, top_n_words = 5) {
   output
 }
 
-para.fn(paragraph, 5)
+paramatch(paragraph, 3)
 
 # Current Output
 #                                                    input col_DOG col_THE col_LAZY col_FOX col_IS
