@@ -1,7 +1,15 @@
-# Paramunge function - Paraffin 
+#' Count the occurances of the N most repeated words in a paragraph
+#'
+#' Paragraphs of M lines for N words will return a data frame of N + 1 columns and M rows each counting the occurance in the particular line.
+#'
+#' This conducts full word matching only.  Substring matches do not count towards the total.
+#'
+#' @param input an atomic vector. The paragraph of text to analyse.
+#' @return numeric. Number of occurances of the particular word in each line.
+#' @examples
+#' paragraph <- c("This is an example.", "Great code uses examples like this example.")
+#' paramatch(paragraph, 2)
 
-# The test input
-paragraph <- c("The lazy dog is a  dog.","dog jumps fox ,","fox outwits lazy dog","The fox out foxed the dog.","The lazy dog loses because of the lazy dog's lazy eye.")
 
 paramatch <- function(input, top_n_words = 5) {
   # Make sure inputs are valid
@@ -29,17 +37,3 @@ paramatch <- function(input, top_n_words = 5) {
 
   output
 }
-
-paramatch(paragraph, 3)
-
-# Current Output
-#                                                    input col_DOG col_THE col_LAZY col_FOX col_IS
-# 1                                The lazy dog is a  dog.       2       1        1       0      1
-# 2                                        dog jumps fox ,       1       0        0       1      0
-# 3                                   fox outwits lazy dog       1       0        1       1      0
-# 4                             The fox out foxed the dog.       1       2        0       1      0
-# 5 The lazy dog loses because of the lazy dog's lazy eye.       2       2        3       0      0
-
-# Desired Output
-#          input  col_DOG       col_THE       col_LAZY    col_FOX       col_IS
-# c(paragraph)    c(2,1,1,1,2)  c(1,0,0,2,2) c(1,0,1,0,3) c(0,1,1,1,0) c(1,0,0,0,0)
