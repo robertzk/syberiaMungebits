@@ -1,4 +1,4 @@
-context(paramatch)
+context('paramatch')
 
 test_that("It handles blank, space only, or punctuation entries (which should all be ignored", {
   expect_equal(paramatch(c("hello?", " ", "???", " =( "), 3, suppress.input = TRUE), 

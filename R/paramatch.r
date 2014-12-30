@@ -45,3 +45,4 @@ paramatch <- function(input, top_n_words = 5, suppress.input = FALSE) {
 
   output[if(suppress.input) {-1} else {TRUE}]
 }
+
