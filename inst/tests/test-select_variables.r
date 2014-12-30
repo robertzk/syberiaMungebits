@@ -25,3 +25,4 @@ test_that("it preserves attributes after subsetting", {
   expect_identical(attr(iris2, 'foo'), 'bar')
 })
 
+

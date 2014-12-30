@@ -3,7 +3,7 @@ Title: Common mungebits used with Syberia projects.
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
     with the mungebits package, designed for syberia models.
-Version: 0.2
+Version: 0.2.1
 Author: Robert Krzyzanowski <technoguyrob@gmail.com>
 Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
 Authors@R: c(person("Robert", "Krzyzanowski",
