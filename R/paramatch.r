@@ -40,7 +40,8 @@ paramatch <- function(input, top_n_words = 5, suppress.input = FALSE) {
   # Take the top N words
     top_n <- frequency[order(-frequency$occurances),][1:top_n_words,]
   # Create the output data frame
-    output <- data.frame(input, sapply(top_n$word, function(x) str_count(paragraph,paste0("\\<",x,"\\>"))))
+    output <- data.frame(input, sapply(top_n$word,
+      function(x) stingr::str_count(paragraph, paste0("\\<",x,"\\>"))))
     colnames(output) <- c("input", sapply(top_n$word, function(x) paste0("col_", x)))
 
   output[if(suppress.input) {-1} else {TRUE}]
