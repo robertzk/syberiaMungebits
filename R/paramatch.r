@@ -8,11 +8,10 @@
 #' @param top_n_words integer.  The number of top strings to count in each line.
 #' @param suppress.input logical.  Suppresses the Input column of the output data frame.
 #' @return numeric. Number of occurances of the particular word in each line.
+#' @export
 #' @examples
 #' paragraph <- c("This is an example.", "Great code uses examples like this example.")
 #' paramatch(paragraph, 2)
-
-
 paramatch <- function(input, top_n_words = 5, suppress.input = FALSE) {
   # Make sure inputs are valid
     stopifnot(is.character(input))
