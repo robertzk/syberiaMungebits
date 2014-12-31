@@ -1,5 +1,5 @@
 context('paramatch')
-
+# Example Dataframes
 df <- data.frame(
   id = 1:10,
   text = c("goldeen goldeen goldeen", 
@@ -21,6 +21,7 @@ df2 <- data.frame(
            "My friend put it to the end"),
   stringsAsFactors = FALSE
 )
+# Testing Begins
 test_that("The training data is perserved for use with predictions", {
   mp <- mungebits:::mungeplane(df)
   mb <- mungebits:::mungebit(paramatch)
@@ -31,7 +32,7 @@ test_that("The training data is perserved for use with predictions", {
 })
 mb <- NULL
 test_that("Check that N defaults the the number of unique words if set to high", {
-  mp <- mungebits:::mungeplane(df[1:2,])
+  mp <- mungebits:::mungeplane(df[1:2, ])
   mp2 <- mp
   mb <- mungebits:::mungebit(paramatch)
   expect_equal(mb$run(mp, col = 'text', top_n = 1),
@@ -39,14 +40,14 @@ test_that("Check that N defaults the the number of unique words if set to high",
 })
 mb <- NULL
 test_that("It handles blank, space only, or punctuation entries (which should all be ignored)", {
-    mp <- mungebits:::mungeplane(df[3:5,])
-    mb <- mungebits:::mungebit(paramatch)
-    mb$run(mp, col = 'text', top_n = 1)
-    expect_equal(mp$data$col_HELLO, c(3,0,0))
+  mp <- mungebits:::mungeplane(df[3:5, ])
+  mb <- mungebits:::mungebit(paramatch)
+  mb$run(mp, col = 'text', top_n = 1)
+  expect_equal(mp$data$col_HELLO, c(3,0,0))
   })
 mb <- NULL
 test_that("Only whole words are being counted", {
-  mp <- mungebits:::mungeplane(df[6:7,])
+  mp <- mungebits:::mungeplane(df[6:7, ])
   mb <- mungebits:::mungebit(paramatch)
   mb$run(mp, col = 'text', top_n = 2, suppress.input = TRUE)
   rownames(mp$data) <- NULL
@@ -54,7 +55,7 @@ test_that("Only whole words are being counted", {
 })
 mb <- NULL
 test_that("punctuation works in the same way that spaces do", {
-  mp <- mungebits:::mungeplane(df[8:9,])
+  mp <- mungebits:::mungeplane(df[8:9, ])
   mb <- mungebits:::mungebit(paramatch)
   mb$run(mp, col = 'text', top_n = 4, suppress.input = TRUE)
   row1 <- mp$data[1, -1]
@@ -63,7 +64,3 @@ test_that("punctuation works in the same way that spaces do", {
   rownames(row2) <- NULL
   expect_equal(row1, row2)
 })
-
-
-
-
