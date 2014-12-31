@@ -1,6 +1,6 @@
-#' Count the occurances of the N most repeated words in a paragraph
+#' Mungebit to count the occurances of the N most repeated words in a dataframe column.
 #'
-#' Paragraphs of M lines for N words will return a data frame of N + 1 columns and M rows each counting the occurance in the particular line.
+#' Trains to find the most repeated words.  Then counts the number of matches for dataframes passed to it.
 #'
 #' This conducts full word matching only.  Substring matches do not count towards the total.
 #'
@@ -8,11 +8,10 @@
 #' @param top_n_words integer.  The number of top strings to count in each line.
 #' @param suppress.input logical.  Suppresses the Input column of the output data frame.
 #' @return numeric. Number of occurances of the particular word in each line.
+#' @author Mike Bruno
 #' @examples
-#' paragraph <- c("This is an example.", "Great code uses examples like this example.")
-#' paramatch(paragraph, 2)
-
-library(stringr)
+#' paragraph <- data.frame(text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
+#' paramatch(paragraph, "text", 2)
 
 #' @export
 paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE) {
