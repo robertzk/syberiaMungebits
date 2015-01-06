@@ -3,14 +3,19 @@
 \alias{paramatch}
 \title{Mungebit to count the occurances of the N most repeated words in a dataframe column.}
 \usage{
-paramatch(dataframe, col, top_n_words = 5, suppress.input = FALSE)
+paramatch(dataframe, col, top_n_words = 5, suppress.input = FALSE,
+  blacklist = c())
 }
 \arguments{
+\item{dataframe}{}
+
+\item{col}{character. The column name pertaining to paragraphs for matching.}
+
 \item{top_n_words}{integer.  The number of top strings to count in each line.}
 
 \item{suppress.input}{logical.  Suppresses the Input column of the output data frame.}
 
-\item{input}{an atomic vector. The paragraph of text to analyse.}
+\item{blacklist}{character. Prevents undesired words participating int he output.}
 }
 \value{
 numeric. Number of occurances of the particular word in each line.
@@ -22,7 +27,7 @@ Trains to find the most repeated words.  Then counts the number of matches for d
 This conducts full word matching only.  Substring matches do not count towards the total.
 }
 \examples{
-paragraph <- data.frame(text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
+paragraph <- data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
 paramatch(paragraph, "text", 2)
 }
 \author{

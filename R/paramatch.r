@@ -4,13 +4,15 @@
 #'
 #' This conducts full word matching only.  Substring matches do not count towards the total.
 #'
-#' @param input an atomic vector. The paragraph of text to analyse.
+#' @param dataframe
+#' @param col character. The column name pertaining to paragraphs for matching.
 #' @param top_n_words integer.  The number of top strings to count in each line.
 #' @param suppress.input logical.  Suppresses the Input column of the output data frame.
+#' @param blacklist character. Prevents undesired words participating int he output.
 #' @return numeric. Number of occurances of the particular word in each line.
 #' @author Mike Bruno
 #' @examples
-#' paragraph <- data.frame(text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
+#' paragraph <- data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
 #' paramatch(paragraph, "text", 2)
 
 #' @export
