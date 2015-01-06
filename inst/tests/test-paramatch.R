@@ -64,3 +64,16 @@ test_that("punctuation works in the same way that spaces do", {
   rownames(row2) <- NULL
   expect_equal(row1, row2)
 })
+mb <- NULL
+test_that("The blacklist prevents words from participating in the top n columns", {
+  mp <- mungebits:::mungeplane(df)
+  mp2 <- mungebits:::mungeplane(df)
+  mb <- mungebits:::mungebit(paramatch)
+  mb$run(mp, col = 'text', top_n = 6)
+  blacklist <- sapply(colnames(mp$data[3:5]), function(s) substring(s, 5))
+  mb2 <- mungebits:::mungebit(paramatch)
+  mb2$run(mp2, col = 'text', top_n = 3, blacklist = blacklist)
+  expect_equal(mp$data[-c(3:5)], mp2$data)
+})
+mb <- NULL
+mb2 <- NULL
