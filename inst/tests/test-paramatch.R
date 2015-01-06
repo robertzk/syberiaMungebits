@@ -43,7 +43,7 @@ test_that("It handles blank, space only, or punctuation entries (which should al
   mp <- mungebits:::mungeplane(df[3:5, ])
   mb <- mungebits:::mungebit(paramatch)
   mb$run(mp, col = 'text', top_n = 1)
-  expect_equal(mp$data$col_HELLO, c(3,0,0))
+  expect_equal(mp$data$col_HELLO, c(3, 0, 0))
   })
 mb <- NULL
 test_that("Only whole words are being counted", {

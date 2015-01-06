@@ -42,14 +42,14 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
                             occurances = sapply(words, function(x) length(grep(paste0("\\<", x, "\\>"), allwords))), 
                             stringsAsFactors = FALSE) 
     # Blacklist
-    frequency <- frequency[!frequency$word %in% blacklist]
+    frequency <- frequency[!frequency$word %in% blacklist, ]
     # Ensure that N isn't greater than the total number of unique words d
     if(length(allwords) < top_n_words) {
       message("Note: N is too high, defaulting to the number of unique words")
       top_n_words <- length(words)
     }
     # Take the top N words
-    top_n <- frequency[order(-frequency$occurances),][1:top_n_words, 1]
+    top_n <- frequency[order(frequency$occurances, decreasing = TRUE),][1:top_n_words, 1]
     # Write top_n to the Environment
     inputs$top_n <<- top_n
   } else {
