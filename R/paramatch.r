@@ -12,9 +12,9 @@
 #' @return numeric. Number of occurances of the particular word in each line.
 #' @author Mike Bruno
 #' @examples
-#' paragraph <- data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
-#' paramatch(paragraph, "text", 2)
-
+#' mp <- mungebits::mungeplane(data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE))
+#' mb <- mungebits:::mungebit(paramatch)
+#' mb$run(mp, col = 'text', top_n = 2)
 #' @export
 paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, blacklist = c()) {
   # Grab the string vector
@@ -32,15 +32,15 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   # Munge
   if(!('top_n' %in% names(inputs))) { # Train # TODO add something in case top N length is differnt from inputs
     # Find the top N words
-    # Split string into words  
+    # Split string into words
     allwords <- unlist(strsplit(paragraph_col, " "))
     allwords <- allwords[allwords != ""]
     # Split into unique words
     words <- unique(allwords)
     # Full word matching
-    frequency <- data.frame(word = words, 
-                            occurances = sapply(words, function(x) length(grep(paste0("\\<", x, "\\>"), allwords))), 
-                            stringsAsFactors = FALSE) 
+    frequency <- data.frame(word = words,
+                            occurances = vapply(words, function(x) length(grep(paste0("\\<", x, "\\>"), allwords)), character(1)),
+                            stringsAsFactors = FALSE)
     # Blacklist
     frequency <- frequency[!frequency$word %in% blacklist, ]
     # Ensure that N isn't greater than the total number of unique words d
@@ -55,10 +55,9 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   } else {
     top_n <- inputs$top_n
   }
-
   # Run the count for the top n words
-  output <- data.frame(sapply(top_n, function(x) stringr::str_count(paragraph_col, paste0("\\<", x, "\\>"))))
-  colnames(output) <- c(sapply(top_n, function(x) paste0("col_", x)))
+  output <- data.frame(vapply(top_n, function(x) stringr::str_count(paragraph_col, paste0("\\<", x, "\\>")), character(1)))
+  colnames(output) <- vapply(top_n, function(x) paste0("col_", x), character(1))
   # Create the final dataframe with additional columns
   eval(substitute({
     dataframe <- cbind(dataframe, output)

@@ -27,8 +27,9 @@ Trains to find the most repeated words.  Then counts the number of matches for d
 This conducts full word matching only.  Substring matches do not count towards the total.
 }
 \examples{
-paragraph <- data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE)
-paramatch(paragraph, "text", 2)
+mp <- mungebits::mungeplane(data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE))
+mb <- mungebits:::mungebit(paramatch)
+mb$run(mp, col = 'text', top_n = 2)
 }
 \author{
 Mike Bruno
