@@ -39,14 +39,10 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
     words <- unique(allwords)
     # Full word matching
     frequency <- data.frame(word = words, 
-                            occurances = sapply(words, function(x) length(grep(paste0("\\<",x,"\\>"), allwords))), 
+                            occurances = sapply(words, function(x) length(grep(paste0("\\<", x, "\\>"), allwords))), 
                             stringsAsFactors = FALSE) 
     # Blacklist
-    if (length(blacklist) >0) {
-      for (i in 1:length(blacklist)) {
-        frequency <- frequency[!frequency$word == blacklist[[i]],]
-      }
-    }
+    frequency <- frequency[!frequency$word %in% blacklist]
     # Ensure that N isn't greater than the total number of unique words d
     if(length(allwords) < top_n_words) {
       message("Note: N is too high, defaulting to the number of unique words")
@@ -61,7 +57,7 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   }
 
   # Run the count for the top n words
-  output <- data.frame(sapply(top_n, function(x) stringr::str_count(paragraph_col, paste0("\\<",x,"\\>"))))
+  output <- data.frame(sapply(top_n, function(x) stringr::str_count(paragraph_col, paste0("\\<", x, "\\>"))))
   colnames(output) <- c(sapply(top_n, function(x) paste0("col_", x)))
   # Create the final dataframe with additional columns
   eval(substitute({
