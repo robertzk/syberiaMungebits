@@ -3,6 +3,7 @@ src/*.o
 src/symbols.rds
 R/Rcpp*
 *.r.swp
+**/.DS_Store
 
 ..Rcheck
 *.Rcheck
