@@ -21,8 +21,7 @@ test_that("it imputes a column in a dataframe correctly", {
   # Ignore starred attributes for now
   expect_equal(length(grep("^[^*].*[^*]?", names(mb$inputs))), 2,
     info = paste0("Expecting imputer mungebit to store inputs for 2 columns.",
-                  " Did you set ",
-                  testthat::colourise("mutating = TRUE", "green"),
+                  " Did you set mutating = TRUE ",
                   " when defining the column_transformation?"))
   
   if (!mungebits_loaded) unloadNamespace('mungebits')
