@@ -17,7 +17,8 @@ Imports:
     statsUtils,
     Ramd,
     timeDate,
-    lubridate
+    lubridate,
+    stringr
 LinkingTo: Rcpp
 License: MIT
 LazyData: true
