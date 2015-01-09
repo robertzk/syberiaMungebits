@@ -8,3 +8,4 @@ R/Rcpp*
 ..Rcheck
 *.Rcheck
 *.tar.gz
+.Rproj.user
