@@ -30,12 +30,12 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   paragraph_col <- gsub("[[:punct:]]", " ", paragraph_col)
   paragraph_col <- gsub("[[:space:]]+", " ", paragraph_col)
   # Munge
-  if(!('top_n' %in% names(inputs))) { # Train # TODO add something in case top N length is differnt from inputs
+  if(!('top_n' %in% names(inputs))) { # Train # TODO add something in case top N length is different from inputs
     # Find the top N words
     # Split string into words
     allwords <- unlist(strsplit(paragraph_col, " "))
     allwords <- allwords[allwords != ""]
-    # Split into unique words
+    # Find the unique
     words <- unique(allwords)
     # Full word matching
     frequency <- data.frame(word = words,
@@ -43,7 +43,7 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
                             stringsAsFactors = FALSE)
     # Blacklist
     frequency <- frequency[!frequency$word %in% blacklist, ]
-    # Ensure that N isn't greater than the total number of unique words d
+    # Ensure that N isn't greater than the total number of unique words
     if(length(allwords) < top_n_words) {
       message("Note: N is too high, defaulting to the number of unique words")
       top_n_words <- length(words)
@@ -55,14 +55,19 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   } else {
     top_n <- inputs$top_n
   }
-  # Run the count for the top n words
-  output <- data.frame(sapply(top_n, function(x) stringr::str_count(paragraph_col, paste0("\\<", x, "\\>"))))
-  colnames(output) <- unlist(lapply(top_n, function(x) paste0("col_", x)))
-  # Create the final dataframe with additional columns
-  eval(substitute({
-    dataframe <- cbind(dataframe, output)
-    # Optional - Suppress Input - hide the original paragraph column
-    if (suppress.input) dataframe[[col]] <- NULL
+  # Add a column of match counts for each of the top n words
+  for (i in 1:length(top_n)){
+    output <- data.frame(stringr::str_count(paragraph_col, paste0('\\<', top_n[i], '\\>')))
+    colnames(output) <- paste0("col_", top_n[i])
+    #Add the Column to the exterior dataset
+    eval(substitute({
+      dataframe <- cbind(dataframe, output)
+    }), envir = parent.frame()
+    )
+  }
+  # Set the added column names and optionally suppress the input column
+  if(suppress.input) eval(substitute({
+    dataframe[[col]] <- NULL
   }), envir = parent.frame()
   )
 }
