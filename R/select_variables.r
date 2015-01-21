@@ -14,10 +14,9 @@ select_variables <- function(dataframe, cols, weak = TRUE) {
     na_cols <- setdiff(cols, colnames(dataframe))
     cols <- intersect(colnames(dataframe), cols)
   }
+  remove <- setdiff(colnames(dataframe), cols)
   eval(substitute({
-    for (col in setdiff(colnames(dataframe), cols)) {
-      dataframe[[col]] <- NULL
-    }
+    dataframe[remove] <- vector('list', length(remove))
 
     if (weak && length(na_cols) > 0) dataframe[, na_cols] <- NA
   }), envir = parent.frame())
