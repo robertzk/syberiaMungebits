@@ -15,7 +15,7 @@ select_variables <- function(dataframe, cols, weak = TRUE) {
   if (anyDuplicated(colnames(dataframe))) {
     stop(call. = FALSE, "You have duplicately named columns in your data.frame. ",
          "The select_variables mungebit cannot process these. They are: ",
-         unique(duplicated(colnames(dataframe))))
+         paste(collapse = ", ", unique(duplicated(colnames(dataframe)))))
   }
 
   if (weak) {
