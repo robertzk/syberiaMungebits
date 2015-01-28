@@ -25,4 +25,10 @@ test_that("it preserves attributes after subsetting", {
   expect_identical(attr(iris2, 'foo'), 'bar')
 })
 
+test_that("it cannot process a dataframe with duplicate columns #34", {
+  iris2 <- iris
+  colnames(iris2)[1:2] <- c('x', 'x')
+  expect_error(select_variables(iris2, colnames(iris)[3:5]), "duplicate")
+})
+
 

@@ -10,11 +10,20 @@
 #' df <- iris; select_variables(df, c(TRUE,TRUE,FALSE,FALSE,TRUE)) # Exclude cols 3 and 4
 select_variables <- function(dataframe, cols, weak = TRUE) {
   cols <- mungebits:::standard_column_format(cols, dataframe)
+
+  # Workaround for https://github.com/robertzk/syberiaMungebits/issues/34
+  if (anyDuplicated(colnames(dataframe))) {
+    stop(call. = FALSE, "You have duplicately named columns in your data.frame. ",
+         "The select_variables mungebit cannot process these. They are: ",
+         unique(duplicated(colnames(dataframe))))
+  }
+
   if (weak) {
     na_cols <- setdiff(cols, colnames(dataframe))
     cols <- intersect(colnames(dataframe), cols)
   }
   remove <- setdiff(colnames(dataframe), cols)
+
   eval(substitute({
     dataframe[remove] <- vector('list', length(remove))
 
