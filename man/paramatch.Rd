@@ -2,7 +2,7 @@
 % Please edit documentation in R/paramatch.r
 \name{paramatch}
 \alias{paramatch}
-\title{Mungebit to count the occurances of the N most repeated words in a dataframe column.}
+\title{Identify and Count occurances of the most repeated words.}
 \usage{
 paramatch(dataframe, col, top_n = 5, suppress.input = FALSE,
   blacklist = c())
@@ -22,7 +22,7 @@ paramatch(dataframe, col, top_n = 5, suppress.input = FALSE,
 numeric. Number of occurances of the particular word in each line.
 }
 \description{
-Trains to find the most repeated words.  Then counts the number of matches for dataframes passed to it.
+Finds the N the most repeated words in a character column of a dataframe and appends N columns containing the number of matches of each word in each row.
 }
 \details{
 This conducts full word matching only.  Substring matches do not count towards the total.

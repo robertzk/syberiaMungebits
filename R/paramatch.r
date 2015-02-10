@@ -1,6 +1,6 @@
-#' Mungebit to count the occurances of the N most repeated words in a dataframe column.
+#' Identify and Count occurances of the most repeated words.
 #'
-#' Trains to find the most repeated words.  Then counts the number of matches for dataframes passed to it.
+#' Finds the N the most repeated words in a character column of a dataframe and appends N columns containing the number of matches of each word in each row.
 #'
 #' This conducts full word matching only.  Substring matches do not count towards the total.
 #'
