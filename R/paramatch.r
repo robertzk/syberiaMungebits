@@ -30,7 +30,8 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
   paragraph_col <- gsub("[[:punct:]]", " ", paragraph_col)
   paragraph_col <- gsub("[[:space:]]+", " ", paragraph_col)
   # Munge
-  if(!('top_n' %in% names(inputs))) { # Train # TODO add something in case top N length is different from inputs
+  
+  if(!(exists('inputs') && paste0(col, "_top_n") %in% names(inputs))) { # Train
     # Find the top N words
     # Split string into words
     allwords <- unlist(strsplit(paragraph_col, " "))
@@ -50,10 +51,10 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
     }
     # Take the top N words
     top_n <- frequency[order(frequency$occurances, decreasing = TRUE),][1:top_n_words, 1]
-    # Write top_n to the Environment
-    inputs$top_n <<- top_n
-  } else {
-    top_n <- inputs$top_n
+    # Write col_name_top_n to the Environment
+    inputs[[paste0(col, "_top_n")]] <<- top_n
+    } else { # Predict
+      top_n <- inputs[[paste0(col, "_top_n")]]
   }
   # Add a column of match counts for each of the top n words
   for (i in 1:length(top_n)){
