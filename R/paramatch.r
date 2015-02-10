@@ -14,7 +14,7 @@
 #' @examples
 #' mp <- mungebits::mungeplane(data.frame(id = c(1:2), text = c("This is an example.", "Great code uses examples like this example."), stringsAsFactors = FALSE))
 #' mb <- mungebits:::mungebit(paramatch)
-#' mb$run(mp, col = 'text', top_n_words = 2)
+#' mb$run(mp, col = 'text', top_n = 2)
 #' @export
 paramatch <- function(dataframe, col, top_n = 5, suppress.input = FALSE, blacklist = c()) {
   # Grab the string vector
