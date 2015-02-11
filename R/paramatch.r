@@ -1,12 +1,12 @@
-#' Mungebit to count the occurances of the N most repeated words in a dataframe column.
+#' Identify and Count occurances of the most repeated words.
 #'
-#' Trains to find the most repeated words.  Then counts the number of matches for dataframes passed to it.
+#' Finds the N the most repeated words in a character column of a dataframe and appends N columns containing the number of matches of each word in each row.
 #'
 #' This conducts full word matching only.  Substring matches do not count towards the total.
 #'
 #' @param dataframe
 #' @param col character. The column name pertaining to paragraphs for matching.
-#' @param top_n_words integer.  The number of top strings to count in each line.
+#' @param top_n integer.  The number of top strings to count in each line.
 #' @param suppress.input logical.  Suppresses the Input column of the output data frame.
 #' @param blacklist character. Prevents undesired words participating int he output.
 #' @return numeric. Number of occurances of the particular word in each line.
@@ -16,21 +16,22 @@
 #' mb <- mungebits:::mungebit(paramatch)
 #' mb$run(mp, col = 'text', top_n = 2)
 #' @export
-paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, blacklist = c()) {
+paramatch <- function(dataframe, col, top_n = 5, suppress.input = FALSE, blacklist = c()) {
   # Grab the string vector
   paragraph_col <- dataframe[[col]]
   # Make sure inputs are valid
   stopifnot(is.character(paragraph_col))
-  stopifnot(is.numeric(top_n_words))
-  stopifnot(top_n_words >= 1)
-  stopifnot(top_n_words %% 1 == 0)
+  stopifnot(is.numeric(top_n))
+  stopifnot(top_n >= 1)
+  stopifnot(top_n %% 1 == 0)
   stopifnot(is.logical(suppress.input))
   # Standardize the input
   paragraph_col <- toupper(paragraph_col)
   paragraph_col <- gsub("[[:punct:]]", " ", paragraph_col)
   paragraph_col <- gsub("[[:space:]]+", " ", paragraph_col)
   # Munge
-  if(!('top_n' %in% names(inputs))) { # Train # TODO add something in case top N length is different from inputs
+  
+  if(!(exists('inputs') && paste0(col, "_top_n_words") %in% names(inputs))) { # Train
     # Find the top N words
     # Split string into words
     allwords <- unlist(strsplit(paragraph_col, " "))
@@ -44,21 +45,21 @@ paramatch <- function(dataframe, col, top_n_words = 5, suppress.input = FALSE, b
     # Blacklist
     frequency <- frequency[!frequency$word %in% blacklist, ]
     # Ensure that N isn't greater than the total number of unique words
-    if(length(allwords) < top_n_words) {
+    if(length(allwords) < top_n) {
       message("Note: N is too high, defaulting to the number of unique words")
-      top_n_words <- length(words)
+      top_n <- length(words)
     }
     # Take the top N words
-    top_n <- frequency[order(frequency$occurances, decreasing = TRUE),][1:top_n_words, 1]
-    # Write top_n to the Environment
-    inputs$top_n <<- top_n
-  } else {
-    top_n <- inputs$top_n
+    top_n_words <- frequency[order(frequency$occurances, decreasing = TRUE),][1:top_n, 1]
+    # Write col_name_top_n_words to the Environment
+    inputs[[paste0(col, "_top_n_words")]] <<- top_n_words
+    } else { # Predict
+      top_n_words <- inputs[[paste0(col, "_top_n_words")]]
   }
   # Add a column of match counts for each of the top n words
-  for (i in 1:length(top_n)){
-    output <- data.frame(stringr::str_count(paragraph_col, paste0('\\<', top_n[i], '\\>')))
-    colnames(output) <- paste0("col_", top_n[i])
+  for (i in 1:length(top_n_words)){
+    output <- data.frame(stringr::str_count(paragraph_col, paste0('\\<', top_n_words[i], '\\>')))
+    colnames(output) <- paste0("col_", top_n_words[i])
     #Add the Column to the exterior dataset
     eval(substitute({
       dataframe <- cbind(dataframe, output)
