@@ -21,8 +21,9 @@ paramatch <- function(dataframe, col, top_n = 5, suppress.input = FALSE, blackli
   paragraph_col <- dataframe[[col]]
   # Make sure inputs are valid
   stopifnot(is.character(paragraph_col))
-  stopifnot(is.integer(top_n))
+  stopifnot(is.numeric(top_n))
   stopifnot(top_n >= 1)
+  stopifnot(top_n %% 1 == 0)
   stopifnot(is.logical(suppress.input))
   # Standardize the input
   paragraph_col <- toupper(paragraph_col)
