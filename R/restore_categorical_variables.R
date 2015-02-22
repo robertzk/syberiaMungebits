@@ -3,7 +3,7 @@
 #' @export
 restore_categorical_variables_fn <- function(x) {
   if ('levels' %in% names(inputs)) {
-    x <- factor(x, levels = inputs$levels); x
+    factor(x, levels = inputs$levels)
   } else {
     inputs$levels <<- levels(x); x
   }
