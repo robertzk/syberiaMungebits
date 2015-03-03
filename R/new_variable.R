@@ -6,6 +6,11 @@
 #' @export
 new_variable <- function(df, fun, output, inputs = NULL) {
   if (is.null(inputs)) inputs <- as.character(names(formals(fun)))
+  if (!is.function(fun)) {
+    f <- function() {}
+    body(f) <- fun
+    fun <- f
+  }
   eval.parent(substitute({
     multi_column_transformation(fun)(df, inputs, output)
     dataframe <- df
