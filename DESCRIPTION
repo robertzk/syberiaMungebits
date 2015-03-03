@@ -25,7 +25,6 @@ LazyData: true
 Suggests:
     testthat,
     testthatsomemore,
-    paris,
     knitr,
     microbenchmark
 Roxygen: list(wrap = FALSE)

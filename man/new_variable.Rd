@@ -9,7 +9,7 @@ new_variable(df, fun, output, inputs = NULL)
 \arguments{
 \item{df}{dataframe. The dataframe to modify.}
 
-\item{fun}{function. The expression to run to convert inputs to outputs.}
+\item{fun}{function. The function to run to convert inputs to outputs.}
 
 \item{output}{character. The name of the desired new variable.}
 
