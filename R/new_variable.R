@@ -29,7 +29,7 @@ new_variable <- function(df, fun, new_variable, old_variables = NULL) {
     fun <- f
   }
   eval.parent(substitute({
-    multi_column_transformation(fun)(df, old_variables, new_variable)
+    mungebits::multi_column_transformation(fun)(df, old_variables, new_variable)
     dataframe <- df
   }))
 }
