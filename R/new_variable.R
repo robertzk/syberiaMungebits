@@ -13,7 +13,7 @@
 #' new_variable(iris, function(Sepal.Width, Sepal.Length) Sepal.Width*2 + Sepal.Length*2, 'Sepal.Perimeter')
 #' new_variable(iris, iris$Sepal.Width, 'Sepal.Width2')
 #'
-#' Usage in a Syberia file:
+#' # Usage in a Syberia file
 #' list("Make new variable" = list(
 #'   new_variable,
 #'   function(Sepal.Width, Sepal.Length) Sepal.Width*2 + Sepal.Length*2,
