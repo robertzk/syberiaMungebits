@@ -9,9 +9,25 @@ replace_variable(df, fun)
 \arguments{
 \item{df}{dataframe. The dataframe to modify.}
 
-\item{fun}{function. The function to run to convert the input into the new input.}
+\item{fun}{function. The function to run to convert the input into the new input.  Whichever argument is passed first to the function is the variable that will be replaced.}
+}
+\value{
+Does not return anything, but modifies-in-place the dataframe to replace that variable.
 }
 \description{
 Replaces a variable in the dataframe.
+}
+\examples{
+replace_variable(iris, function(Sepal.Width) function(Sepal.Length) Sepal.Length + 1)  # Repaces Sepal.Width to add 1 to each datapoint.
+replace_variable(iris, function(Sepal.Length, Sepal.Width) Sepal.Width + Sepal.Length)  # Repaces Sepal.Length to add the corresponding Sepal.Width to each datapoint for Sepal.Length.
+
+Usage in a Syberia file:
+list("Replace Sepal.Length with Sepal.Length + 1" = list(
+ replace_variable,
+ function(Sepal.Length) Sepal.Length + 1,
+))
+}
+\author{
+Peter Hurford
 }
 

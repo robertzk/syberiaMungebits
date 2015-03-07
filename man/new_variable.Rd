@@ -4,18 +4,36 @@
 \alias{new_variable}
 \title{Creates a new variable in the dataframe.}
 \usage{
-new_variable(df, fun, output, inputs = NULL)
+new_variable(df, fun, new_variable, old_variables = NULL)
 }
 \arguments{
 \item{df}{dataframe. The dataframe to modify.}
 
-\item{fun}{function. The function to run to convert inputs to outputs.}
+\item{fun}{function. The function to run to convert old_variables to new_variables.
+Also can take a non-function expression that will be converted to function() expression.}
 
-\item{output}{character. The name of the desired new variable.}
+\item{new_variable}{character. The name of the desired new variable.}
 
-\item{inputs}{character. The names of the variables needed to make the output.}
+\item{old_variables}{character. The names of the variables needed to make the new_variable.}
+}
+\value{
+Does not return anything, but modifies-in-place the dataframe to have that new variable.
 }
 \description{
-Creates a new variable in the dataframe.
+Wrapper around the default multi_column_transformation mungebit to make new variables.
+}
+\examples{
+new_variable(iris, function(Sepal.Width, Sepal.Length) Sepal.Width*2 + Sepal.Length*2, 'Sepal.Perimeter')
+new_variable(iris, iris$Sepal.Width, 'Sepal.Width2')
+
+Usage in a Syberia file:
+list("Make new variable" = list(
+  new_variable,
+  function(Sepal.Width, Sepal.Length) Sepal.Width*2 + Sepal.Length*2,
+  'Sepal.Perimeter'
+))
+}
+\author{
+Peter Hurford
 }
 
