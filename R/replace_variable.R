@@ -5,8 +5,11 @@
 #' @return Does not return anything, but modifies-in-place the dataframe to replace that variable.
 #' @author Peter Hurford
 #' @examples
-#' replace_variable(iris, function(Sepal.Width) function(Sepal.Length) Sepal.Length + 1)  # Repaces Sepal.Width to add 1 to each datapoint.
-#' replace_variable(iris, function(Sepal.Length, Sepal.Width) Sepal.Width + Sepal.Length)  # Repaces Sepal.Length to add the corresponding Sepal.Width to each datapoint for Sepal.Length.
+#' # Repaces Sepal.Width to add 1 to each datapoint.
+#' replace_variable(iris, function(Sepal.Width) Sepal.Length + 1)
+#'
+#' # Repaces Sepal.Length to add the corresponding Sepal.Width to each datapoint for Sepal.Length.
+#' replace_variable(iris, function(Sepal.Length, Sepal.Width) { Sepal.Width + Sepal.Length })
 #'
 #' # Usage in a Syberia file
 #' list("Replace Sepal.Length with Sepal.Length + 1" = list(
