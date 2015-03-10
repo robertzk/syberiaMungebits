@@ -19,7 +19,7 @@ Replaces a variable in the dataframe.
 }
 \examples{
 # Repaces Sepal.Width to add 1 to each datapoint.
-replace_variable(iris, function(Sepal.Width) { Sepal.Length + 1 })
+replace_variable(iris, function(Sepal.Width) { Sepal.Width + 1 })
 
 # Repaces Sepal.Length to add the corresponding Sepal.Width to each datapoint for Sepal.Length.
 replace_variable(iris, function(Sepal.Length, Sepal.Width) { Sepal.Width + Sepal.Length })
