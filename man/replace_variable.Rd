@@ -27,7 +27,7 @@ replace_variable(iris, function(Sepal.Length, Sepal.Width) { Sepal.Width + Sepal
 # Usage in a Syberia file
 list("Replace Sepal.Length with Sepal.Length + 1" = list(
  replace_variable,
- function(Sepal.Length) Sepal.Length + 1,
+ function(Sepal.Length) Sepal.Length + 1
 ))
 }
 \author{
