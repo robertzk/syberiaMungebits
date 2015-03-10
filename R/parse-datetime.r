@@ -11,7 +11,7 @@
 
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
-datetime_fn <- function(createdat, mode="since") {
+datetime_fn <- function(createdat, mode="since", permissive=FALSE) {
   
   # track which records are NA before the mungebit
   originally_NA <- is.na(createdat)
@@ -24,7 +24,7 @@ datetime_fn <- function(createdat, mode="since") {
   }
   
   # check to see if any records are converted to NA
-  if (any(is.na(datetime[!originally_NA]))) { 
+  if (any(is.na(datetime[!originally_NA])) && !isTRUE(permissive)) { 
     stop('Improper date format.') 
   }
 
