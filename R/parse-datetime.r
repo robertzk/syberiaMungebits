@@ -47,7 +47,7 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
 get.doy <- function(dates) {
   vapply(dates, function(date) {
     thisyear <- lubridate::year(date)
-    janprime <- as.Date(paste(c(thisyear,'1','1'), collapse='-'))
+    janprime <- as.Date(paste(c(thisyear,'1','1'), collapse = '-'))
     as.numeric(as.Date(date)) - as.numeric(janprime) + 1
   }, numeric(1))
 }
