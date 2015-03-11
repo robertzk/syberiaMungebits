@@ -49,7 +49,7 @@ get.doy <- function(dates) {
     thisyear <- lubridate:::year(date)
     janprime <- as.Date(paste(c(thisyear,'1','1'), collapse='-'))
     as.numeric(as.Date(date)) - as.numeric(janprime) + 1
-  }, as.numeric(1))
+  }, numeric(1))
 }
 
 is.weekend <- function(date) {
