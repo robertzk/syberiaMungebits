@@ -1,24 +1,24 @@
 context("parse_datetime")
 library(timeDate)
 
-check_date <- function(date, expectation, mode='since') {
+check_date <- function(date, expectation, mode = 'since') {
   mb <- set_mungebit()
   mp <- set_mungeplane(date)
-  mb$run(mp, 1, mode=mode)
+  mb$run(mp, 1, mode = mode)
   eval(substitute(expect_equal(expectation, mp$data$x)))
 }
 
-check_NA <- function(date, mode='since') {
+check_NA <- function(date, mode = 'since') {
   mb <- set_mungebit()
   mp <- set_mungeplane(date)
-  mb$run(mp, 1, mode=mode)
+  mb$run(mp, 1, mode = mode)
   expect_true(is.na(mp$data$x))
 }
   
-check_invalid_date <- function(date, expectation, mode='since') {
+check_invalid_date <- function(date, expectation, mode = 'since') {
   mb <- set_mungebit()
   mp <- set_mungeplane(date)
-  expect_error(mb$run(mp, 1, mode=mode), expectation)
+  expect_error(mb$run(mp, 1, mode = mode), expectation)
 }
 
 set_mungebit <- function() {
@@ -30,10 +30,10 @@ set_mungeplane <- function(date) {
   mungebits:::mungeplane(df)
 }
 
-datetime = '1991-12-11 03:14:15.9265'
-date = '1991-12-11'
-multiple_datetimes = c('1991-01-01 12:34:56.789', '1992-01-01 12:34:56.789', '1993-01-01 12:34:56.789')
-multiple_dates = c('1991-01-01', '1992-01-01', '1993-01-01')
+datetime <- '1991-12-11 03:14:15.9265'
+date <- '1991-12-11'
+multiple_datetimes <- c('1991-01-01 12:34:56.789', '1992-01-01 12:34:56.789', '1993-01-01 12:34:56.789')
+multiple_dates <- c('1991-01-01', '1992-01-01', '1993-01-01')
 test_that("it converts to numeric date", { check_date(datetime, 8014) })
 test_that("it doesn't mind NAs", check_NA(NA))
 test_that("it converts to hour of day", { check_date(datetime, 3, 'hod') })
@@ -54,5 +54,6 @@ test_that("it works on multiple dates", { check_date(multiple_dates, c(7670, 803
 test_that("weekend works on multiple dates", { check_date(multiple_dates, c(FALSE, FALSE, FALSE), 'weekend') })
 test_that("holiday works on multiple dates", { check_date(multiple_dates, c(TRUE, TRUE, TRUE), 'holiday') })
 test_that("bizday works on multiple dates", { check_date(multiple_dates, c(FALSE, FALSE, FALSE), 'bizday') })
+test_that("doy works on multiple dates", { check_date(multiple_dates, c(1, 1, 1), 'doy') })
 test_that("it returns an error if time format is invalid", { check_invalid_date('pizza', 'Improper date') })
 test_that("it returns an error if trying to extract hour from date-only", { check_invalid_date('1991-12-11', 'Cannot extract hour', 'hod') })
