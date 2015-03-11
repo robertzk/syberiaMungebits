@@ -26,9 +26,8 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
   
   # check to see if any records are converted to NA
   if (any(is.na(datetime[!originally_NA]))) {
-    msg = 'Improper date format.'
-    if (!isTRUE(permissive)) { stop(msg) }
-    else { warning(msg) }
+    error_method <- if (isTRUE(permissive)) warning else stop
+    error_method('Improper date format.')
   }
 
   suppressWarnings(switch(mode,
