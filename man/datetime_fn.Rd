@@ -13,7 +13,7 @@
    if the output is a weekend (\code{TRUE} or \code{FALSE}, use mode="weekend")
    if the output is a business day (\code{TRUE} or \code{FALSE}, use mode="bizday")}
 \usage{
-datetime_fn(createdat, mode = "since")
+datetime_fn(createdat, mode = "since", permissive = FALSE)
 }
 \arguments{
 \item{mode}{gives the desired output format (see above)}
