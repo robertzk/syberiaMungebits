@@ -11,30 +11,32 @@
 
 #' @param date contains the date to be formatted
 #' @param mode gives the desired output format (see above)
-datetime_fn <- function(createdat, mode="since", permissive=FALSE) {
+#' @param permissive logical. If false, will error with an improper type.  If true, will just warn.
+datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
   
   # track which records are NA before the mungebit
   originally_NA <- is.na(createdat)
   
   # do the conversion
-  datetime <- suppressWarnings(lubridate:::ymd_hms(createdat))
+  datetime <- suppressWarnings(lubridate::ymd_hms(createdat))
   if (any(is.na(datetime))) {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
-    datetime <- suppressWarnings(lubridate:::ymd(createdat))
+    datetime <- suppressWarnings(lubridate::ymd(createdat))
   }
   
   # check to see if any records are converted to NA
-  if (any(is.na(datetime[!originally_NA])) && !isTRUE(permissive)) { 
-    stop('Improper date format.') 
+  if (any(is.na(datetime[!originally_NA]))) {
+    error_method <- if (isTRUE(permissive)) warning else stop
+    error_method('Improper date format.')
   }
 
   suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
-    "hod" = lubridate:::hour(datetime),
+    "hod" = lubridate::hour(datetime),
     "dow" = weekdays(datetime),
-    "dom" = lubridate:::day(datetime),
+    "dom" = lubridate::day(datetime),
     "doy" = syberiaMungebits:::get.doy(datetime),
-    "moy" = lubridate:::month(datetime),
+    "moy" = lubridate::month(datetime),
     "holiday" = syberiaMungebits:::is.holiday(datetime),
     "weekend" = syberiaMungebits:::is.weekend(datetime),
     "bizday" = !syberiaMungebits:::is.holiday(datetime) & !syberiaMungebits:::is.weekend(datetime),
@@ -42,18 +44,14 @@ datetime_fn <- function(createdat, mode="since", permissive=FALSE) {
   ))
 }
 
-get.doy <- function(date) {
-  thisyear <- lubridate:::year(date)
-  janprime <- as.Date(paste(c(thisyear,'1','1'), collapse='-'))
-  as.numeric(as.Date(date)) - as.numeric(janprime) + 1
-}
+get.doy <- function(dates) { as.integer(strftime(as.Date(dates), "%j")) }
 
 is.weekend <- function(date) {
-  weekdays(date) == 'Saturday' | weekdays(date) == 'Sunday'
+  weekdays(date) %in% c('Saturday', 'Sunday')
 }
 
 is.holiday <- function(date) {
-  year <- lubridate:::year(as.Date(date))
+  year <- lubridate::year(date)
   holidays_fun <- list(ChristmasDay, USNewYearsDay, USMemorialDay, LaborDay, USThanksgivingDay)
   fun <- function(f, ...) { f(...) }
   holidays <- lapply(lapply(holidays_fun, fun, year), as.Date)
