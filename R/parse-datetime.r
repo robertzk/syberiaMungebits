@@ -47,11 +47,11 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
 get.doy <- function(dates) { as.integer(strftime(as.Date(dates), "%j")) }
 
 is.weekend <- function(date) {
-  weekdays(date) == 'Saturday' | weekdays(date) == 'Sunday'
+  weekdays(date) %in% c('Saturday', 'Sunday')
 }
 
 is.holiday <- function(date) {
-  year <- lubridate::year(as.Date(date))
+  year <- lubridate::year(date)
   holidays_fun <- list(ChristmasDay, USNewYearsDay, USMemorialDay, LaborDay, USThanksgivingDay)
   fun <- function(f, ...) { f(...) }
   holidays <- lapply(lapply(holidays_fun, fun, year), as.Date)
