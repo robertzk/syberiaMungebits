@@ -18,6 +18,8 @@ datetime_fn(createdat, mode = "since", permissive = FALSE)
 \arguments{
 \item{mode}{gives the desired output format (see above)}
 
+\item{permissive}{logical. If false, will error with an improper type.  If true, will just warn.}
+
 \item{date}{contains the date to be formatted}
 }
 \description{
