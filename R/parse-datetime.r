@@ -18,10 +18,10 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
   originally_NA <- is.na(createdat)
   
   # do the conversion
-  datetime <- suppressWarnings(lubridate:::ymd_hms(createdat))
+  datetime <- suppressWarnings(lubridate::ymd_hms(createdat))
   if (any(is.na(datetime))) {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
-    datetime <- suppressWarnings(lubridate:::ymd(createdat))
+    datetime <- suppressWarnings(lubridate::ymd(createdat))
   }
   
   # check to see if any records are converted to NA
@@ -32,11 +32,11 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
 
   suppressWarnings(switch(mode,
     "since" = as.numeric(as.Date(datetime)),
-    "hod" = lubridate:::hour(datetime),
+    "hod" = lubridate::hour(datetime),
     "dow" = weekdays(datetime),
-    "dom" = lubridate:::day(datetime),
+    "dom" = lubridate::day(datetime),
     "doy" = syberiaMungebits:::get.doy(datetime),
-    "moy" = lubridate:::month(datetime),
+    "moy" = lubridate::month(datetime),
     "holiday" = syberiaMungebits:::is.holiday(datetime),
     "weekend" = syberiaMungebits:::is.weekend(datetime),
     "bizday" = !syberiaMungebits:::is.holiday(datetime) & !syberiaMungebits:::is.weekend(datetime),
@@ -46,7 +46,7 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
 
 get.doy <- function(dates) {
   vapply(dates, function(date) {
-    thisyear <- lubridate:::year(date)
+    thisyear <- lubridate::year(date)
     janprime <- as.Date(paste(c(thisyear,'1','1'), collapse='-'))
     as.numeric(as.Date(date)) - as.numeric(janprime) + 1
   }, numeric(1))
@@ -57,7 +57,7 @@ is.weekend <- function(date) {
 }
 
 is.holiday <- function(date) {
-  year <- lubridate:::year(as.Date(date))
+  year <- lubridate::year(as.Date(date))
   holidays_fun <- list(ChristmasDay, USNewYearsDay, USMemorialDay, LaborDay, USThanksgivingDay)
   fun <- function(f, ...) { f(...) }
   holidays <- lapply(lapply(holidays_fun, fun, year), as.Date)
