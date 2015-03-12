@@ -13,7 +13,7 @@ drop_percent_missing_fn <- function(x, threshold = 0.8) {
     if (inputs$drop) NULL
     else x
   } else {
-    if (mean(is.na(x)) < threshold) {
+    if (mean(is.na(x) | x == 'Missing') < threshold) {
       inputs$drop <<- FALSE
       x
     } else {
