@@ -43,7 +43,7 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
       lower_count_bound = discretizer_params$lower_count_bound)
 
     # Raise an exception if the number of levels exceeds 100
-    if (any(violations <- vapply(dataframe, function(x) is.factor(x) &&
+    if (any(violations <- vapply(dataframe[,!names(dataframe) %in% exclude], function(x) is.factor(x) &&
           nlevels(x) > max_levels, logical(1)))) {
       stop("Too many levels in ", paste(colnames(dataframe)[violations], collapse = ', '))
     }
