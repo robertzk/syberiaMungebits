@@ -15,13 +15,21 @@
 datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
   
   # track which records are NA before the mungebit
+  if (length(createdat) == 0) return(numeric(0))
   originally_NA <- is.na(createdat)
+  if (sum(originally_NA) > 0) {
+    new_values <- Recall(createdat[!originally_NA], mode = mode, permissive = permissive)
+    createdat <- vector(class(new_values), length(createdat))
+    createdat[originally_NA]  <- NA
+    createdat[!originally_NA] <- new_values
+    return(createdat)
+  }
   
   # do the conversion
   datetime <- suppressWarnings(lubridate::ymd_hms(createdat))
   if (any(is.na(datetime))) {
     if (mode == 'hod') { stop('Cannot extract hour from date-only.') }
-    datetime <- suppressWarnings(lubridate::ymd(createdat))
+    datetime <- suppressWarnings(lubridate::parse_date_time2(createdat, 'Ymd'))
   }
   
   # check to see if any records are converted to NA

@@ -26,7 +26,7 @@ set_mungebit <- function() {
 }
 
 set_mungeplane <- function(date) {
-  df <- data.frame(x = date, y = 'bleh')
+  df <- data.frame(x = date, y = rep('bleh', length(date)))
   mungebits:::mungeplane(df)
 }
 
@@ -35,6 +35,7 @@ date <- '1991-12-11'
 multiple_datetimes <- c('1991-01-01 12:34:56.789', '1992-01-01 12:34:56.789', '1993-01-01 12:34:56.789')
 multiple_dates <- c('1991-01-01', '1992-01-01', '1993-01-01')
 test_that("it converts to numeric date", { check_date(datetime, 8014) })
+test_that("it doesn't mind a length 0 vector", check_date(numeric(0), numeric(0)))
 test_that("it doesn't mind NAs", check_NA(NA))
 test_that("it converts to hour of day", { check_date(datetime, 3, 'hod') })
 test_that("it converts to day of week", { check_date(datetime, 'Wednesday', 'dow') })
@@ -57,3 +58,14 @@ test_that("bizday works on multiple dates", { check_date(multiple_dates, c(FALSE
 test_that("doy works on multiple dates", { check_date(multiple_dates, c(1, 1, 1), 'doy') })
 test_that("it returns an error if time format is invalid", { check_invalid_date('pizza', 'Improper date') })
 test_that("it returns an error if trying to extract hour from date-only", { check_invalid_date('1991-12-11', 'Cannot extract hour', 'hod') })
+
+#https://github.com/hadley/lubridate/issues/307
+test_that("it can process a sparse date set (see #307)", {
+  sparse_set <- c(rep(NA, 101), '1980-09-07')
+  check_date(sparse_set, c(rep(NA, 101), 3902))
+})
+
+test_that("it can process a sparse datetime set (see #307)", {
+  sparse_set <- c(rep(NA, 101), '1980-09-07 12:34:56.7890')
+  check_date(sparse_set, c(rep(NA, 101), 3902))
+})
