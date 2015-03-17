@@ -2,10 +2,31 @@ context("parse_datetime")
 library(timeDate)
 
 check_date <- function(date, expectation, mode = 'since') {
-  mb <- set_mungebit()
-  mp <- set_mungeplane(date)
-  mb$run(mp, 1, mode = mode)
-  eval(substitute(expect_equal(expectation, mp$data$x)))
+  grid <- expand.grid(single = c(FALSE, TRUE), permissive = c(FALSE, TRUE))
+  for (i in seq_len(NROW(grid))) {
+    for (j in seq_along(grid)) { assign(colnames(grid)[j], grid[i, j], envir = environment()) }
+    mb <- set_mungebit()
+    nrows <- length(date)
+    mp <- set_mungeplane(date, rows = 1 + as.integer(single))
+    mb$run(mp, 1, mode = mode, permissive = permissive)
+    nat_opts <- paste(vapply(seq_along(grid), function(j) {
+      paste0(colnames(grid)[j], " = ", grid[i, j])
+    }, character(1)), collapse = ", ")
+    actual <- eval(substitute(expectation)) 
+
+    expectation_info <- function(mp) {
+      paste0(sQuote(paste(mp$data$x[nrows], collapse = " ")),
+        " should have been ", sQuote(paste(actual, collapse = " ")),
+        " with ", nat_opts)
+    }
+    expect_equal(actual, mp$data$x[nrows], info = expectation_info(mp))
+    
+    # Now check that predict gives the same result
+    mp <- set_mungeplane(date, rows = 1 + as.integer(single))
+    mb$run(mp, 1, mode = mode, permissive = permissive)
+
+    expect_equal(actual, mp$data$x[nrows], info = expectation_info(mp))
+  }
 }
 
 check_NA <- function(date, mode = 'since') {
@@ -25,8 +46,9 @@ set_mungebit <- function() {
   mungebits:::mungebit(parse_datetime)
 }
 
-set_mungeplane <- function(date) {
+set_mungeplane <- function(date, rows = 1) {
   df <- data.frame(x = date, y = 'bleh')
+  df <- do.call(rbind, replicate(rows, df, simplify = FALSE))
   mungebits:::mungeplane(df)
 }
 
