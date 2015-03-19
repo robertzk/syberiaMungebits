@@ -1,10 +1,11 @@
 #' Drop one of each monotonically related pair
 #'
-#' @param dataframe A data.frame.  Numeric columns must already be set to numeric with 
+#' @param dataframe a data.frame.  Numeric columns must already be set to numeric with 
 #'   the appropriate mungebit.  (Non-numeric columns will not be considered).  Also only
 #'   only complete cases will be considered, so imputation should already have occurred.
-#' @param threshold If the Spearman rank correlation exceeds this value, columns will be
+#' @param threshold numeric. If the Spearman rank correlation exceeds this value, columns will be
 #'   dropped.
+#' @param verbose logical.  Whether to print extra info.
 #' @export
 remove_monotonic <- function(dataframe, threshold, verbose=FALSE) {
 
