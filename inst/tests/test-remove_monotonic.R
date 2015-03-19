@@ -5,6 +5,6 @@ test_that("it drops monotonically related variables", {
   y <- x^2
   z <- rep(c(0,1), 5)
   df <- data.frame(x,y,z)
-  remove_monotonic(df, 1)
+  remove_monotonic(df, 0.9)
   expect_equal(df, data.frame(x,z))
 })
