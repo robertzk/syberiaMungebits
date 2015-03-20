@@ -7,12 +7,14 @@
 remove_monotonic(dataframe, threshold, verbose = FALSE)
 }
 \arguments{
-\item{dataframe}{A data.frame.  Numeric columns must already be set to numeric with
+\item{dataframe}{a data.frame.  Numeric columns must already be set to numeric with
 the appropriate mungebit.  (Non-numeric columns will not be considered).  Also only
 only complete cases will be considered, so imputation should already have occurred.}
 
-\item{threshold}{If the Spearman rank correlation exceeds this value, columns will be
+\item{threshold}{numeric. If the Spearman rank correlation exceeds this value, columns will be
 dropped.}
+
+\item{verbose}{logical.  Whether to print extra info.}
 }
 \description{
 Drop one of each monotonically related pair
