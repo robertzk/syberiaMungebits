@@ -10,14 +10,15 @@
 #'    to be a logical, with only the rows returning \code{TRUE} being selected.
 #' @param whole a logical. See the \code{rows} parameter. The default is 
 #'    \code{FALSE}.
+#' @param ... additional arguments to \code{rows} is that parameter is a function. 
 #' @export
 #' @examples
 #' select_rows(iris, 1:10) # Select only first ten rows
 #' select_rows(iris, c(TRUE,FALSE)) # Select only odd rows
 #' iris2 <- iris; rownames(iris2) <- paste0("row", 1:nrow(iris2))
 #' select_rows(iris, c("row10", "row51")) # Select rows by name
-select_rows <- function(dataframe, rows, whole = FALSE) {
-  force(rows); force(whole)
+select_rows <- function(dataframe, rows, whole = FALSE, ...) {
+  force(rows); force(whole); args <- force(list(...))
   eval(substitute({
     dataframe <- dataframe[if(is.function(rows)) {
       if (whole) rows(dataframe) else apply(dataframe, 1, rows)
