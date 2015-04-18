@@ -43,9 +43,9 @@ sure_independence_screen <- function(dataframe, ..., exclude = character(0),
       lower_count_bound = discretizer_params$lower_count_bound)
 
     # Raise an exception if the number of levels exceeds 100
-    if (any(violations <- vapply(dataframe[,!names(dataframe) %in% exclude], function(x) is.factor(x) &&
+    if (any(violations <- vapply(df <- dataframe[,!names(dataframe) %in% exclude], function(x) is.factor(x) &&
           nlevels(x) > max_levels, logical(1)))) {
-      stop("Too many levels in ", paste(colnames(dataframe)[violations], collapse = ', '))
+      stop("Too many levels in ", paste(colnames(df)[violations], collapse = ', '))
     }
 
     # Replace NAs with a new level, "Missing", so that sure independence screening
