@@ -67,7 +67,7 @@ paramatch <- function(dataframe, col, top_n = 5, suppress.input = FALSE, blackli
     )
   }
   # Set the added column names and optionally suppress the input column
-  if(suppress.input) eval(substitute({
+  if(isTRUE(suppress.input)) eval(substitute({
     dataframe[[col]] <- NULL
   }), envir = parent.frame()
   )
