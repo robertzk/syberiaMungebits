@@ -1,5 +1,5 @@
 context('paramatch')
-# Example Dataframes
+
 df <- data.frame(
   id = 1:10,
   text = c("goldeen goldeen goldeen", 
@@ -21,7 +21,8 @@ df2 <- data.frame(
            "My friend put it to the end"),
   stringsAsFactors = FALSE
 )
-# Testing Begins
+
+
 test_that("The training data is perserved for use with predictions", {
   mp <- mungebits:::mungeplane(df)
   mb <- mungebits:::mungebit(paramatch)
@@ -31,6 +32,7 @@ test_that("The training data is perserved for use with predictions", {
   expect_equal(colnames(mp$data), colnames(mp2$data))
 })
 mb <- NULL
+
 test_that("Check that N defaults the the number of unique words if set to high", {
   mp <- mungebits:::mungeplane(df[1:2, ])
   mp2 <- mp
@@ -39,6 +41,7 @@ test_that("Check that N defaults the the number of unique words if set to high",
                suppressMessages(mb$run(mp2, col = 'text', top_n = 6)))
 })
 mb <- NULL
+
 test_that("It handles blank, space only, or punctuation entries (which should all be ignored)", {
   mp <- mungebits:::mungeplane(df[3:5, ])
   mb <- mungebits:::mungebit(paramatch)
@@ -46,6 +49,7 @@ test_that("It handles blank, space only, or punctuation entries (which should al
   expect_equal(mp$data$col_HELLO, c(3, 0, 0))
   })
 mb <- NULL
+
 test_that("Only whole words are being counted", {
   mp <- mungebits:::mungeplane(df[6:7, ])
   mb <- mungebits:::mungebit(paramatch)
@@ -54,6 +58,7 @@ test_that("Only whole words are being counted", {
   expect_equal(mp$data[,-1], data.frame(col_AN = c(2, 2), col_ANT = c(2, 1)))
 })
 mb <- NULL
+
 test_that("punctuation works in the same way that spaces do", {
   mp <- mungebits:::mungeplane(df[8:9, ])
   mb <- mungebits:::mungebit(paramatch)
@@ -65,6 +70,7 @@ test_that("punctuation works in the same way that spaces do", {
   expect_equal(row1, row2)
 })
 mb <- NULL
+
 test_that("The blacklist prevents words from participating in the top n columns", {
   mp <- mungebits:::mungeplane(df)
   mp2 <- mungebits:::mungeplane(df)
@@ -75,5 +81,3 @@ test_that("The blacklist prevents words from participating in the top n columns"
   mb2$run(mp2, col = 'text', top_n = 3, blacklist = blacklist)
   expect_equal(mp$data[-c(3:5)], mp2$data)
 })
-mb <- NULL
-mb2 <- NULL
