@@ -56,6 +56,7 @@ test_that("it converts to FALSE in is bizday mode if bizday", {
   check_date('2014-10-04 11:22:33.4455', FALSE, 'bizday') })
 test_that("it converts to TRUE in is bizday mode if not bizday", {
   check_date('2012-11-21 12:34:56.7890', TRUE, 'bizday') })
+
 test_that("it works on dates too", { check_date(date, 8014) })
 test_that("it works on multiple datetimes", {
   check_date(multiple_datetimes, c(7670, 8035, 8401)) })

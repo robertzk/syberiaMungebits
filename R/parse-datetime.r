@@ -16,6 +16,7 @@ datetime_fn <- function(createdat, mode = "since", permissive = FALSE) {
   
   # track which records are NA before the mungebit
   if (length(createdat) == 0) return(numeric(0))
+  if (is.factor(createdat)) { createdat <- as.character(createdat) }
   originally_NA <- is.na(createdat)
   if (sum(originally_NA) > 0) {
     new_values <- Recall(createdat[!originally_NA], mode = mode, permissive = permissive)
