@@ -68,7 +68,9 @@ CharacterVector numeric_to_factor(NumericVector num,
     }
     clean_ranged_levels[j] = tmp;
   }
-
+  // Save minimum value so we can sort -infinity as less than that value
+  double min_value = 0;
+  boolean min_set = false;
   // Compute right and left bounds from ranges
   for (int j = 0; j < nrlevs; j++) {
     if (clean_ranged_levels[j][0] != '[' && clean_ranged_levels[j][0] != '(') {
@@ -99,7 +101,20 @@ CharacterVector numeric_to_factor(NumericVector num,
     rights.push_back(atof( ((std::string)(clean_ranged_levels[j])).substr(comma + 1, (levsize - 1) - (comma + 1)).c_str() ));
     // lefts[j] = atof( ((std::string)(clean_ranged_levels[j])).substr(1, comma - 1).c_str() );
     // rights[j] = atof( ((std::string)(clean_ranged_levels[j])).substr(comma + 1, (levsize - 1) - (comma + 1)).c_str() );
+
+    // if not the negative infinity level then check if minimum
+    if (neg_inf_index != j) {
+      if (min_value > lefts.end() || !min_set){
+        min_value = lefts.end();
+        if (!min_set) min_set = true;
+      }
+    }
   } // Right & lefts bounds and inclusivity booleans have been set
+
+  //correctly sort negative infinity values
+  if (neg_inf_index != -1){
+    lefts.at(neg_inf_index) = min_value -1;
+  }
 
   // Optimization trick: sort lefts, remembering the order
   _sort_actuals = std::vector<double>();
@@ -136,10 +151,10 @@ CharacterVector numeric_to_factor(NumericVector num,
     }
     //If at leftmost level then either infinity or out of factor bounds to the left so assign to current (cur == 0).
     //If at infinity index and greater than left bound then also assign to current.
-    //If we're at the last level then we're surely inside that level.
-    if (cur == 0 || (pos_inf_index == h && mynum > lefts[h])) {
-      charnums[row] = ranged_levels[h];
-    } else if (cur == nrlevs && (rightinc[h] ? num[row] <= rights[h] : num[row] < rights[h])) {
+    //If we're at the last level then we're surely inside that level, since we've accounted for NA_REAL values.
+    if (cur == 0 ||
+      (pos_inf_index == h && mynum > lefts[h]) ||
+      (cur == nrlevs)) {
       charnums[row] = ranged_levels[h];
     }
     h = sorted_indices[cur - 1]; // back up, we went too far!
