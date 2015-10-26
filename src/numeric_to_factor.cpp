@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <vector>
+#include <math.h>
 #include <algorithm>
 #include <string>
 #include <iostream>
@@ -46,11 +47,13 @@ CharacterVector numeric_to_factor(NumericVector num,
     }
     if (!other) {
       ranged_levels.push_back(levs[j]);
-      if (neg_inf) neg_inf_index = j;
+      if (neg_inf) {
+        std::cout << "negInf at " << j << "\n";
+        neg_inf_index = j;
+      }
       if (pos_inf) pos_inf_index = j;
     }
   }
-
   if (ranged_levels.size() == 0) {
     for (int row = 0; row < num.size(); row++) charnums[row] = num[row];
     return charnums;
@@ -63,14 +66,15 @@ CharacterVector numeric_to_factor(NumericVector num,
   CharacterVector clean_ranged_levels = CharacterVector(nrlevs);
   for (int j = 0; j < nrlevs; j++) {
     std::string tmp = "";
-    for (int k = 0; k < strlen(ranged_levels[j])); k++) {
+    for (int k = 0; k < strlen(ranged_levels[j]); k++) {
       if (ranged_levels[j][k] != ' ') tmp += ranged_levels[j][k];
     }
     clean_ranged_levels[j] = tmp;
   }
+
   // Save minimum value so we can sort -infinity as less than that value
   double min_value = 0;
-  boolean min_set = false;
+  bool min_set = false;
   // Compute right and left bounds from ranges
   for (int j = 0; j < nrlevs; j++) {
     if (clean_ranged_levels[j][0] != '[' && clean_ranged_levels[j][0] != '(') {
@@ -104,16 +108,16 @@ CharacterVector numeric_to_factor(NumericVector num,
 
     // if not the negative infinity level then check if minimum
     if (neg_inf_index != j) {
-      if (min_value > lefts.end() || !min_set){
-        min_value = lefts.end();
+      if (min_value > lefts[j] || !min_set){
+        min_value = lefts[j];
         if (!min_set) min_set = true;
       }
     }
   } // Right & lefts bounds and inclusivity booleans have been set
 
-  //correctly sort negative infinity values
+  //correctly sort negative infinity values trick: Assign -Inf value to minimum left edge minus 1
   if (neg_inf_index != -1){
-    lefts.at(neg_inf_index) = min_value -1;
+    lefts.at(neg_inf_index) = min_value - 1;
   }
 
   // Optimization trick: sort lefts, remembering the order
@@ -130,7 +134,7 @@ CharacterVector numeric_to_factor(NumericVector num,
   for (int row = 0; row < num.size(); row++) {
     double mynum = num[row];
     //truncate to match precision of discretizer
-    if (mynum == NA_REAL) {
+    if (NumericVector::is_na(num[row])) {
       if (na_to_missing) {
         charnums[row] = (String)"Missing";
       } else {
@@ -138,29 +142,43 @@ CharacterVector numeric_to_factor(NumericVector num,
       }
       continue;
     }
+    //Truncate to 6 digits like R does.  Shouldn't be necessary but I think it is.
+    mynum = ceilf(mynum * 1000000) / 1000000;
 
-    cout << fixed << setprecision(7) << mynum;
+    //Increment until our number is less than the left bin edge
     for (cur = 0; cur < nrlevs; cur++) {
       h = sorted_indices[cur];
       if (neg_inf_index == h && mynum < rights[h]) {
+        std::cout << "1\n";
         break;
       }
       if (leftinc[h] ? mynum < lefts[h] : mynum <= lefts[h]) {
+        std::cout << "2\n";
         break;
       }
     }
+    std::cout << "NegInfIndex = " << (neg_inf_index) << "\n";
+    std::cout << (mynum) << "\n";
+    std::cout << (lefts[h]) << "\n";
+    std::cout << (rights[h]) << "\n";
+    std::cout << (mynum == lefts[h]) << "\n";
+    std::cout << (mynum < rights[h]) << "\n";
     //If at leftmost level then either infinity or out of factor bounds to the left so assign to current (cur == 0).
     //If at infinity index and greater than left bound then also assign to current.
     //If we're at the last level then we're surely inside that level, since we've accounted for NA_REAL values.
     if (cur == 0 ||
       (pos_inf_index == h && mynum > lefts[h]) ||
-      (cur == nrlevs)) {
+      (cur == nrlevs) ||
+      (leftinc[h] && mynum == lefts[h])) {
       charnums[row] = ranged_levels[h];
+      continue;
     }
     h = sorted_indices[cur - 1]; // back up, we went too far!
 
     //we are surely not NA, and surely not at the beginning or end.
     charnums[row] = ranged_levels[h];
+
+
   }
 
   return charnums;
