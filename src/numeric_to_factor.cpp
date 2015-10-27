@@ -25,13 +25,11 @@ CharacterVector numeric_to_factor(NumericVector num,
   CharacterVector ranged_levels = CharacterVector();
   CharacterVector other_levels = CharacterVector();
 
-  // keep track of infinity indices
+  // keep track of negative infinity indices.  Positive infinity sorts itself out.
   int neg_inf_index = -1;
-  int pos_inf_index = -1;
   for (int j = 0; j < nlevs; j++) {
     bool other = false;
     bool neg_inf = false;
-    bool pos_inf = false;
     for (unsigned int k = 0; k < strlen(levs[j]); k++ ) {
       if (!(isdigit(levs[j][k]) || levs[j][k] == ',' || levs[j][k] == '.' ||
              levs[j][k] == '(' || levs[j][k] == ')' || levs[j][k] == '[' ||
@@ -42,11 +40,9 @@ CharacterVector numeric_to_factor(NumericVector num,
         break;
       }
       // look for infinity in levels
-      if (levs[j][k] == '-' && k < strlen(levs[j])-3 ) {
+      if (levs[j][k] == '-' && k < strlen(levs[j]) - 3) {
         if(levs[j][k+1] == 'I' && levs[j][k+2] == 'n' && levs[j][k+3] == 'f')
         neg_inf = true;
-      } else if (!neg_inf && levs[j][k] == 'I' && k < strlen(levs[j])-2 ) {
-        if(levs[j][k+1] == 'n' && levs[j][k+2] == 'f') pos_inf = true;
       }
     }
     if (!other) {
@@ -54,7 +50,6 @@ CharacterVector numeric_to_factor(NumericVector num,
       if (neg_inf) {
         neg_inf_index = j;
       }
-      if (pos_inf) pos_inf_index = j;
     }
   }
   if (ranged_levels.size() == 0) {
@@ -163,12 +158,10 @@ CharacterVector numeric_to_factor(NumericVector num,
       }
     }
 
-    // If at leftmost level then either infinity or out of factor bounds to the left so assign to current (cur == 0).
-    // If at infinity index and greater than left bound then also assign to current.
+    // If at leftmost level then either -infinity or out of factor bounds to the left so assign to current (cur == 0).
     // If we're at the last level then we're surely inside that level, since we've accounted for NA_REAL values.
     // If the current left edge is inclusive and we are within epsilon of that edge then we are in that level.
     if (cur == 0 ||
-      (pos_inf_index == h && mynum > lefts[h]) ||
       (cur == nrlevs) ||
       (leftinc[h] && epsilon_compare(mynum, lefts[h]))) {
       charnums[row] = ranged_levels[h];
