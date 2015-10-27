@@ -1,3 +1,4 @@
+data(iris_discretized, package = "syberiaMungebits")
 context("discretizer")
 require(mungebits)
 # TODO: (RK) Figure out why this is broken on CI
