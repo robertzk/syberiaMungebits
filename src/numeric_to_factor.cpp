@@ -3,7 +3,6 @@
 #include <math.h>
 #include <algorithm>
 #include <string>
-#include <iostream>
 using namespace Rcpp;
 
 std::vector<double> _sort_actuals = std::vector<double>();
@@ -84,10 +83,10 @@ CharacterVector numeric_to_factor(NumericVector num,
     if (clean_ranged_levels[j][0] != '[' && clean_ranged_levels[j][0] != '(') {
       // Assume this is just a number
       lefts.push_back(atof(clean_ranged_levels[j]));
-      // lefts[j] = atof(clean_ranged_levels[j]);
+      //lefts[j] = atof(clean_ranged_levels[j]);
       rights.push_back(lefts[j]);
-      // rights[j] = lefts[j];
-      // leftinc[j] = rightinc[j] = true;
+      //rights[j] = lefts[j];
+      //leftinc[j] = rightinc[j] = true;
       leftinc.push_back(true); rightinc.push_back(true);
       continue;
     }
@@ -95,8 +94,8 @@ CharacterVector numeric_to_factor(NumericVector num,
     int levsize = clean_ranged_levels[j].size();
     leftinc.push_back(clean_ranged_levels[j][0] == '[');
     rightinc.push_back(clean_ranged_levels[j][levsize - 1] == ']');
-    // leftinc[j] = clean_ranged_levels[j][0] == '[';
-    // rightinc[j] = clean_ranged_levels[j][levsize - 1] == ']';
+    //leftinc[j] = clean_ranged_levels[j][0] == '[';
+    //rightinc[j] = clean_ranged_levels[j][levsize - 1] == ']';
     // Find the comma
     int comma; for (comma = 0; comma < levsize &&
                    clean_ranged_levels[j][comma] != ','; comma++);
