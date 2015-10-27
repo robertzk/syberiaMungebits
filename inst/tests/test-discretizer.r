@@ -130,7 +130,7 @@ test_that("it correctly assigns to infinity bins", {
  expected_discretized_column <-
    factor(c(rep(0, 34), rep(1, 33), rep(2, 33)),labels = c('[-Inf, 25)','[  25, 58)','[  58,Inf]'))
 
- df <- mungebits:::mungeplane(data.frame(first = c(seq(-10000,-9991),1:80,seq(9991,10000))))
+ df <- mungebits:::mungeplane(data.frame(first = c(-Inf,seq(-9999,-9991),1:80,seq(9991,9999),Inf)))
  mb$run(df, 1)
  expect_equal(df$data[[1]],
    expected_discretized_column)
