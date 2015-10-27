@@ -131,8 +131,18 @@ CharacterVector numeric_to_factor(NumericVector num,
   int h, cur;
   for (int row = 0; row < num.size(); row++) {
     double mynum = num[row];
-    //truncate to match precision of discretizer
-    if (NumericVector::is_na(num[row])) {
+
+    //Explicitly look for Infinity values and assign to far left or far right bins
+    if (mynum == R_NegInf) {
+      charnums[row] = ranged_levels[sorted_indices[0]];
+      continue;
+    } else if (mynum == R_PosInf) {
+        charnums[row] = ranged_levels[sorted_indices[sorted_indices.size() - 1]];
+        continue;
+    }
+
+    //Explicitly look for missing, since out of bounds is no longer missing
+    if (NumericVector::is_na(mynum)) {
       if (na_to_missing) {
         charnums[row] = (String)"Missing";
       } else {
