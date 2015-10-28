@@ -137,17 +137,17 @@ test_that("it correctly assigns to infinity bins", {
    expected_discretized_column)
 })
 
-test_that("it supports up to 6 digits in discretization levels", {
- df <- mungebits:::mungeplane(data.frame(first = 1:100 / 40000))
+test_that("it supports up to 8 digits in discretization levels", {
+ df <- mungebits:::mungeplane(data.frame(first = 1:100 / 4000000))
  mb <- mungebits:::mungebit(discretizer)
  mb$run(df, 1)
  expected_discretized_column <-
-   factor(c(rep("[0.000025,0.000875)", 34), rep("[0.000875,0.001700)", 33),
-            rep("[0.001700,0.002500]", 33)))
+   factor(c(rep("[0.00000025,0.00000875)", 34), rep("[0.00000875,0.00001700)", 33),
+            rep("[0.00001700,0.00002500]", 33)))
  expect_equal(df$data[[1]], expected_discretized_column)
 
  # test prediction
- df <- mungebits:::mungeplane(data.frame(first = (1:100 / 40000)[1:50]))
+ df <- mungebits:::mungeplane(data.frame(first = (1:100 / 4000000)[1:50]))
  mb$run(df, 1)
  expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
