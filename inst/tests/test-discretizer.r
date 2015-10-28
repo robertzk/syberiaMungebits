@@ -38,7 +38,7 @@ test_that("it correctly restores iris data set", {
  if (!mungebits_loaded) unloadNamespace('mungebits')
 })
 #
-test_that("it does not discretize values with uniques below the lower bnd", {
+test_that("it does not discretize values with uniques below the lower bound", {
  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
  iris2 <- mungebits:::mungeplane(iris)
  mb <- mungebits:::mungebit(discretizer)
