@@ -56,7 +56,7 @@ discretizer_fn <- function(column,
         discretized_column <- try(suppressWarnings(arules::discretize(column,
           digits = syberiaMungebits:::MAX_DISCRETIZATION_DIGITS, method = 'frequency',
           categories = i, ...)))
-        if (inherits(discretized_column, 'try-error')) next 
+        if (inherits(discretized_column, 'try-error')) next
         trimmed_levels <- gsub('^ *| *$', '', levels(discretized_column))
         if (mode_value %in% suppressWarnings(as.numeric(trimmed_levels))) {
           mode_corrected <- TRUE
@@ -69,7 +69,7 @@ discretizer_fn <- function(column,
         warning(paste0("Mode of variable '", colname ,"' is above ", 100 * mode_freq_threshold, "% ",
                 "and/or mode ratio is above ", mode_ratio_threshold, " and no number of buckets between ",
                 min(category_range), " and ", max(category_range), " fixes the problem. May want to ",
-                "discretize manually")) 
+                "discretize manually"))
       }
     }
     if (!mode_corrected) {
@@ -107,7 +107,7 @@ restore_levels_fn <- function(column, missing_level = 'Missing', ...) {
   else {
     previous_missing_values <- is.na(column[[1]])
     col <- syberiaMungebits:::numeric_to_factor(column[[1]], inputs$levels,
-                                                na.to.missing = FALSE) 
+                                                na.to.missing = FALSE)
     if (!is.null(missing_level))
       factor(ifelse(previous_missing_values,
             as.character(missing_level), as.character(col)), levels = levels(col))
@@ -157,5 +157,4 @@ freqs <- function(variable,
   tabulate(match(variable, uniques))
 }
 
-MAX_DISCRETIZATION_DIGITS <- 10
-
+MAX_DISCRETIZATION_DIGITS <- 8

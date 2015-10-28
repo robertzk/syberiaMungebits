@@ -150,8 +150,8 @@ CharacterVector numeric_to_factor(NumericVector num,
       }
       continue;
     }
-    // Round to 6 digits like R seems to do in discretizer.  Shouldn't be necessary but I think it is.
-    mynum = roundf(mynum * 1000000) / 1000000;
+    // Round to 8 digits like R seems to do in discretizer.  Shouldn't be necessary but I think it is.
+    mynum = roundf(mynum * 100000000) / 100000000;
 
     // Increment until our number is less than the left bin edge
     for (cur = 0; cur < nrlevs; cur++) {

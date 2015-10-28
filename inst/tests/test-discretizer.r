@@ -151,6 +151,7 @@ test_that("it supports up to 6 digits in discretization levels", {
  mb$run(df, 1)
  expect_equal(df$data[[1]], expected_discretized_column[1:50])
 })
+
 #
 #
 test_that("Discretizer Successfully Interacts with Truncators to Truncate Extreme values ", {
