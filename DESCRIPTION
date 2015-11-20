@@ -3,7 +3,7 @@ Title: Common mungebits used with Syberia projects.
 Type: Package
 Description: A collection of specific transformations to be used in conjuction
     with the mungebits package, designed for syberia models.
-Version: 0.2.3.5
+Version: 0.2.3.6
 Author: Robert Krzyzanowski <technoguyrob@gmail.com>
 Maintainer: Robert Krzyzanowski <technoguyrob@gmail.com>
 Authors@R: c(person("Robert", "Krzyzanowski",
@@ -12,7 +12,7 @@ Depends:
     R (>= 3.0.1),
     Rcpp (>= 0.10.6)
 Imports:
-    mungebits(>= 0.3.12.2),
+    mungebits(>= 0.3.12.3),
     arules,
     statsUtils,
     Ramd,
