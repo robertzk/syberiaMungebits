@@ -16,11 +16,14 @@ value_replacer_fn <- function(x, values_map) {
   is_factor <- is.factor(replaced)
   if (is_factor) {
     replaced <- as.character(replaced)
-    rep_levels <- unique(unlist(lapply(values_map, function(value_map) value_map[[2]]))) 
   }
   unnamed_indices <- names(values_map) == ""
-  if (is.null(unnamed_indices) || length(unnamed_indices) == 0)
+  if (is.null(unnamed_indices) || length(unnamed_indices) == 0) {
     unnamed_indices <- TRUE
+  }
+  rep_levels_unnamed <- unlist(lapply(values_map[unnamed_indices], function(value_map) value_map[[2]])) 
+  rep_levels_named <- unlist(lapply(names(values_map)[!unnamed_indices], function(name) values_map[[name]])) 
+  rep_levels <- unique(c(rep_levels_unnamed, rep_levels_named))
   for (value_map in values_map[unnamed_indices]) {
     replaced[x %in% value_map[[1]]] <-
       if (is_factor) as.character(value_map[[2]]) else value_map[[2]]

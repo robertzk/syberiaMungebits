@@ -12,7 +12,7 @@ Depends:
     R (>= 3.0.1),
     Rcpp (>= 0.10.6)
 Imports:
-    mungebits(>= 0.3.12.2),
+    mungebits,
     arules,
     statsUtils,
     Ramd,
