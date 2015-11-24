@@ -18,10 +18,13 @@ value_replacer_fn <- function(x, values_map) {
   unnamed_indices <- names(values_map) == ""
   if (is.null(unnamed_indices) || length(unnamed_indices) == 0)
     unnamed_indices <- TRUE
- 
-  rep_levels_unnamed <- unlist(lapply(values_map[unnamed_indices], function(value_map) value_map[[2]])) 
-  rep_levels_named <- unlist(lapply(names(values_map)[!unnamed_indices], function(name) values_map[[name]])) 
-  rep_levels <- unique(c(rep_levels_unnamed, rep_levels_named))
+  if (is_factor) { 
+    if (!exists('inputs') || !'levels' %in% names(inputs)) {
+      rep_levels_unnamed <- unlist(lapply(values_map[unnamed_indices], function(value_map) value_map[[2]])) 
+      rep_levels_named <- unlist(lapply(names(values_map)[!unnamed_indices], function(name) values_map[[name]])) 
+      rep_levels <- unique(c(rep_levels_unnamed, rep_levels_named))
+    } else rep_levels <- inputs$levels
+  }
   for (value_map in values_map[unnamed_indices]) {
     replaced[x %in% value_map[[1]]] <-
       if (is_factor) as.character(value_map[[2]]) else value_map[[2]]
@@ -30,10 +33,7 @@ value_replacer_fn <- function(x, values_map) {
     replaced[x == name] <- 
       if (is_factor) as.character(values_map[[name]]) else values_map[[name]]
   }
-  if (is_factor) factor(replaced, levels =
-    if (!exists('inputs')) unique(replaced)
-    else if ('levels' %in% names(inputs)) inputs$levels
-    else inputs$levels <<- union(unique(replaced), rep_levels))
+  if (is_factor) factor(replaced, levels = union(unique(replaced), rep_levels))
   else replaced
 }
 
