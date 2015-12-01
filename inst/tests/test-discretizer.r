@@ -214,7 +214,7 @@ test_that("Discretizer can handle unforseen Factor Levels", {
 
 # test_that("it successfully bins values on the boundary of the training phase", {
 
-test_that("Within Discretizer It Doesent Contain Factor Gaps", {
+test_that("Within Discretizer It Doesn't Contain Factor Gaps", {
 
  mungebits_loaded <- 'mungebits' %in% loadedNamespaces(); require(mungebits)
 
