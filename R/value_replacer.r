@@ -20,8 +20,8 @@ value_replacer_fn <- function(x, values_map) {
     unnamed_indices <- TRUE
   if (is_factor) { 
     if (!exists('inputs') || !'levels' %in% names(inputs)) {
-      rep_levels_unnamed <- unlist(lapply(values_map[unnamed_indices], function(value_map) value_map[[2]])) 
-      rep_levels_named <- unlist(lapply(names(values_map)[!unnamed_indices], function(name) values_map[[name]])) 
+      rep_levels_unnamed <- c(recursive = T, lapply(values_map[unnamed_indices], function(value_map) value_map[[2]])) 
+      rep_levels_named <- c(recursive = T, lapply(names(values_map)[!unnamed_indices], function(name) values_map[[name]])) 
       rep_levels <- unique(c(rep_levels_unnamed, rep_levels_named))
     } else rep_levels <- inputs$levels
   }

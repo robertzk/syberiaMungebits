@@ -100,5 +100,39 @@ test_that("it restores factors correctly", {
                         factor('b', levels = c("b", "a", "d"))))
 })
 
+test_that("it leaves new levels alone", {
+  ###TRAIN
+  train_df <- data.frame(x = factor(c("a", "2", "3", "4", "5", "5")), y = factor(c("a", "b", NA,"c", "d", "d")))
+  mb <- mungebits:::mungebit(value_replacer)
+  mp <- mungebits::mungeplane(train_df)
+  mb$run(mp, is.factor, list(list(NA, "Missing"), list("a", "was_a")))
+
+  ###PREDICT
+  pred_df <- data.frame(x = factor(c("2", "a", "2", "leave_alone")), y = factor(c("a", "b", NA, "leave_alone2")))
+  mp <- mungebits::mungeplane(pred_df)
+  mb$run(mp, is.factor, list(list(NA, "Missing"), list("a", "was_a")))
+  
+  expected_df <- data.frame(x = factor(c("2", "was_a", "2", "leave_alone")), y = factor(c("was_a", "b", "Missing", "leave_alone2")))
+  expect_equal(as.character(mp$data[[1]]),as.character(expected_df[[1]]))
+  expect_equal(as.character(mp$data[[2]]),as.character(expected_df[[2]]))
+})
+
+test_that("it replaces factor NA that it hasn't seen in training", {
+  ###TRAIN
+  train_df <- data.frame(x = factor(c("a", "2", "3", "4", "5", "5")), y = factor(c("a", "b", NA,"c", "d", "d")))
+  mb <- mungebits:::mungebit(value_replacer)
+  mp <- mungebits::mungeplane(train_df)
+  mb$run(mp, is.factor, list(list(NA, "Missing"), list("a", "was_a")))
+
+  ###PREDICT
+  pred_df <- data.frame(x = factor(c("2", "a", NA)), y = factor(c("a", "b", NA)))
+  mp <- mungebits::mungeplane(pred_df)
+  mb$run(mp, is.factor, list(list(NA, "Missing"), list("a", "was_a")))
+  
+  expected_df <- data.frame(x = factor(c("2", "was_a", "Missing")), y = factor(c("was_a", "b", "Missing")))
+  expect_equal(as.character(mp$data[[1]]),as.character(expected_df[[1]]))
+  expect_equal(as.character(mp$data[[2]]),as.character(expected_df[[2]]))
+})
+
 if (!mungebits_loaded) unloadNamespace('mungebits')
 
