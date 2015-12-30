@@ -4,7 +4,7 @@
 #' @docType package
 #' @useDynLib syberiaMungebits
 #' @exportPattern .*numeric_to_factor.*
-#' @import mungebits Ramd timeDate lubridate
+#' @import mungebits Ramd timeDate lubridate plyr
 NULL
 
 #' A discretized version of the iris data set, used for internal
