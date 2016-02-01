@@ -19,10 +19,10 @@ Imports:
     plyr,
     stringr
 Remotes:
-    git::ggobi/ggally,
-    git::robertzk/mungebits,
-    git::robertzk/Ramd,
-    git::robertzk/statsUtils
+    ggobi/ggally,
+    robertzk/mungebits,
+    robertzk/Ramd,
+    robertzk/statsUtils
 LinkingTo: Rcpp
 License: MIT
 LazyData: true
