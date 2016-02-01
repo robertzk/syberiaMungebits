@@ -12,14 +12,16 @@ Depends:
     R (>= 3.0.1),
     Rcpp (>= 0.10.6)
 Imports:
-    mungebits,
     arules,
-    statsUtils,
     Ramd,
     timeDate,
     lubridate,
     plyr,
     stringr
+Remotes:
+    git::robertzk/mungebits,
+    git::robertzk/Ramd,
+    git::robertzk/statsUtils
 LinkingTo: Rcpp
 License: MIT
 LazyData: true
