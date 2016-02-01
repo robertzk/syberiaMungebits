@@ -19,6 +19,7 @@ Imports:
     plyr,
     stringr
 Remotes:
+    git::ggobi/ggally,
     git::robertzk/mungebits,
     git::robertzk/Ramd,
     git::robertzk/statsUtils
