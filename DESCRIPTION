@@ -29,3 +29,4 @@ Suggests:
     knitr,
     microbenchmark
 Roxygen: list(wrap = FALSE)
+RoxygenNote: 5.0.0
