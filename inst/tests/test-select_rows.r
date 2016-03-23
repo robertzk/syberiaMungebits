@@ -32,3 +32,18 @@ test_that("it correctly selects rows by function", {
   expect_equal(dd, dd2[3, ]) 
 })
 
+test_that("it correctly selects rows by function and cols_to_check with whole = FALSE", {
+  dd <- data.frame(x = c(1,2,3), y = c(4,5,6), z = c(-1,-2,999))
+  dd2 <- dd
+  select_rows(dd, function(x) {sum(x) == 0}, whole = FALSE, cols_to_check = c('x', 'z'))
+  expect_equal(dd, dd2[1:2, ])
+})
+
+test_that("it correctly selects rows by function and cols_to_check with whole = TRUE", {
+  dd <- data.frame(x = c(1,2,3), y = c(4,5,6), z = c(-1,-2,999))
+  dd2 <- dd
+  select_rows(dd, function(x) {(x[[1]] + x[[2]]) > 0}, whole = TRUE, cols_to_check = c('x', 'z'))
+  expect_equal(dd, dd2[3, ])
+})
+
+
