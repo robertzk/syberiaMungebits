@@ -4,7 +4,7 @@
 \alias{select_rows}
 \title{Select rows in a dataframe.}
 \usage{
-select_rows(dataframe, rows, whole = FALSE, cols_to_check = NULL, ...)
+select_rows(dataframe, rows, whole = FALSE, ..., cols_to_check = NULL)
 }
 \arguments{
 \item{dataframe}{a data.frame}
@@ -20,11 +20,11 @@ to be a logical, with only the rows returning \code{TRUE} being selected.}
 \item{whole}{a logical. See the \code{rows} parameter. The default is 
 \code{FALSE}.}
 
+\item{...}{additional arguments to \code{rows} is that parameter is a function.}
+
 \item{cols_to_check}{a character vector. Allows for rows to be applied to a
 column subset of the dataframe. The default is to apply to all columns of
 the dataframe.}
-
-\item{...}{additional arguments to \code{rows} is that parameter is a function.}
 }
 \description{
 Select rows in a dataframe.
