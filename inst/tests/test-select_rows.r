@@ -44,6 +44,7 @@ test_that("it correctly selects rows by function and cols_to_check with whole = 
   dd2 <- dd
   select_rows(dd, function(x) {(x[[1]] + x[[2]]) > 0}, whole = TRUE, cols_to_check = c('x', 'z'))
   expect_equal(dd, dd2[3, ])
+  expect_false(isTRUE(all.equal(dd, dd2[1, ])))
 })
 
 
