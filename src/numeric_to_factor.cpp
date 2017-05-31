@@ -62,9 +62,9 @@ CharacterVector numeric_to_factor(NumericVector num,
   std::vector<bool> leftinc, rightinc; // left/right inclusive
 
   CharacterVector clean_ranged_levels = CharacterVector(nrlevs);
-  for (int j = 0; j < nrlevs; j++) {
+  for (auto j = 0; j < nrlevs; j++) {
     std::string tmp = "";
-    for (int k = 0; k < strlen(ranged_levels[j]); k++) {
+    for (unsigned int k = 0; k < strlen(ranged_levels[j]); k++) {
       if (ranged_levels[j][k] != ' ') tmp += ranged_levels[j][k];
     }
     clean_ranged_levels[j] = tmp;
@@ -128,7 +128,7 @@ CharacterVector numeric_to_factor(NumericVector num,
   std::sort(sorted_indices.begin(), sorted_indices.end(), sortshuffle);
 
   // Now actually restore the levels for each num
-  int h, cur;
+  int h = 0, cur;
   for (int row = 0; row < num.size(); row++) {
     double mynum = num[row];
 
