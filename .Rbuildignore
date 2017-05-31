@@ -1,7 +1,0 @@
- .travis.yml
-data/.DS_Store
-..Rcheck
-.git
-.gitignore
-^.*\.Rproj$
-^\.Rproj\.user$
